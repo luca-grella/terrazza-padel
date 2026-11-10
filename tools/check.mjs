@@ -1,5 +1,6 @@
 // Headless check with real touch events through the Chrome DevTools Protocol.
-// Usage: node --experimental-websocket tools/check.mjs <url> <outDir> [--mobile] [--landscape] [--lang=en]
+// Usage: node --experimental-websocket tools/check.mjs <url> <outDir> [--mobile] [--landscape] [--lang=en] [--gate] [--android]
+// Mobile runs pretend to be the installed app (standalone); --gate checks the install page a phone browser gets instead.
 // Needs Google Chrome installed. Serve the folder first, e.g. python3 -m http.server 8777.
 import { spawn } from 'node:child_process';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
@@ -7,7 +8,8 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
 const [url, out] = process.argv.slice(2);
-const mobile = process.argv.includes('--mobile'), landscape = process.argv.includes('--landscape');
+const gate = process.argv.includes('--gate'), android = process.argv.includes('--android');
+const mobile = process.argv.includes('--mobile') || gate, landscape = process.argv.includes('--landscape');
 const lang = (process.argv.find((a) => a.startsWith('--lang=')) || '--lang=it').slice(7);
 const W = mobile ? (landscape ? 844 : 390) : 1280, H = mobile ? (landscape ? 390 : 844) : 800;
 const CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
@@ -47,10 +49,23 @@ try {
   if (mobile) {
     await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 2, mobile: true });
     await send('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
-    await send('Emulation.setUserAgentOverride', { userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1', platform: 'iPhone' });
+    await send('Emulation.setUserAgentOverride', android
+      ? { userAgent: 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0 Mobile Safari/537.36', platform: 'Linux armv8l' }
+      : { userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1', platform: 'iPhone' });
+    if (!gate) await send('Page.addScriptToEvaluateOnNewDocument', { source: "Object.defineProperty(navigator, 'standalone', { get: () => true });" });
   }
   await send('Emulation.setLocaleOverride', { locale: lang === 'en' ? 'en-GB' : 'it-IT' }).catch(() => {});
   await send('Page.navigate', { url });
+  if (gate) {
+    await sleep(2500);
+    result.gate = await ev(`({ shown: getComputedStyle(document.getElementById('gate')).display !== 'none', game: getComputedStyle(document.getElementById('wrap')).display, padel: !!window.padel,
+      text: document.getElementById('gate').innerText.replace(/\\s+/g, ' ').slice(0, 400), overflowX: document.documentElement.scrollWidth > innerWidth })`);
+    await shot('gate-' + (android ? 'android' : 'ios') + (landscape ? '-land' : ''));
+    const gl = await ev('document.documentElement.lang');
+    await tap('#gLang [data-v="' + (gl === 'it' ? 'en' : 'it') + '"]'); await sleep(200);
+    result.gate.switched = await ev("document.getElementById('gate').innerText.replace(/\\s+/g, ' ').slice(0, 120)");
+    throw new Error('gate-only run');
+  }
   for (let i = 0; i < 60; i++) { await sleep(250); if (await ev('!!window.padel && !document.getElementById("loading")').catch(() => false)) break; }
   await sleep(1200);
   await shot('1-start');
@@ -96,7 +111,7 @@ try {
   await ev('document.getElementById("panel").scrollTop = 0'); await sleep(200); await shot('6-panel-switched');
   result.overflowX = await ev('document.documentElement.scrollWidth > innerWidth');
   // coach mode: long simulated match, then the score and the last commentary line
-  result.sim = await ev(`(() => { const P = window.padel; P.settings.mode = 'coach'; P.newMatch(false); for (let i = 0; i < 300; i++) P.step(240); return { score: P.state.score, points: P.debugLog.length, comm: document.getElementById('commNow').textContent, coachWho: document.getElementById('coachWho').textContent }; })()`);
+  result.sim = await ev(`(() => { const P = window.padel; P.settings.mode = 'coach'; P.newMatch(false); for (let i = 0; i < 300; i++) { P.step(240); if (P.rally.state === 'choose') P.chooseSide('right'); } return { score: P.state.score, points: P.debugLog.length, comm: document.getElementById('commNow').textContent, coachWho: document.getElementById('coachWho').textContent }; })()`);
   await sleep(300); await shot('7-coach');
   // tournament: back to the menu, enter the Bronze event in the quick format, play the first match
   await ev('window.padel.newMatch(true)'); await sleep(300);
@@ -110,11 +125,11 @@ try {
   await tap('#detPlay'); await sleep(2500);
   result.tour = { header: await ev('document.getElementById("topEyebrow").textContent + " | " + document.getElementById("topTitle").textContent'), vs: await ev('document.getElementById("vsLine").textContent'), fmt: await ev('JSON.stringify(window.padel.FMT)') };
   await shot('10-tour-match');
-  result.tour.end = await ev(`(() => { const P = window.padel; for (let i = 0; i < 60 && !P.score.over; i++) P.award(0); P.step(600); return document.getElementById('cardResult').innerText.replace(/\s+/g, ' '); })()`);
+  result.tour.end = await ev(`(() => { const P = window.padel; for (let i = 0; i < 60 && !P.score.over; i++) P.award(0); P.step(600); return document.getElementById('cardResult').innerText.replace(/\\s+/g, ' '); })()`);
   await sleep(300); await shot('11-result');
   await tap('#resCont'); await sleep(400); await shot('12-next-round');
   result.tour.next = await ev('document.getElementById("detNextLbl").textContent');
-} catch (e) { result.fatal = String(e.stack || e); }
+} catch (e) { if (String(e).indexOf('gate-only run') < 0) result.fatal = String(e.stack || e); }
 writeFileSync(join(out, 'result.json'), JSON.stringify(result, null, 2));
 console.log(JSON.stringify(result, null, 1));
 try { ws?.close(); } catch (e) { /* closed */ }

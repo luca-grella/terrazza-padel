@@ -13,6 +13,19 @@
 <meta name="application-name" content="Terrazza Padel">
 <meta name="description" content="Padel 2 contro 2 in pixel art su otto terrazze nel mondo, con tornei. 2 vs 2 pixel-art padel on eight rooftops, with tournaments.">
 <title>Terrazza Padel</title>
+<script>
+// Phones and tablets play only the installed app (home-screen PWA); in their browser they get the install page.
+(() => {
+  const ua = navigator.userAgent || '', pf = navigator.platform || '';
+  const ios = /iP(hone|ad|od)/.test(pf) || /iP(hone|ad|od)/.test(ua) || (/Mac/.test(pf) && navigator.maxTouchPoints > 1);
+  const android = /Android/i.test(ua);
+  const touchOnly = matchMedia('(pointer: coarse)').matches && !matchMedia('(any-pointer: fine)').matches;
+  const standalone = !!(navigator.standalone || ['standalone', 'fullscreen', 'minimal-ui'].some((m) => matchMedia(`(display-mode: ${m})`).matches));
+  const sandbox = /claude|anthropic/.test(location.hostname);
+  window.__gate = (ios || android || touchOnly) && !standalone && !sandbox ? (ios ? 'ios' : android ? 'android' : 'other') : '';
+  if (window.__gate) document.documentElement.classList.add('gate');
+})();
+</script>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -279,6 +292,15 @@ button:focus-visible, input:focus-visible { outline: 2px solid var(--sun); outli
   box-shadow: 0 -2px 0 var(--gold), 0 2px 0 var(--gold), -2px 0 0 var(--gold), 2px 0 0 var(--gold); cursor: pointer; display: grid; place-items: center; }
 #hudPause svg { width: 16px; height: 16px; fill: currentColor; shape-rendering: crispEdges; }
 #hudPause.on { background: var(--sun); color: var(--g); }
+#sideChoice { position: absolute; inset: 0; z-index: 8; display: grid; place-items: center; background: rgba(10, 24, 16, 0.35); }
+#sideChoice[hidden] { display: none; }
+#sideChoice .sc-card { font-family: var(--pixel); text-align: center; padding: 14px 18px 16px; display: grid; gap: 8px; width: min(320px, 86%);
+  background: var(--sand) repeating-conic-gradient(#ede1cc 0 25%, transparent 0 50%) 0 0 / 6px 6px;
+  box-shadow: 0 -4px 0 var(--g), 0 4px 0 var(--g), -4px 0 0 var(--g), 4px 0 0 var(--g), inset 0 0 0 4px var(--gold), 10px 10px 0 rgba(0, 0, 0, 0.35); }
+#sideChoice .sc-t { font-size: 30px; color: var(--g); text-shadow: 3px 3px 0 var(--gold); }
+#sideChoice .sc-h { font-size: 18px; color: var(--teal); }
+#sideChoice .sc-b { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 4px; }
+#sideChoice .btn { font-size: 20px; padding: 10px 4px 12px; }
 #stick { border-radius: 0; border: 0; background: rgba(20, 50, 35, 0.5); clip-path: polygon(30% 0, 70% 0, 70% 6%, 85% 6%, 85% 15%, 94% 15%, 94% 30%, 100% 30%, 100% 70%, 94% 70%, 94% 85%, 85% 85%, 85% 94%, 70% 94%, 70% 100%, 30% 100%, 30% 94%, 15% 94%, 15% 85%, 6% 85%, 6% 70%, 0 70%, 0 30%, 6% 30%, 6% 15%, 15% 15%, 15% 6%, 30% 6%); }
 #knob { border-radius: 0; background: var(--sand); box-shadow: inset -4px -4px 0 var(--cream-d), inset 4px 4px 0 #fff;
   clip-path: polygon(25% 0, 75% 0, 75% 12%, 88% 12%, 88% 25%, 100% 25%, 100% 75%, 88% 75%, 88% 88%, 75% 88%, 75% 100%, 25% 100%, 25% 88%, 12% 88%, 12% 75%, 0 75%, 0 25%, 12% 25%, 12% 12%, 25% 12%); }
@@ -397,6 +419,10 @@ button { touch-action: manipulation; }
 .stand td { padding: 1px 4px; text-align: right; }
 .stand td:first-child { text-align: left; }
 .stand tr.q td:first-child::before { content: '› '; color: var(--teal); }
+.stand.rank td:first-child { text-align: right; width: 2.2em; }
+.stand.rank td:nth-child(2) { text-align: left; }
+.stand.rank tr.me td { color: #a33b22; }
+#rankBox h4 { margin-top: 6px; }
 #cardResult { text-align: center; }
 #cardResult .res-big { font-family: var(--pixel); font-size: clamp(48px, 13vw, 72px); line-height: 0.9; color: var(--g); text-shadow: 3px 3px 0 var(--gold); }
 #cardResult .res-score { font-family: var(--pixel); font-size: 30px; color: var(--ink); }
@@ -404,9 +430,55 @@ button { touch-action: manipulation; }
 #cardResult .res-msg { color: var(--g); }
 #btnMenu { width: calc(100% - 4px); cursor: pointer; }
 #top .status { overflow: hidden; text-overflow: ellipsis; }
+
+/* Install page for phones and tablets opened in the browser */
+html.gate #top, html.gate #wrap, html.gate #start, html.gate #loading { display: none !important; }
+html.gate #gate { display: grid !important; }
+#gate { position: fixed; inset: 0; z-index: 50; overflow-y: auto; -webkit-overflow-scrolling: touch; place-items: start center; box-sizing: border-box;
+  padding: calc(14px + env(safe-area-inset-top, 0px)) max(14px, env(safe-area-inset-right, 0px)) calc(18px + env(safe-area-inset-bottom, 0px)) max(14px, env(safe-area-inset-left, 0px));
+  background: #1c3d2c repeating-conic-gradient(#21462f 0 25%, transparent 0 50%) 0 0 / 16px 16px; font-family: var(--pixel); -webkit-font-smoothing: none; }
+#gate .gcard { width: min(520px, 100%); background: var(--sand) repeating-conic-gradient(#ede1cc 0 25%, transparent 0 50%) 0 0 / 6px 6px; padding: 18px; display: grid; gap: 14px; margin: 8px; box-sizing: border-box;
+  box-shadow: 0 -4px 0 var(--g), 0 4px 0 var(--g), -4px 0 0 var(--g), 4px 0 0 var(--g), inset 0 0 0 4px var(--gold), 12px 12px 0 rgba(0, 0, 0, 0.35); }
+#gate .card-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+#gate .eyebrow { font-size: 15px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--g); }
+#gate .ghead { display: flex; align-items: center; gap: 14px; }
+#gate .ghead img { width: 64px; height: 64px; image-rendering: pixelated; box-shadow: 0 0 0 3px var(--g), 4px 4px 0 3px rgba(0,0,0,0.25); }
+#gate h2 { margin: 0; font-family: var(--pixel); font-weight: 400; font-size: clamp(40px, 11vw, 58px); line-height: 0.9; color: var(--g); text-shadow: 3px 3px 0 var(--gold); }
+#gate p { margin: 0; font-size: 19px; line-height: 1.2; color: var(--ink); }
+#gate .note { font-size: 16px; color: var(--ink-2); }
+#gate .note.warn { color: #a33b22; }
+#gate .gsteps { background: var(--cream); padding: 10px 12px 12px; margin: 2px; box-shadow: 0 0 0 2px var(--g); display: grid; gap: 8px; }
+#gate .gsteps[hidden] { display: none; }
+#gate h3 { margin: 0; font-weight: 400; font-size: 22px; color: var(--g); display: flex; align-items: center; gap: 8px; }
+#gate ol { margin: 0; padding: 0; list-style: none; counter-reset: st; display: grid; gap: 8px; }
+#gate li { counter-increment: st; display: grid; grid-template-columns: 30px 1fr; gap: 8px; align-items: center; font-size: 18px; line-height: 1.15; }
+#gate li::before { content: counter(st); width: 26px; height: 26px; display: grid; place-items: center; background: var(--g); color: var(--sand); font-size: 18px; box-shadow: inset 2px 2px 0 var(--g2); }
+#gate li b { font-weight: 400; color: var(--g); background: #fffaf0; padding: 0 4px; box-shadow: 0 0 0 2px var(--cream-d); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+#gate li .gico { vertical-align: -3px; }
+#gate [hidden] { display: none !important; }
+.gico { width: 22px; height: 22px; display: inline-block; vertical-align: -4px; image-rendering: pixelated; background: center / 22px 22px no-repeat; flex: none; margin: 0 2px; }
+.gi-share { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' shape-rendering='crispEdges'%3E%3Cpath fill='%232f7fd8' d='M5 0h1v1h1v1h1v1H6v5H5V3H3V2h1V1h1zM1 4h3v1H2v5h7V5H7V4h3v7H1z'/%3E%3C/svg%3E"); }
+.gi-add { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' shape-rendering='crispEdges'%3E%3Cpath fill='%231c3d2c' d='M1 1h9v9H1zM2 2v7h7V2zM5 3h1v2h2v1H6v2H5V6H3V5h2z'/%3E%3C/svg%3E"); }
+.gi-dots { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' shape-rendering='crispEdges'%3E%3Cpath fill='%231c3d2c' d='M4 0h3v3H4zM4 4h3v3H4zM4 8h3v3H4z'/%3E%3C/svg%3E"); }
+.gi-apple { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' shape-rendering='crispEdges'%3E%3Cpath fill='%231c3d2c' d='M2 1h7v9H2zM3 2v6h5V2zM5 8h1v1H5z'/%3E%3C/svg%3E"); }
+.gi-android { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 11 11' shape-rendering='crispEdges'%3E%3Cpath fill='%233fb36b' d='M2 1h1v1h5V1h1v1H8v1h1v2H2V3h1V2H2zM2 6h7v3H8v2H7V9H4v2H3V9H2zM0 6h1v3H0zM10 6h1v3h-1z'/%3E%3Cpath fill='%23fff' d='M4 3h1v1H4zM6 3h1v1H6z'/%3E%3C/svg%3E"); }
 </style>
 </head>
 <body>
+<div id="gate" hidden>
+  <div class="card gcard">
+    <div class="card-top"><div class="eyebrow" data-g="eyebrow"></div><div class="seg mini" id="gLang"><button data-v="it">IT</button><button data-v="en">EN</button></div></div>
+    <div class="ghead"><img src="icons/icon.svg" alt="" width="64" height="64"><h2>Terrazza Padel</h2></div>
+    <p data-g="intro"></p>
+    <button class="btn primary big" id="gInstall" hidden></button>
+    <section class="gsteps" id="gIos"><h3><i class="gico gi-apple"></i><span data-g="iosTitle"></span></h3><ol><li><span data-g-html="ios1"></span></li><li><span data-g-html="ios2"></span></li><li><span data-g-html="ios3"></span></li></ol><p class="note" data-g="iosNote"></p></section>
+    <section class="gsteps" id="gAndroid"><h3><i class="gico gi-android"></i><span data-g="andTitle"></span></h3><ol><li><span data-g-html="and1"></span></li><li><span data-g-html="and2"></span></li><li><span data-g-html="and3"></span></li></ol><p class="note" data-g="andNote"></p></section>
+    <p class="note warn" id="gInApp" data-g="inApp" hidden></p>
+    <p class="note" id="gDone" data-g="done" hidden></p>
+    <p class="note" data-g="desk"></p>
+    <button class="btn small" id="gOther"></button>
+  </div>
+</div>
 
 
 <header id="top">
@@ -425,6 +497,13 @@ button { touch-action: manipulation; }
     </div>
     <div id="comm"><span class="lbl" data-i18n="commLbl">Telecronaca</span><span class="now" id="commNow"></span><span class="prev" id="commPrev"></span></div>
     <div id="toast"><div class="big"></div><div class="small"></div></div>
+    <div id="sideChoice" hidden>
+      <div class="sc-card">
+        <div class="sc-t" data-i18n="sideTitle">Punto decisivo</div>
+        <div class="sc-h" data-i18n="sideHint">Da che lato ricevete?</div>
+        <div class="sc-b"><button class="btn primary" data-side="left" data-i18n="sideBtnL">Sinistra</button><button class="btn primary" data-side="right" data-i18n="sideBtnR">Destra</button></div>
+      </div>
+    </div>
     <div id="keys" hidden data-i18n-html="keysHint"></div>
     <button id="hudPause" class="px-btn" hidden data-i18n-aria="pause"><svg viewBox="0 0 8 8" aria-hidden="true"><path d="M2 1h1v6H2zM5 1h1v6H5z"/></svg></button>
     <div id="touch" hidden>
@@ -536,6 +615,7 @@ button { touch-action: manipulation; }
     <div class="card-top"><button class="px-btn back" data-back="cardHome" data-i18n="back">Indietro</button><div class="eyebrow" data-i18n="tourTitle">Circuito</div></div>
     <h3 id="tourHead"></h3>
     <div class="tlist" id="tourList"></div>
+    <div id="rankBox"></div>
   </div>
   <div class="card wide" id="cardTourDet" hidden>
     <div class="card-top"><button class="px-btn back" data-back="cardTour" data-i18n="back">Indietro</button><i class="tier" id="detTier"></i></div>
@@ -610,6 +690,7 @@ function haptic(pattern = 12) {
   }, { passive: false });
   document.addEventListener('touchmove', (e) => {
     if (e.touches.length > 1) { e.preventDefault(); return; }
+    if (e.target.closest?.('#gate')) return;
     const sc = e.target.closest?.('#panel, .card, input[type=range]');
     if (!sc || (sc.type !== 'range' && sc.scrollHeight <= sc.clientHeight + 1)) e.preventDefault();
   }, { passive: false });
@@ -680,11 +761,13 @@ const STR = {
       double: 'Doppio rimbalzo', glassDirect: 'Palla sul vetro senza rimbalzo', meshDirect: 'Palla sulla rete metallica senza rimbalzo',
       net: 'In rete', own: 'Rimbalzo nel proprio campo', out: 'Fuori', portres: '¡Por tres!', porcuatro: '¡Por cuatro!',
       back: 'La palla torna indietro', serveOut: 'Servizio fuori', serveMesh: 'Servizio sulla rete metallica',
+      serveGlass: 'Servizio sul vetro', doubleFault: 'Doppio fallo',
     },
     lines: {
       portres: '¡Por tres! {p} manda la palla fuori dalla porta laterale.', porcuatro: '¡Por cuatro! {p} la fa uscire sopra il vetro di fondo.',
       double: 'Punto a {t}: doppio rimbalzo.', glassDirect: 'Errore: la palla prende il vetro senza rimbalzare. Punto a {t}.',
       net: 'In rete. Punto a {t}.', other: '{r}. Punto a {t}.',
+      doubleFault: 'Doppio fallo di {p}. Punto a {t}.',
     },
     shots: {
       smash: ['Smash di {p}!', '{p} schiaccia forte!', 'Che smash di {p}!'],
@@ -692,7 +775,15 @@ const STR = {
       volley: ['Volée di {p}.', '{p} chiude a rete.'],
       bandeja: ['Bandeja di {p}.', '{p} gioca la bandeja.'],
       drop: ['Dejada di {p}!', '{p} accarezza una palla corta.'],
+      bajada: ['Bajada di {p}!', '{p} aspetta la palla dal vetro e la tira giù forte.'],
+      rescue: ['{p} la riprende da fuori campo!', 'Che recupero di {p} da fuori!'],
     },
+    secondServe: 'Seconda di servizio per {p}.', faultBig: 'Fallo', faultSay: 'Fallo di {p}: {r}. Seconda di servizio.',
+    letSmall: 'La palla tocca la rete: si ripete', letSay: 'Net! La palla tocca la rete ed entra: servizio da ripetere.',
+    sideAsk: 'Punto decisivo: scegli da che lato ricevere.', sideSay: 'Punto decisivo: {t} ricevono {s}. Serve {p}.', sideR: 'a destra', sideL: 'a sinistra',
+    sideTitle: 'Punto decisivo', sideHint: 'Da che lato ricevete?', sideBtnL: 'Sinistra', sideBtnR: 'Destra',
+    changeEnds: 'Cambio campo', changeSmall: 'Le coppie si scambiano i lati', changeSay: 'Cambio campo: le coppie passano dall\'altra parte.',
+    outChase: 'Fuori dalla porta! Si può ancora giocare da fuori campo…',
     breakFor: 'Palla break per {t}. Serve {p}.', serves: 'Serve {p}.', serveKmh: 'Servizio di {p}, {k} km/h.',
     offGlass: 'La palla esce dal vetro…', order: '{p} esegue l\'ordine: {o}.', orderNames: { lob: 'pallonetto', drop: 'dejada', smash: 'smash' },
     aimDone: '{p} tira dove hai chiesto.', aimBad: 'Tocca un punto nella metà campo avversaria.', aimOk: 'Bersaglio fissato per il prossimo colpo.',
@@ -721,7 +812,10 @@ const STR = {
     },
     tourTitle: 'Circuito', rankPts: 'Punti ranking: {p}', titlesN: 'Titoli: {n}', pairsN: '{n} coppie',
     groupsFmt: 'Due gironi all\'italiana da 4 coppie; le prime due di ogni girone vanno in semifinale.',
-    locked: 'Si sblocca con {p} punti ranking', best: 'Migliore: {r}',
+    locked: 'Si sblocca con {p} punti ranking', best: 'Migliore: {r}', lockedTop: 'Si gioca solo tra le prime 8 del ranking (ora siete {r}°)',
+    seasonHead: 'Stagione {n} · {r}° nel ranking · {p} punti', rankTitle: 'Ranking stagione {n}', ptsCol: 'Punti',
+    rankNote: 'Contano il miglior risultato di ogni torneo nella stagione. Le prime 8 coppie vanno alle Finals di Milano; dopo le Finals parte una nuova stagione.',
+    seasonEnd: 'Fine della stagione {n}: chiudete al {r}° posto. Comincia la stagione {m}.',
     res: { W: 'Vinto', F: 'Finale', SF: 'Semifinale', QF: 'Quarti', R16: 'Ottavi', RR: 'Gironi' },
     rounds: { R16: 'Ottavi di finale', QF: 'Quarti di finale', SF: 'Semifinale', F: 'Finale' },
     roundsIn: { R16: 'agli ottavi', QF: 'ai quarti', SF: 'in semifinale', F: 'in finale', RR: 'nei gironi' },
@@ -734,6 +828,17 @@ const STR = {
     resWin: 'Vittoria!', resLoss: 'Sconfitta', resIn: 'Contro {t}', cont: 'Continua', rematch: 'Rivincita', menu: 'Menu', resumeMatch: 'Riprendi il match',
     matchTo: 'Partita a {t}!', tbLbl: 'tie-break', mtbLbl: 'match tie-break', stbLbl: 'super tie-break', goldLbl: 'punto d\'oro', starLbl: 'star point',
     beat: 'b.', setPt: 'set point', matchPt: 'match point', winsCol: 'V', setsCol: 'Set', inTour: 'nel torneo',
+    gate: {
+      eyebrow: 'Padel in pixel art', intro: 'Su telefono e tablet Terrazza Padel si gioca come app: installala sulla schermata Home e aprila da lì. È gratis, senza store, e dopo la prima volta funziona anche offline.',
+      install: 'Installa l\'app', iosTitle: 'iPhone e iPad', andTitle: 'Android',
+      ios1: 'Apri questa pagina in <b>Safari</b> e tocca <i class="gico gi-share"></i> <b>Condividi</b>.', ios2: 'Scorri e scegli <i class="gico gi-add"></i> <b>Aggiungi alla schermata Home</b>, poi <b>Aggiungi</b>.', ios3: 'Apri <b>Terrazza Padel</b> dall\'icona sulla Home.',
+      iosNote: 'Da iOS 16.4 funziona anche da Chrome: stesso menu Condividi.',
+      and1: 'Apri questa pagina in <b>Chrome</b> e tocca <i class="gico gi-dots"></i> in alto a destra.', and2: 'Scegli <b>Installa app</b> (o <b>Aggiungi a schermata Home</b>) e conferma.', and3: 'Apri <b>Terrazza Padel</b> dall\'icona sulla Home.',
+      andNote: 'Su Samsung Internet: menu ≡ › Aggiungi pagina a › Schermata Home.',
+      inApp: 'Sei dentro un\'altra app (Instagram, WhatsApp…): apri il link nel browser dal menu ⋯ › Apri in Safari o Chrome.',
+      done: 'Installata! Chiudi il browser e apri Terrazza Padel dalla schermata Home.',
+      desk: 'Dal computer si gioca subito nel browser, con la tastiera.', other: 'Istruzioni per l\'altro sistema',
+    },
     screen: ['BENVENUTI', 'TERRAZZA OPEN'], updated: 'Nuova versione pronta: riapri il gioco per usarla.',
   },
   en: {
@@ -774,11 +879,13 @@ const STR = {
       double: 'Double bounce', glassDirect: 'Ball hit the glass before bouncing', meshDirect: 'Ball hit the fence before bouncing',
       net: 'Into the net', own: 'Bounced on own side', out: 'Out', portres: '¡Por tres!', porcuatro: '¡Por cuatro!',
       back: 'The ball came back over', serveOut: 'Serve out', serveMesh: 'Serve hit the fence',
+      serveGlass: 'Serve hit the glass', doubleFault: 'Double fault',
     },
     lines: {
       portres: '¡Por tres! {p} sends the ball out through the side door.', porcuatro: '¡Por cuatro! {p} sends it out over the back glass.',
       double: 'Point to {t}: double bounce.', glassDirect: 'Error: the ball hits the glass without bouncing. Point to {t}.',
       net: 'Into the net. Point to {t}.', other: '{r}. Point to {t}.',
+      doubleFault: 'Double fault by {p}. Point to {t}.',
     },
     shots: {
       smash: ['Smash by {p}!', '{p} hits it hard!', 'What a smash by {p}!'],
@@ -786,7 +893,15 @@ const STR = {
       volley: ['Volley by {p}.', '{p} finishes at the net.'],
       bandeja: ['Bandeja by {p}.', '{p} plays the bandeja.'],
       drop: ['Drop shot by {p}!', '{p} strokes a short ball.'],
+      bajada: ['Bajada by {p}!', '{p} waits for it off the glass and drives it down.'],
+      rescue: ['{p} plays it back from outside the court!', 'What a rescue by {p} from outside!'],
     },
+    secondServe: 'Second serve for {p}.', faultBig: 'Fault', faultSay: 'Fault by {p}: {r}. Second serve.',
+    letSmall: 'The ball clipped the net: replay', letSay: 'Let! The ball clips the net and lands in: replay the serve.',
+    sideAsk: 'Deciding point: choose the side you receive on.', sideSay: 'Deciding point: {t} receive {s}. {p} serves.', sideR: 'on the right', sideL: 'on the left',
+    sideTitle: 'Deciding point', sideHint: 'Which side do you receive on?', sideBtnL: 'Left', sideBtnR: 'Right',
+    changeEnds: 'Change of ends', changeSmall: 'The pairs swap sides', changeSay: 'Change of ends: the pairs move to the other side.',
+    outChase: 'Out through the door! It can still be played from outside…',
     breakFor: 'Break point for {t}. {p} serves.', serves: '{p} serves.', serveKmh: 'Serve by {p}, {k} km/h.',
     offGlass: 'The ball comes off the glass…', order: '{p} follows the order: {o}.', orderNames: { lob: 'lob', drop: 'drop shot', smash: 'smash' },
     aimDone: '{p} hits where you asked.', aimBad: 'Tap a spot in the opponents\' half.', aimOk: 'Target set for the next shot.',
@@ -815,7 +930,10 @@ const STR = {
     },
     tourTitle: 'Tour', rankPts: 'Ranking points: {p}', titlesN: 'Titles: {n}', pairsN: '{n} pairs',
     groupsFmt: 'Two round-robin groups of 4 pairs; the top two of each group reach the semi-finals.',
-    locked: 'Unlocks at {p} ranking points', best: 'Best: {r}',
+    locked: 'Unlocks at {p} ranking points', best: 'Best: {r}', lockedTop: 'Only the top 8 of the ranking play here (you are #{r})',
+    seasonHead: 'Season {n} · #{r} in the ranking · {p} points', rankTitle: 'Season {n} ranking', ptsCol: 'Points',
+    rankNote: 'Your best result in each event this season counts. The top 8 pairs go to the Milan Finals; a new season starts after the Finals.',
+    seasonEnd: 'End of season {n}: you finish #{r}. Season {m} begins.',
     res: { W: 'Won', F: 'Final', SF: 'Semi-final', QF: 'Quarter-final', R16: 'Round of 16', RR: 'Groups' },
     rounds: { R16: 'Round of 16', QF: 'Quarter-final', SF: 'Semi-final', F: 'Final' },
     roundsIn: { R16: 'in the round of 16', QF: 'in the quarter-finals', SF: 'in the semi-finals', F: 'in the final', RR: 'in the groups' },
@@ -828,6 +946,17 @@ const STR = {
     resWin: 'You win!', resLoss: 'You lose', resIn: 'Against {t}', cont: 'Continue', rematch: 'Rematch', menu: 'Menu', resumeMatch: 'Resume the match',
     matchTo: 'Match to {t}!', tbLbl: 'tie-break', mtbLbl: 'match tie-break', stbLbl: 'super tie-break', goldLbl: 'golden point', starLbl: 'star point',
     beat: 'd.', setPt: 'set point', matchPt: 'match point', winsCol: 'W', setsCol: 'Sets', inTour: 'in the tournament',
+    gate: {
+      eyebrow: 'Pixel-art padel', intro: 'On phones and tablets Terrazza Padel plays as an app: add it to your home screen and open it from there. It is free, with no store, and works offline after the first time.',
+      install: 'Install the app', iosTitle: 'iPhone and iPad', andTitle: 'Android',
+      ios1: 'Open this page in <b>Safari</b> and tap <i class="gico gi-share"></i> <b>Share</b>.', ios2: 'Scroll and pick <i class="gico gi-add"></i> <b>Add to Home Screen</b>, then <b>Add</b>.', ios3: 'Open <b>Terrazza Padel</b> from its icon on the home screen.',
+      iosNote: 'From iOS 16.4 it also works from Chrome: same Share menu.',
+      and1: 'Open this page in <b>Chrome</b> and tap <i class="gico gi-dots"></i> at the top right.', and2: 'Pick <b>Install app</b> (or <b>Add to Home screen</b>) and confirm.', and3: 'Open <b>Terrazza Padel</b> from its icon on the home screen.',
+      andNote: 'On Samsung Internet: menu ≡ › Add page to › Home screen.',
+      inApp: 'You are inside another app (Instagram, WhatsApp…): open the link in your browser from the ⋯ menu › Open in Safari or Chrome.',
+      done: 'Installed! Close the browser and open Terrazza Padel from your home screen.',
+      desk: 'On a computer you can play right away in the browser, with the keyboard.', other: 'Instructions for the other system',
+    },
     screen: ['WELCOME', 'TERRAZZA OPEN'], updated: 'New version ready: reopen the game to use it.',
   },
 };
@@ -840,6 +969,35 @@ const nameFor = (i) => cleanName(settings.names[i]) || DEFAULT_NAMES[i];
 
 const coach = { tactic: 'normal', next: null, serve: 'body', aim: null, aiming: false };
 let paused = false;
+
+/* Install page: on a phone or tablet browser the game does not start, only the instructions to install it. */
+let deferredInstall = null;
+addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredInstall = e; if (window.__gate) drawGate(); });
+addEventListener('appinstalled', () => { deferredInstall = null; gateDone = true; if (window.__gate) drawGate(); });
+let gateDone = false, gateBoth = window.__gate === 'other';
+function drawGate() {
+  const g = tr('gate');
+  document.documentElement.lang = settings.lang;
+  for (const el of document.querySelectorAll('#gate [data-g]')) el.textContent = g[el.dataset.g];
+  for (const el of document.querySelectorAll('#gate [data-g-html]')) el.innerHTML = g[el.dataset.gHtml];
+  const plat = window.__gate;
+  document.getElementById('gIos').hidden = !(gateBoth || plat === 'ios');
+  document.getElementById('gAndroid').hidden = !(gateBoth || plat === 'android');
+  document.getElementById('gOther').hidden = gateBoth;
+  document.getElementById('gOther').textContent = g.other;
+  const ib = document.getElementById('gInstall'); ib.hidden = !deferredInstall || gateDone || plat === 'ios'; ib.textContent = g.install;
+  document.getElementById('gDone').hidden = !gateDone;
+  document.getElementById('gInApp').hidden = !/FBAN|FBAV|Instagram|Line\/|WhatsApp|Telegram|TikTok|; wv\)/i.test(navigator.userAgent || '');
+  for (const b of document.querySelectorAll('#gLang button')) b.setAttribute('aria-pressed', String(b.dataset.v === settings.lang));
+}
+if (window.__gate) {
+  document.getElementById('gate').hidden = false;
+  document.getElementById('gLang').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; settings.lang = b.dataset.v; saveSettings(); drawGate(); });
+  document.getElementById('gOther').addEventListener('click', () => { gateBoth = true; drawGate(); });
+  document.getElementById('gInstall').addEventListener('click', async () => { if (!deferredInstall) return; deferredInstall.prompt(); try { const r = await deferredInstall.userChoice; if (r.outcome === 'accepted') gateDone = true; } catch (e) { /* dismissed */ } deferredInstall = null; drawGate(); });
+  drawGate();
+  await new Promise(() => {}); // stop here: the game never starts in a phone browser
+}
 
 /* ================================================================== */
 /* Renderer, scene, camera                                             */
@@ -1031,11 +1189,16 @@ const BALL_R = 0.033, BALL_VIS = 0.13;
 const G = 9.81, DRAG = 0.012;
 const BACK_GLASS_H = 3, BACK_H = 4, SIDE_H = 3;
 const NET_H = 0.88, NET_POST_H = 0.92;
+// Two side openings per side wall (FIP: 0.72-1.00 m wide, 2.00-2.20 m high), for out-of-court play.
+const DOOR_Z0 = 2.5, DOOR_Z1 = 3.5, DOOR_H = 2.2;
+const inDoorZ = (z, m = 0) => Math.abs(z) > DOOR_Z0 + m && Math.abs(z) < DOOR_Z1 - m;
 const DT = 1 / 120;
 const BASE_TIME = 0.8;
 const sideGlassH = (az) => (az > 8 ? 3 : az > 6 ? 2 : 0);
-const sideOf = (z) => (z >= 0 ? 0 : 1);
-const teamSign = (t) => (t === 0 ? 1 : -1);
+// Ends: team 0 starts on the +z half; after a change of ends (FIP rule 5) the halves swap.
+let flip = 1;
+const sideOf = (z) => ((z >= 0) === (flip > 0) ? 0 : 1);
+const teamSign = (t) => (t === 0 ? flip : -flip);
 const netHeightAt = (x) => NET_H + (NET_POST_H - NET_H) * Math.min(1, Math.abs(x) / HW);
 const SURFACES = {
   blue: { base: '#3462c9', a: '#2f5bbb', b: '#3a6bd6', apron: '#2f9a3e', e: 0.75, f: 0.88 },
@@ -1155,6 +1318,11 @@ function buildCourt() {
     m.position.set(x, y, z); m.rotation.y = rotY; m.renderOrder = 1; WORLD.add(m); pixelArt.hideInNormalPass.push(m);
   };
   const frame = 0x23272f;
+  for (const sx of [-1, 1]) for (const s of [-1, 1]) {
+    addMesh(DOOR_Z1 - DOOR_Z0, 3 - DOOR_H, sx * HW, DOOR_H + (3 - DOOR_H) / 2 + 0.06, s * (DOOR_Z0 + DOOR_Z1) / 2, Math.PI / 2);
+    for (const z of [DOOR_Z0, DOOR_Z1]) box(0.1, SIDE_H, 0.1, frame, sx * HW, SIDE_H / 2 + 0.06, s * z);
+    box(0.1, 0.08, DOOR_Z1 - DOOR_Z0, frame, sx * HW, DOOR_H + 0.06, s * (DOOR_Z0 + DOOR_Z1) / 2);
+  }
   for (const s of [-1, 1]) {
     addMesh(HW * 2, 1, 0, 3.56, s * HL, 0);
     for (let x = -HW; x <= HW + 0.01; x += 2) box(0.09, BACK_H, 0.09, frame, x, BACK_H / 2 + 0.06, s * HL);
@@ -1162,7 +1330,7 @@ function buildCourt() {
     box(HW * 2, 0.06, 0.09, frame, 0, BACK_GLASS_H + 0.06, s * HL);
     for (const sx of [-1, 1]) {
       addMesh(2, 1, sx * HW, 2.56, s * 7, Math.PI / 2);
-      addMesh(12, 3, sx * HW, 1.56, 0, Math.PI / 2);
+      for (const [z0, z1] of [[-6, -DOOR_Z1], [-DOOR_Z0, DOOR_Z0], [DOOR_Z1, 6]]) addMesh(z1 - z0, 3, sx * HW, 1.56, (z0 + z1) / 2, Math.PI / 2);
       addMesh(2, 1, sx * HW, 3.56, s * 9, Math.PI / 2);
       for (let z = 0; z <= 8.01; z += 2) box(0.09, SIDE_H, 0.09, frame, sx * HW, SIDE_H / 2 + 0.06, s * z);
       box(0.09, 0.07, HL, frame, sx * HW, SIDE_H + 0.06, s * HL / 2);
@@ -1992,6 +2160,7 @@ function buildWorld(id) {
   buildRoof(); buildCourt(); buildStands(); buildProps(); buildClub(); VEN.below();
   applyTime();
   renderer.shadowMap.needsUpdate = true;
+  if (Sfx.ctx) Sfx.ambient();
 }
 
 /* ================================================================== */
@@ -2050,9 +2219,10 @@ function refreshLevels() {
 }
 
 class Player {
+  get slotHomeX() { return this.slotSide * teamSign(this.team); }
   constructor(team, slot, look) {
     this.team = team; this.slot = slot;
-    this.slotHomeX = team === 0 ? (slot === 0 ? 1 : -1) : (slot === 0 ? -1 : 1);
+    this.slotSide = slot === 0 ? 1 : -1; // slot 0 plays the right side of its half
     this.homeX = this.slotHomeX; this.isHuman = false; this.name = '';
     this.pos = new THREE.Vector3(); this.vel = new THREE.Vector3(); this.target = new THREE.Vector3();
     this.plan = null; this.frozenUntil = 0; this.swing = 0; this.swingKind = 'drive'; this.walk = 0; this.jump = 0;
@@ -2060,14 +2230,16 @@ class Player {
   }
 }
 const teams = [[], []], players = [];
-const ball = { p: new THREE.Vector3(0, 1, 0), v: new THREE.Vector3(), out: false, rolled: false };
-const rally = { state: 'serve', server: null, hitterTeam: 0, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: 1, designated: [null, null], shotType: 'drive', hitZ: 0, lastHitTime: 0, lastErr: false, hits: 0, lastHitter: null };
+const ball = { p: new THREE.Vector3(0, 1, 0), v: new THREE.Vector3(), out: false, rolled: false, inbound: false, outBounced: false, outFar: false };
+const rally = { serveNum: 1, replay: 0, side: null, outside: false, offBack: false, pano: false, state: 'serve', server: null, hitterTeam: 0, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: 1, designated: [null, null], shotType: 'drive', hitZ: 0, lastHitTime: 0, lastErr: false, hits: 0, lastHitter: null };
 /* Scoring by the FIP Rules of Padel: 6-game sets with a tie-break at 6-6, or 4-game mini sets with a tie-break at 4-4.
    At 40-40: advantage, golden point (next point decides) or star point (two advantages, then a decisive point on the third deuce).
    The deciding set can be replaced by a match tie-break to 7 or a super tie-break to 10. */
 const FMT = { bestOf: 1, games: 6, deuce: 'golden', decider: 'set' };
 function setFormat(f) { Object.assign(FMT, { bestOf: 3, games: 6, deuce: 'golden', decider: 'set' }, f); }
-const freshScore = () => ({ points: [0, 0], games: [0, 0], sets: [0, 0], serverIdx: 0, tb: false, mtb: false, tbTo: 7, tbStart: 0, deuces: 0, hist: [], over: false, winner: -1 });
+const freshScore = () => ({ points: [0, 0], games: [0, 0], sets: [0, 0], serverIdx: 0, tb: false, mtb: false, tbTo: 7, tbStart: 0, deuces: 0, hist: [], over: false, winner: -1, ends: 0, changed: false });
+// FIP rule 5: change ends after the 1st, 3rd and every odd game of a set, and every 6 points of a tie-break.
+function changeEnds() { score.ends ^= 1; score.changed = true; }
 const score = freshScore();
 const setsToWin = () => Math.ceil(FMT.bestOf / 2);
 function decisiveNow() {
@@ -2100,9 +2272,21 @@ function stepBall(b, dt, ev, deterministic = false) {
   const px = b.p.x, pz = b.p.z;
   integrate(b, dt);
   if (b.out) {
-    if (b.p.y < BALL_R && Math.abs(b.p.x) < ROOF_W / 2 && Math.abs(b.p.z) < ROOF_L / 2) { b.p.y = BALL_R; if (b.v.y < 0) { b.v.y = -b.v.y * 0.55; b.v.x *= 0.8; b.v.z *= 0.8; } }
+    // Outside the court: the first bounce on the paving, or the boards and stands, end a ball that is being chased (FIP rule 13e)
+    if (b.p.y < BALL_R && Math.abs(b.p.x) < ROOF_W / 2 && Math.abs(b.p.z) < ROOF_L / 2) {
+      b.p.y = BALL_R;
+      if (b.v.y < 0) { if (!b.outBounced) { b.outBounced = true; ev && ev.push({ type: 'outFloor' }); } b.v.y = -b.v.y * 0.55; b.v.x *= 0.8; b.v.z *= 0.8; }
+    }
+    const far = Math.abs(b.p.x) > APRON_W - 0.25 || Math.abs(b.p.z) > APRON_L - 0.25;
+    if (!b.outFar && far && (b.p.y < 2.6 || Math.abs(b.p.x) > APRON_W + 2 || Math.abs(b.p.z) > APRON_L + 2)) { b.outFar = true; ev && ev.push({ type: 'outFar' }); }
     return;
   }
+  if (b.inbound && Math.abs(px) > HW && Math.abs(b.p.x) <= HW) {
+    // A return played from outside must come back over the side wall or through a door
+    b.inbound = false;
+    if (b.p.y < SIDE_H + BALL_R && !(inDoorZ(b.p.z) && b.p.y < DOOR_H)) { b.p.x = Math.sign(px) * (HW + 0.08); b.v.x = -b.v.x * 0.3; ev && ev.push({ type: 'wall', mat: 'mesh', side: sideOf(b.p.z), x: b.p.x, y: b.p.y, z: b.p.z, axis: 'x' }); }
+  }
+  if (b.inbound && b.p.y < BALL_R) b.inbound = false;
   if ((pz >= 0) !== (b.p.z >= 0)) {
     const t = pz / (pz - b.p.z), xc = px + (b.p.x - px) * t;
     if (Math.abs(xc) <= HW && b.p.y < netHeightAt(xc) + BALL_R) {
@@ -2116,6 +2300,8 @@ function stepBall(b, dt, ev, deterministic = false) {
     if (b.v.y < 0) {
       const vin = -b.v.y;
       b.v.y = vin * surf.e; b.v.x *= surf.f; b.v.z *= surf.f;
+      // Kick smash (por tres): the ball jumps up and sideways towards the side wall
+      if (b.kick) { b.kick = false; b.v.y = Math.max(b.v.y, 9); b.v.x = Math.sign(b.p.x || 1) * 2.4; b.v.z *= 0.15; }
       if (b.v.y < 0.35) { b.v.y = 0; if (!b.rolled) { b.rolled = true; ev && ev.push({ type: 'roll', side: sideOf(b.p.z) }); } }
       else ev && ev.push({ type: 'floor', side: sideOf(b.p.z), x: b.p.x, z: b.p.z, speed: vin });
     }
@@ -2128,19 +2314,20 @@ function stepBall(b, dt, ev, deterministic = false) {
     if (!glass && !deterministic) { b.v.x += rnd(-1, 1); b.v.y += rnd(-0.6, 0.4); }
     ev && ev.push({ type: 'wall', mat: glass ? 'glass' : 'mesh', side: sideOf(b.p.z), x: b.p.x, y: b.p.y, z: b.p.z, axis: 'z' });
   }
-  if (ax > HW - BALL_R && az <= HL && b.p.y < SIDE_H && Math.sign(b.v.x) === Math.sign(b.p.x)) {
+  if (ax > HW - BALL_R && ax < HW + 0.2 && az <= HL && b.p.y < SIDE_H && Math.sign(b.v.x) === Math.sign(b.p.x) && !(inDoorZ(az) && b.p.y < DOOR_H) && !b.inbound) {
     const glass = b.p.y < sideGlassH(az);
     b.p.x = Math.sign(b.p.x) * (HW - BALL_R); b.v.x = -b.v.x * (glass ? 0.74 : 0.3);
     const tf = glass ? 0.92 : 0.6; b.v.z *= tf; b.v.y *= tf;
     if (!glass && !deterministic) { b.v.z += rnd(-1, 1); b.v.y += rnd(-0.6, 0.4); }
     ev && ev.push({ type: 'wall', mat: glass ? 'glass' : 'mesh', side: sideOf(b.p.z), x: b.p.x, y: b.p.y, z: b.p.z, axis: 'x' });
   }
-  if (Math.abs(b.p.x) > HW + 0.06 || Math.abs(b.p.z) > HL + 0.06) {
+  if (!b.inbound && (Math.abs(b.p.x) > HW + 0.06 || Math.abs(b.p.z) > HL + 0.06)) {
     b.out = true; ev && ev.push({ type: 'out', over: Math.abs(b.p.x) > HW + 0.06 ? 'side' : 'back' });
   }
 }
 function predict(maxT = 3.4) {
-  const b = { p: ball.p.clone(), v: ball.v.clone(), out: ball.out, rolled: ball.rolled };
+  const b = { p: ball.p.clone(), v: ball.v.clone(), out: ball.out, rolled: ball.rolled, inbound: ball.inbound, outBounced: ball.outBounced, outFar: ball.outFar, kick: ball.kick };
+  let outside = rally.outside;
   const rt = 1 - rally.hitterTeam;
   let bounces = rally.bounces, crossed = rally.crossed; const isServe = rally.isServe;
   const samples = []; let landing = null; const ev = [];
@@ -2151,10 +2338,11 @@ function predict(maxT = 3.4) {
       if (e.type === 'cross') { if (e.to === rt) crossed = true; else if (crossed) stop = true; }
       else if (e.type === 'floor') { if (e.side === rt) { bounces++; if (!landing) landing = { x: b.p.x, z: b.p.z, t }; if (bounces >= 2) stop = true; } else if (!crossed) stop = true; }
       else if (e.type === 'wall') { if (e.side === rt && bounces === 0 && crossed) stop = true; }
+      else if (e.type === 'out') { if (crossed && bounces >= 1 && e.over === 'side' && sideOf(b.p.z) === rt) outside = true; else stop = true; }
       else stop = true;
     }
     if (stop) break;
-    samples.push({ t, x: b.p.x, y: b.p.y, z: b.p.z, vy: b.v.y, fb: bounces, legal: crossed && sideOf(b.p.z) === rt && bounces <= 1 && !(isServe && bounces === 0) });
+    samples.push({ t, x: b.p.x, y: b.p.y, z: b.p.z, vy: b.v.y, fb: bounces, out: outside, legal: crossed && sideOf(b.p.z) === rt && bounces <= 1 && !(isServe && bounces === 0) && (!b.out || outside) && Math.abs(b.p.x) < APRON_W - 0.5 });
   }
   return { samples, landing };
 }
@@ -2184,6 +2372,7 @@ function planShot(from, type, team, o) {
     case 'bandeja': depth = o.depth ?? 8.4; speed = 13.5; break;
     case 'smash': depth = o.depth ?? 5.5; speed = o.speed ?? 28; break;
     case 'drop': depth = o.depth ?? 2.6; speed = 8; clear = 0.2; break;
+    case 'bajada': depth = o.depth ?? 7.4; speed = o.speed ?? 23; clear = 0.25; break;
     default: depth = o.depth ?? 7.6; speed = o.speed ?? 18;
   }
   const target = o.wild ? new THREE.Vector3(o.x, BALL_R, s * depth) : new THREE.Vector3(clamp(o.x, -4.6, 4.6), BALL_R, s * depth);
@@ -2191,6 +2380,23 @@ function planShot(from, type, team, o) {
   let sol = null;
   for (let i = 0; i < 16; i++) { sol = solveVel(from, target, T); if (o.noClear || sol.netY >= netHeightAt(target.x) + clear) break; T += 0.07; }
   return sol.v;
+}
+
+// Return from outside the court: a lob that clears the side wall (or goes through a door) and lands in the opponents' half.
+function planOutShot(from, team, o) {
+  const s = -teamSign(team), target = new THREE.Vector3(o.wild ? o.x : clamp(o.x, -4.3, 4.3), BALL_R, s * (o.depth ?? 6.8));
+  for (let T = 1.0; T <= 3.0; T += 0.1) {
+    const sol = solveVel(from, target, T);
+    _fb.p.copy(from); _fb.v.copy(sol.v);
+    const n = Math.ceil(T / DT), dt = T / n; let ok = true, px = from.x;
+    for (let i = 0; i < n && ok; i++) {
+      integrate(_fb, dt);
+      if (Math.abs(px) > HW && Math.abs(_fb.p.x) <= HW && _fb.p.y < SIDE_H + 0.35 && !(inDoorZ(_fb.p.z, 0.15) && _fb.p.y < DOOR_H - 0.3)) ok = false;
+      px = _fb.p.x;
+    }
+    if (ok && sol.netY >= NET_H + 0.3) return sol.v;
+  }
+  return solveVel(from, target, 2.8).v;
 }
 
 /* ================================================================== */
@@ -2220,25 +2426,36 @@ function handleEvent(e) {
     case 'net': rally.netTouched = true; Sfx.net(); break;
     case 'floor':
       fxDust(e.x, e.z, e.speed); Sfx.bounce(e.speed);
-      if (e.side === ht) { if (!rally.crossed) return award(rt, rally.netTouched ? 'net' : 'own'); }
+      if (e.side === ht) { if (!rally.crossed) { if (rally.isServe) return serveFault('net'); return award(rt, rally.netTouched ? 'net' : 'own'); } }
       else {
         rally.bounces++;
         if (rally.isServe && rally.bounces === 1) {
           const inBox = Math.abs(e.z) <= SERVICE + 0.05 && Math.sign(e.x || rally.serveBoxSign) === rally.serveBoxSign;
-          if (!inBox) return award(rt, 'serveOut');
+          if (!inBox) return serveFault('serveOut');
+          if (rally.netTouched) return serveLet();
         }
         if (rally.bounces >= 2) return award(ht, 'double');
       }
       replan(); break;
     case 'wall':
       fxWall(e); e.mat === 'glass' ? Sfx.glass() : Sfx.mesh();
+      if (rally.isServe && (e.side === ht || rally.bounces === 0)) return serveFault(e.mat === 'glass' ? 'serveGlass' : 'serveMesh');
+      if (rally.isServe && e.mat === 'mesh' && e.side === rt) return serveFault('serveMesh');
       if (e.side === rt && rally.bounces === 0 && rally.crossed) return award(rt, e.mat === 'glass' ? 'glassDirect' : 'meshDirect');
-      if (rally.isServe && e.mat === 'mesh' && e.side === rt) return award(rt, 'serveMesh');
+      if (e.side === rt && e.mat === 'glass' && e.axis === 'z' && rally.bounces >= 1) rally.offBack = true;
       if (e.side === rt && e.mat === 'glass' && Math.random() < 0.3) say(tr('offGlass'));
       replan(); break;
     case 'out':
-      if (rally.crossed && rally.bounces >= 1) return award(ht, e.over === 'side' ? 'portres' : 'porcuatro');
+      if (rally.isServe && rally.bounces === 0) return serveFault('serveOut');
+      if (rally.crossed && rally.bounces >= 1) {
+        // Over the side wall or through a door the ball can still be played from outside (FIP rule 13e); over the back wall the point is over
+        if (e.over === 'side' && !rally.outside) { tally('outChase'); rally.outside = true; say(tr('outChase'), true); replan(); break; }
+        return award(ht, 'porcuatro');
+      }
       return award(rt, 'out');
+    case 'outFloor': case 'outFar':
+      if (rally.outside) return award(ht, 'portres');
+      break;
     case 'roll':
       if (sideOf(ball.p.z) === rt && rally.crossed) return award(ht, 'double');
       return award(rt, 'own');
@@ -2248,13 +2465,21 @@ function handleEvent(e) {
 const debugLog = [];
 function award(team, reason) {
   debugLog.push({ reason, shot: rally.shotType, err: rally.lastErr, hits: rally.hits, t: +simTime.toFixed(1) });
+  tally('pt:' + reason); if (rally.shotType === 'rescue') tally('afterRescue:' + reason + (team === rally.hitterTeam ? '+' : '-'));
   if (debugLog.length > 300) debugLog.shift();
-  rally.state = 'dead'; deadTimer = 2.4;
+  rally.state = 'dead'; deadTimer = 2.4; rally.replay = 0; rally.side = null; rally.outside = false;
+  for (const p of players) { p.mood = p.team === team ? 1 : -1; p.moodT = 1.9; }
   const ev = addPoint(team);
+  rally.pano = false; rally.swap = false;
+  if ((score.changed || ev === 'set') && !score.over) {
+    // Wide shot of the venue at changeovers and at the end of a set
+    rally.pano = true; rally.swap = score.changed; score.changed = false; deadTimer = 4.8; cam.cine = 0;
+  } else score.changed = false;
+  if (ev === 'game' || ev === 'set' || ev === 'match') Sfx.applause(ev === 'game' ? 1 : 1.6);
   const tn = teamName(team), rs = tr('r')[reason] || '';
   toast(_t(ev === 'match' ? 'matchTo' : ev === 'set' ? 'setTo' : ev === 'game' ? 'gameTo' : 'pointTo', { t: tn }), rs);
   if (ev !== 'point') saveLive();
-  const who = rally.lastHitter ? rally.lastHitter.name : '', lines = tr('lines');
+  const who = reason === 'doubleFault' && rally.server ? rally.server.name : rally.lastHitter ? rally.lastHitter.name : '', lines = tr('lines');
   say(fill(lines[reason] || lines.other, { p: who, t: tn, r: rs }), true);
   if (human.player && team === human.player.team) haptic([18, 40, 18]);
   Sfx.cheer(team === 0 ? 1 : 0.6);
@@ -2274,6 +2499,7 @@ function addPoint(t) {
       return winSet(t, tbPts, wasMtb);
     }
     if ((p[0] + p[1]) % 2 === 1) score.serverIdx = (score.serverIdx + 1) % 4;
+    if ((p[0] + p[1]) % 6 === 0) changeEnds();
     return 'point';
   }
   const decisive = decisiveNow();
@@ -2288,11 +2514,13 @@ function winGame(t) {
   score.serverIdx = (score.serverIdx + 1) % 4;
   const g = score.games, G = FMT.games;
   if (g[t] >= G && g[t] - g[1 - t] >= 2) return winSet(t);
+  if ((g[0] + g[1]) % 2 === 1) changeEnds();
   if (g[0] === G && g[1] === G) Object.assign(score, { tb: true, tbTo: 7, tbStart: score.serverIdx });
   return 'game';
 }
 function winSet(t, tbPts = null, mtb = false) {
   score.hist.push({ g: mtb ? null : [...score.games], tb: tbPts });
+  if (!mtb && (score.games[0] + score.games[1]) % 2 === 1) changeEnds();
   score.sets[t]++; score.games = [0, 0];
   if (score.sets[t] >= setsToWin()) { score.over = true; score.winner = t; return 'match'; }
   if (FMT.decider !== 'set' && score.sets[0] === score.sets[1] && score.sets[0] === setsToWin() - 1) {
@@ -2313,11 +2541,22 @@ function ptLabel(t) {
   if (a === 4) return 'AD';
   return b === 4 ? '40' : PT[a];
 }
-function startPoint() {
+function startPoint(serveNum = 1) {
+  flip = score.ends ? -1 : 1;
   const srv = serverOrder[score.serverIdx];
   const st = srv.team, sg = teamSign(st), rt = 1 - st;
-  const rightX = st === 0 ? 1 : -1;
-  const sxs = (score.points[0] + score.points[1]) % 2 === 0 ? rightX : -rightX;
+  const rightX = teamSign(st);
+  let sxs = (score.points[0] + score.points[1]) % 2 === 0 ? rightX : -rightX;
+  // FIP rule 1: on the deciding point the receiving pair chooses to receive on the right or on the left
+  let choose = false;
+  if (decisiveNow()) {
+    if (!rally.side) {
+      const ours = !demo && rt === 0;
+      if (ours) choose = true;
+      else { rally.side = Math.random() < 0.5 ? 'right' : 'left'; }
+    }
+    if (rally.side) sxs = rally.side === 'right' ? -teamSign(rt) : teamSign(rt);
+  }
   const partner = teams[st].find((p) => p !== srv);
   srv.homeX = sxs; partner.homeX = -sxs;
   srv.pos.set(sxs * 2.2, 0, sg * 9.0); partner.pos.set(-sxs * 2.4, 0, sg * 3.8);
@@ -2325,38 +2564,83 @@ function startPoint() {
   const receiver = teams[rt].find((p) => p.homeX === -sxs), rPartner = teams[rt].find((p) => p !== receiver);
   receiver.pos.set(-sxs * 2.6, 0, -sg * 9.2); rPartner.pos.set(sxs * 2.4, 0, -sg * 6.2);
   for (const p of players) { p.target.copy(p.pos); p.vel.set(0, 0, 0); p.plan = null; p.swing = 0; p.frozenUntil = 0; }
-  Object.assign(rally, { state: 'serve', server: srv, hitterTeam: st, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: -sxs, designated: [null, null], shotType: 'serve', lastErr: false, hits: 0, lastHitter: srv });
-  ball.out = false; ball.rolled = false; ball.v.set(0, 0, 0);
+  Object.assign(rally, { state: choose ? 'choose' : 'serve', server: srv, serveNum, replay: 0, outside: false, offBack: false, pano: false, hitterTeam: st, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: -sxs, designated: [null, null], shotType: 'serve', lastErr: false, hits: 0, lastHitter: srv });
+  ball.out = false; ball.rolled = false; ball.inbound = false; ball.outBounced = false; ball.outFar = false; ball.kick = false; ball.v.set(0, 0, 0);
+  ball.p.set(srv.pos.x - 0.25 * sg, 0.85, srv.pos.z - 0.35 * sg);
   serveTimer = srv.isHuman ? 0 : 1.2;
-  human.pressAt = -10; trail.reset();
+  human.pressAt = -10; human.autoServe = false; trail.reset();
+  $('sideChoice').hidden = !choose;
+  if (choose) { say(tr('sideAsk'), true); updateScoreUI(); return; }
   const bp = !score.tb && gamePointFor(rt);
-  say(bp ? _t('breakFor', { t: teamName(rt), p: srv.name }) : _t('serves', { p: srv.name }), true);
+  if (serveNum === 2) say(_t('secondServe', { p: srv.name }), true);
+  else if (decisiveNow()) say(_t('sideSay', { t: teamName(rt), s: tr(rally.side === 'right' ? 'sideR' : 'sideL'), p: srv.name }), true);
+  else say(bp ? _t('breakFor', { t: teamName(rt), p: srv.name }) : _t('serves', { p: srv.name }), true);
   updateScoreUI();
 }
+function chooseSide(side) {
+  if (rally.state !== 'choose') return;
+  haptic(10); rally.side = side; $('sideChoice').hidden = true; startPoint(rally.serveNum);
+}
+// FIP rules 7 and 9: a fault gives a second serve, two faults lose the point; a serve that touches the net and lands in the box is replayed.
+const evCount = {};
+const tally = (k) => { evCount[k] = (evCount[k] || 0) + 1; };
+function serveFault(reason) {
+  tally('fault:' + reason);
+  if (rally.serveNum >= 2) return award(1 - rally.hitterTeam, 'doubleFault');
+  rally.state = 'dead'; deadTimer = 1.5; rally.replay = 2; marker.visible = false;
+  toast(tr('faultBig'), tr('r')[reason] || ''); say(_t('faultSay', { p: rally.server.name, r: (tr('r')[reason] || '').toLowerCase() }), true);
+  updateScoreUI();
+}
+function serveLet() {
+  tally('let');
+  rally.state = 'dead'; deadTimer = 1.5; rally.replay = rally.serveNum; marker.visible = false;
+  toast('Net', tr('letSmall')); say(tr('letSay'), true);
+}
 function doServe() {
-  const srv = rally.server, sg = teamSign(srv.team), lv = lvOf(srv);
+  const srv = rally.server, sg = teamSign(srv.team), lv = lvOf(srv), second = rally.serveNum === 2;
   let base = 2.4;
-  if (settings.mode === 'coach' && srv.team === 0) base = { t: 0.7, body: 2.4, wide: 4.1 }[coach.serve];
+  if (settings.mode === 'coach' && srv.team === 0 && !demo) base = { t: 0.7, body: 2.4, wide: 4.1 }[coach.serve];
   else if (!srv.isHuman) base = pick([0.8, 2.4, 3.9], Math.random);
-  const err = srv.isHuman ? 0.2 : lv.jitter * 0.5;
-  const tx = rally.serveBoxSign * clamp(base + gauss() * 0.6 + (srv.isHuman ? human.input.x * rally.serveBoxSign * -0.8 : 0), 0.5, 4.4);
-  const depth = clamp(5.0 + gauss() * err * 2, 3.2, 6.6);
+  let lat, depth, T;
+  if (srv.isHuman) {
+    // Timing: the best moment is at the top of the toss; pushing the stick forward serves deeper and faster, with more risk.
+    const timing = Math.abs(Math.sin(simTime * 4)), iy = human.input.y;
+    const miss = human.autoServe ? 0 : Math.max(0, 0.62 - timing) * (second ? 2.4 : 4.4);
+    lat = base + gauss() * 0.45 + human.input.x * rally.serveBoxSign * -0.9 + miss * (Math.random() < 0.5 ? 0.7 : -0.5);
+    depth = (second ? 4.7 : 5.3) + iy * (second ? 0.55 : 1.15) + gauss() * 0.3 + miss * (Math.random() < 0.7 ? 1 : -0.6);
+    T = (second ? 1.0 : 0.9) - Math.max(0, iy) * (second ? 0.03 : 0.12);
+  } else {
+    lat = base + gauss() * 0.6;
+    depth = (second ? 4.8 : 5.4) + gauss() * lv.jitter * 0.6;
+    T = (second ? 1.0 : 0.9) - Math.random() * 0.12;
+    if (Math.random() < (second ? 0.025 : 0.09) + lv.err * (second ? 0.25 : 1)) { if (Math.random() < 0.65) depth = 7.2 + Math.random() * 0.7; else lat = 5.25 + Math.random() * 0.5; }
+  }
+  const tx = rally.serveBoxSign * clamp(lat, 0.2, 5.8);
+  depth = clamp(depth, 2.4, 8.4);
   ball.p.set(srv.pos.x - 0.25 * sg, 0.85, srv.pos.z - 0.35 * sg);
-  ball.v.copy(planShot(ball.p, 'serve', srv.team, { x: tx, depth, T: 0.9 - (srv.isHuman ? 0 : Math.random() * 0.12) }));
-  Object.assign(rally, { state: 'play', isServe: true, hitterTeam: srv.team, bounces: 0, crossed: false, netTouched: false, hitZ: srv.pos.z, shotType: 'serve', lastHitTime: simTime, lastHitter: srv });
-  ball.rolled = false; srv.swing = 0.3; srv.swingKind = 'serve';
+  ball.v.copy(planShot(ball.p, 'serve', srv.team, { x: tx, depth, T, wild: true }));
+  Object.assign(rally, { state: 'play', isServe: true, hitterTeam: srv.team, bounces: 0, crossed: false, netTouched: false, hitZ: srv.pos.z, shotType: 'serve', lastHitTime: simTime, lastHitter: srv, outside: false, offBack: false });
+  ball.rolled = false; ball.inbound = false; srv.swing = 0.3; srv.swingKind = 'serve'; srv.swingSide = 1;
+  for (const q of teams[1 - srv.team]) q.hop = 0.22;
   const kmh = ball.v.length() * 3.6; drawSpeed(kmh);
   say(_t('serveKmh', { p: srv.name, k: Math.round(kmh) }), true);
   Sfx.hit(0.7); replan();
 }
 function legalFor(p) {
-  return rally.state === 'play' && !ball.out && p.team !== rally.hitterTeam && rally.crossed && sideOf(ball.p.z) === p.team && rally.bounces <= 1 && !(rally.isServe && rally.bounces === 0);
+  return rally.state === 'play' && (!ball.out || rally.outside) && !ball.inbound && p.team !== rally.hitterTeam && rally.crossed && sideOf(ball.p.z) === p.team && rally.bounces <= 1 && !(rally.isServe && rally.bounces === 0);
 }
 function doHit(p, type, o) {
   const lv = lvOf(p);
-  if (!p.isHuman) o.speed = (o.speed ?? (type === 'smash' ? 29 : type === 'volley' ? 16.5 : 20)) * lv.power * (o.powerMul || 1);
-  ball.v.copy(planShot(ball.p, type, p.team, o));
-  Object.assign(rally, { hitterTeam: p.team, bounces: 0, crossed: false, isServe: false, netTouched: false, shotType: type, hitZ: p.pos.z, lastHitTime: simTime, lastErr: !!(o.wild || o.noClear), hits: rally.hits + 1, lastHitter: p });
+  if (!p.isHuman) o.speed = (o.speed ?? (type === 'smash' ? 29 : type === 'volley' ? 16.5 : type === 'bajada' ? 23 : 20)) * lv.power * (o.powerMul || 1);
+  const fromOut = Math.abs(ball.p.x) > HW + 0.05;
+  if (fromOut) type = 'rescue';
+  tally('shot:' + type);
+  ball.v.copy(fromOut ? planOutShot(ball.p, p.team, o) : planShot(ball.p, type, p.team, o));
+  ball.out = false; ball.outBounced = false; ball.outFar = false; ball.inbound = fromOut;
+  ball.kick = type === 'smash' && o.depth < 4 && Math.abs(o.x ?? 0) > 2;
+  p.swingSide = (ball.p.x - p.pos.x) * teamSign(p.team) >= 0 ? 1 : -1;
+  for (const q of teams[1 - p.team]) q.hop = 0.22;
+  Object.assign(rally, { outside: false, offBack: false, hitterTeam: p.team, bounces: 0, crossed: false, isServe: false, netTouched: false, shotType: type, hitZ: p.pos.z, lastHitTime: simTime, lastErr: !!(o.wild || o.noClear), hits: rally.hits + 1, lastHitter: p });
   ball.rolled = false; p.swing = 0.3; p.swingKind = type;
   if (type === 'smash') { p.jump = 0.35; drawSpeed(ball.v.length() * 3.6); }
   for (const q of teams[1 - p.team]) if (!q.isHuman) q.frozenUntil = simTime + lvOf(q).react * (0.8 + Math.random() * 0.7);
@@ -2380,7 +2664,7 @@ function replan() {
     for (let i = 0; i < pr.samples.length; i += 2) {
       const s = pr.samples[i];
       if (!s.legal || s.y < 0.15 || s.y > 2.45) continue;
-      const d = Math.max(0, Math.hypot(s.x - p.pos.x, s.z - p.pos.z) - REACH * 0.6);
+      const d = Math.max(0, pathLen(p, s.x, s.z) - REACH * 0.6);
       if (d / spd + (p.isHuman ? 0 : lvOf(p).react) > s.t) continue;
       let cost = s.t;
       if (s.fb === 0 && Math.abs(p.pos.z) > 6 && s.y < 1.7) cost += 0.8;
@@ -2406,13 +2690,23 @@ function replan() {
       const hard = (ball.v.length() > 17 ? 1 : 0) + (rally.bounces > 0 ? 0.5 : 0);
       const off = Math.random() < lv.misread * (1 + hard) ? 1.1 + Math.random() * 0.9 : 0;
       const ang = Math.random() * Math.PI * 2;
-      d.target.set(clamp(best.s.x - Math.sign(best.s.x || 1) * 0.25 + Math.cos(ang) * off, -4.7, 4.7), 0, best.s.z + teamSign(rt) * 0.2 + Math.sin(ang) * off);
+      if (best.s.out || Math.abs(best.s.x) > HW) d.target.set(clamp(best.s.x, -(APRON_W - 0.5), APRON_W - 0.5), 0, best.s.z);
+      else d.target.set(clamp(best.s.x - Math.sign(best.s.x || 1) * 0.25 + Math.cos(ang) * off, -4.7, 4.7), 0, best.s.z + teamSign(rt) * 0.2 + Math.sin(ang) * off);
     }
   }
   for (const p of teams[rt]) if (p !== rally.designated[rt]) { p.plan = null; setFormation(p); }
   for (const p of teams[rally.hitterTeam]) { p.plan = null; setFormation(p); }
   if (pr.landing && teams[rt].some((p) => p.isHuman)) { marker.position.set(pr.landing.x, 0.08, pr.landing.z); marker.visible = true; }
   else marker.visible = false;
+}
+// Walking distance, through the nearest side door when one end is outside the court
+const isOutX = (x) => Math.abs(x) > HW;
+function doorFor(p, x) { return _door.set(Math.sign(x || p.pos.x || 1) * HW, 0, teamSign(p.team) * (DOOR_Z0 + DOOR_Z1) / 2); }
+const _door = new THREE.Vector3();
+function pathLen(p, x, z) {
+  if (isOutX(p.pos.x) === isOutX(x)) return Math.hypot(x - p.pos.x, z - p.pos.z);
+  const d = doorFor(p, isOutX(x) ? x : p.pos.x);
+  return Math.hypot(d.x - p.pos.x, d.z - p.pos.z) + Math.hypot(x - d.x, z - d.z);
 }
 function setFormation(p) {
   if (p.isHuman) return;
@@ -2443,6 +2737,7 @@ function aiTryHit(p) {
   else if (oppsAtNet && Math.random() < (tac === 'safe' ? 0.6 : 0.4)) type = 'lob';
   else if (Math.abs(p.pos.z) > 8 && y < 0.6 && Math.random() < 0.3) type = 'lob';
   else if (oppsBack && Math.random() < 0.06) type = 'drop';
+  if (rally.offBack && y > 1.25 && Math.abs(p.pos.z) > 6.2 && type !== 'smash' && Math.random() < 0.7) type = 'bajada';
   if (isC && coach.next) {
     type = coach.next === 'smash' ? (y > 1.4 ? 'smash' : 'drive') : coach.next;
     say(_t('order', { p: p.name, o: tr('orderNames')[coach.next] }), true);
@@ -2452,11 +2747,13 @@ function aiTryHit(p) {
   let x = 0, bestGap = -1;
   for (const c of cands) { const gap = Math.min(...opps.map((q) => Math.abs(q.pos.x - c))) + Math.random() * 0.8; if (gap > bestGap) { bestGap = gap; x = c; } }
   const o = { x: x + gauss() * lv.jitter };
-  if (type === 'smash') { o.depth = y > 2.1 && Math.abs(ball.p.z) < 4 && Math.random() < 0.35 ? 3.2 : 5 + Math.random() * 2; if (o.depth < 4) { o.x = Math.sign(x || 1) * 3.8; o.speed = 31; } }
+  if (type === 'smash') { o.depth = y > 2.1 && Math.abs(ball.p.z) < 4 && Math.random() < 0.35 ? 3.2 : 5 + Math.random() * 2; if (o.depth < 4) { o.x = Math.sign(x || 1) * 3.1; o.speed = 31; } }
   if (type === 'drive') o.depth = 6.6 + Math.random() * 2.2 + gauss() * lv.jitter * 0.5;
   if (type === 'lob') o.depth = 8.8 + Math.random() * 0.6;
   if (type === 'drop') o.depth = 2.2 + Math.random() * 1.2;
-  let errMul = 1;
+  if (type === 'bajada') o.depth = 6.8 + Math.random() * 1.6;
+  if (Math.abs(ball.p.x) > HW + 0.05) { o.x = Math.sign(ball.p.x) * (1 + Math.random() * 2); o.depth = 6 + Math.random() * 2.5; }
+  let errMul = Math.abs(ball.p.x) > HW + 0.05 ? 1.8 : 1;
   if (isC) {
     if (tac === 'attack') { o.powerMul = 1.08; errMul = 1.25; }
     if (tac === 'safe') { o.powerMul = 0.9; errMul = 0.55; if (type === 'drive') o.depth = 8 + Math.random(); }
@@ -2482,6 +2779,7 @@ addEventListener('keydown', (e) => {
   if (e.target.closest && e.target.closest('input')) return;
   if (!$('start').hidden) return;
   const k = e.key.toLowerCase();
+  if (rally.state === 'choose') { if (k === 'arrowleft' || k === 'a') chooseSide('left'); if (k === 'arrowright' || k === 'd') chooseSide('right'); e.preventDefault(); return; }
   keys.add(k);
   if (k === 'j' || k === ' ') { press('drive'); e.preventDefault(); }
   if (k === 'k') press('lob');
@@ -2492,6 +2790,7 @@ addEventListener('keydown', (e) => {
   if (k.startsWith('arrow')) e.preventDefault();
 });
 addEventListener('keyup', (e) => keys.delete(e.key.toLowerCase()));
+for (const b of document.querySelectorAll('#sideChoice [data-side]')) b.addEventListener('click', () => { Sfx.unlock(); chooseSide(b.dataset.side); });
 addEventListener('blur', () => keys.clear());
 function press(type) {
   Sfx.unlock();
@@ -2540,11 +2839,14 @@ function humanTryHit(p) {
   if (type === 'smash' && y < 1.45) type = atNet ? 'volley' : 'drive';
   if (type === 'drive' && y > 1.8) type = 'bandeja';
   if (type === 'drive' && atNet) type = 'volley';
+  if (rally.offBack && y > 1.2 && (type === 'smash' || type === 'bandeja' || type === 'drive')) type = 'bajada';
   const ix = human.input.x, iy = human.input.y;
   const o = { x: Math.abs(ix) > 0.2 ? ix * 4 : -Math.sign(ball.p.x || 1) * 2.2 + gauss() * 0.4 };
   if (type === 'drive' || type === 'volley') o.depth = clamp(7.2 + iy * 1.6, 5, 9);
   if (type === 'smash') o.depth = iy > 0.5 ? 3.2 : 5.6;
-  if (type === 'smash' && o.depth < 4) o.speed = 31;
+  if (type === 'smash' && o.depth < 4) { o.speed = 31; if (Math.abs(o.x) > 2) o.x = Math.sign(o.x) * 3.1; }
+  if (type === 'bajada') o.depth = clamp(7.4 + iy * 1.2, 5.5, 9);
+  if (Math.abs(ball.p.x) > HW + 0.05) o.depth = clamp(6.8 + iy * 1.4, 5, 8.8);
   human.pressAt = -10;
   doHit(p, type, o);
 }
@@ -2563,18 +2865,30 @@ function updatePlayers(dt) {
     } else if (!p.isHuman && simTime < p.frozenUntil) {
       p.vel.multiplyScalar(Math.max(0, 1 - dt * 8));
     } else {
-      _v2.set(p.target.x - p.pos.x, 0, p.target.z - p.pos.z);
-      const d = _v2.length(), spd = p.isHuman ? HUMAN_SPEED : lv.speed;
+      let tx = p.target.x, tz = p.target.z;
+      if (isOutX(p.pos.x) !== isOutX(tx)) {
+        // Go to the door first, then through it
+        const d = doorFor(p, isOutX(tx) ? tx : p.pos.x), dir = isOutX(p.pos.x) ? -Math.sign(d.x) : Math.sign(d.x);
+        const near = Math.abs(p.pos.z - d.z) < 0.45 && Math.abs(Math.abs(p.pos.x) - HW) < 1.3;
+        tx = near ? d.x + dir * 1.2 : d.x - dir * 0.7; tz = d.z;
+      }
+      _v2.set(tx - p.pos.x, 0, tz - p.pos.z);
+      const d = _v2.length(), spd = (p.isHuman ? HUMAN_SPEED : lv.speed) * (rally.outside || isOutX(p.target.x) || isOutX(p.pos.x) ? 1.3 : 1);
       if (d > 0.05) _v2.multiplyScalar(Math.min(spd, d * 6) / d); else _v2.set(0, 0, 0);
       p.vel.lerp(_v2, Math.min(1, dt * 10));
     }
-    if (rally.state === 'serve') p.vel.set(0, 0, 0);
+    if (rally.state === 'serve' || rally.state === 'choose') p.vel.set(0, 0, 0);
+    const wasOut = isOutX(p.pos.x), ox = p.pos.x;
     p.pos.addScaledVector(p.vel, dt);
-    p.pos.x = clamp(p.pos.x, -HW + 0.3, HW - 0.3);
-    p.pos.z = p.team === 0 ? clamp(p.pos.z, 0.5, HL - 0.3) : clamp(p.pos.z, -HL + 0.3, -0.5);
+    // Side walls: players go in and out only through the doors
+    if (!wasOut) { if (Math.abs(p.pos.x) > HW - 0.3 && !(inDoorZ(p.pos.z, 0.12) && Math.abs(p.pos.x) > HW - 0.35)) p.pos.x = clamp(p.pos.x, -HW + 0.3, HW - 0.3); }
+    else { if (Math.abs(p.pos.x) < HW + 0.3 && !inDoorZ(p.pos.z, 0.12)) p.pos.x = Math.sign(ox) * (HW + 0.3); p.pos.x = clamp(p.pos.x, -(APRON_W - 0.4), APRON_W - 0.4); }
+    p.pos.z = teamSign(p.team) > 0 ? clamp(p.pos.z, 0.5, HL - 0.3) : clamp(p.pos.z, -HL + 0.3, -0.5);
     p.walk += p.vel.length() * dt * 2.4;
     if (p.swing > 0) p.swing -= dt;
     if (p.jump > 0) p.jump -= dt;
+    if (p.hop > 0) p.hop -= dt;
+    if (p.moodT > 0) p.moodT -= dt;
   }
 }
 function checkHits() {
@@ -2592,17 +2906,24 @@ function checkHits() {
 function simStep() {
   simTime += DT;
   if (!demo && settings.mode === 'arcade') readInput(); else human.input.set(0, 0);
+  if (rally.state === 'choose') return;
   updatePlayers(DT);
   if (rally.state === 'serve') {
     const srv = rally.server, sg = teamSign(srv.team);
     ball.p.set(srv.pos.x - 0.25 * sg, 0.85 + Math.abs(Math.sin(simTime * 4)) * 0.25, srv.pos.z - 0.35 * sg);
     serveTimer -= DT;
-    if (srv.isHuman) { if (human.pressAt > simTime - 0.4 || (settings.autoHit && serveTimer < -3.5)) { human.pressAt = -10; doServe(); } }
+    if (srv.isHuman) { if (human.pressAt > simTime - 0.4 || (settings.autoHit && serveTimer < -3.5)) { human.autoServe = human.pressAt <= simTime - 0.4; human.pressAt = -10; doServe(); } }
     else if (serveTimer <= 0) doServe();
     return;
   }
   if (rally.state === 'over') { stepBall(ball, DT, null); return; }
-  if (rally.state === 'dead') { stepBall(ball, DT, null); deadTimer -= DT; if (deadTimer <= 0) { if (score.over) endMatch(); else startPoint(); } return; }
+  if (rally.state === 'dead') {
+    stepBall(ball, DT, null); deadTimer -= DT;
+    if (rally.swap && deadTimer < 2.9) {
+      rally.swap = false; flip = score.ends ? -1 : 1;
+      for (const p of players) { p.pos.x = -p.pos.x; p.pos.z = -p.pos.z; p.target.copy(p.pos); p.vel.set(0, 0, 0); }
+      toast(tr('changeEnds'), tr('changeSmall')); say(tr('changeSay'), true);
+    } if (deadTimer <= 0) { if (score.over) endMatch(); else if (rally.replay) startPoint(rally.replay); else startPoint(); } return; }
   const ev = [];
   stepBall(ball, DT, ev);
   for (const e of ev) { handleEvent(e); if (rally.state !== 'play') return; }
@@ -2673,12 +2994,13 @@ const Sfx = {
     if (!this.ctx) {
       try {
         this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const len = this.ctx.sampleRate, buf = this.ctx.createBuffer(1, len, len), d = buf.getChannelData(0);
+        const len = this.ctx.sampleRate * 2, buf = this.ctx.createBuffer(1, len, this.ctx.sampleRate), d = buf.getChannelData(0);
         for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
         this.noise = buf;
       } catch (e) { this.ctx = null; return; }
     }
-    if (this.ctx.state === 'suspended') this.ctx.resume();
+    if (this.ctx.state === 'suspended') this.ctx.resume().then(() => this.ambient());
+    else if (!this.amb) this.ambient();
   },
   ok() { return settings.sound && this.ctx && this.ctx.state === 'running'; },
   tone(freq, dur, vol, type = 'sine', slide = 0.5) {
@@ -2706,6 +3028,45 @@ const Sfx = {
     s.buffer = this.noise; s.loop = true; f.type = 'bandpass'; f.frequency.value = 1100; f.Q.value = 0.4;
     g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.2 * v, t + 0.25); g.gain.exponentialRampToValueAtTime(0.0001, t + 1.8);
     s.connect(f).connect(g).connect(this.ctx.destination); s.start(t); s.stop(t + 1.9);
+  },
+  // Applause: many short claps scattered over two or three seconds
+  applause(v = 1) {
+    if (!this.ok()) return;
+    const t0 = this.ctx.currentTime, n = Math.round(70 * v), out = this.ctx.createGain();
+    out.gain.value = 0.5; out.connect(this.ctx.destination);
+    for (let i = 0; i < n; i++) {
+      const t = t0 + Math.pow(Math.random(), 1.6) * (1.6 + v), s = this.ctx.createBufferSource(), f = this.ctx.createBiquadFilter(), g = this.ctx.createGain();
+      s.buffer = this.noise; f.type = 'bandpass'; f.frequency.value = 1200 + Math.random() * 1800; f.Q.value = 1.2;
+      g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(0.06 + Math.random() * 0.05, t + 0.004); g.gain.exponentialRampToValueAtTime(0.0001, t + 0.05);
+      s.connect(f).connect(g).connect(out); s.start(t, Math.random() * 1.5); s.stop(t + 0.06);
+    }
+  },
+  // Background loop for the venue: crowd murmur plus sea, wind or city, and birds by day
+  amb: null, birdT: 0,
+  ambient() {
+    if (this.amb) { const a = this.amb; this.amb = null; try { a.g.gain.setTargetAtTime(0.0001, this.ctx.currentTime, 0.3); setTimeout(() => { for (const n of a.nodes) try { n.stop(); } catch (e) { /* stopped */ } a.g.disconnect(); }, 1500); } catch (e) { /* closed */ } }
+    clearInterval(this.birdT);
+    if (!this.ok()) return;
+    const c = this.ctx, t = c.currentTime, g = c.createGain(), nodes = [];
+    g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(1, t + 1.5); g.connect(c.destination);
+    const id = VEN.id || 'milano', time = settings.time;
+    const layer = (type, freq, q, vol, lfo = 0, lfoAmt = 0, target = 'gain') => {
+      const s = c.createBufferSource(), f = c.createBiquadFilter(), lg = c.createGain();
+      s.buffer = this.noise; s.loop = true; f.type = type; f.frequency.value = freq; f.Q.value = q; lg.gain.value = vol;
+      s.connect(f).connect(lg).connect(g); s.start(t, Math.random() * 1.8); nodes.push(s);
+      if (lfo) { const o = c.createOscillator(), og = c.createGain(); o.frequency.value = lfo; og.gain.value = lfoAmt; o.connect(og).connect(target === 'gain' ? lg.gain : f.frequency); o.start(t); nodes.push(o); }
+    };
+    layer('bandpass', 650, 0.7, time === 'night' ? 0.02 : 0.03, 0.13, 0.01);
+    const sea = ['napoli', 'barcellona', 'dubai'].includes(id), wind = ['cortina', 'dubai'].includes(id);
+    if (sea) layer('lowpass', 520, 0.6, 0.05, 0.12, 0.045);
+    if (wind) layer('bandpass', 380, 0.9, 0.035, 0.07, 160, 'freq');
+    if (!sea && !wind || ['milano', 'roma', 'parigi', 'buenosaires'].includes(id)) layer('lowpass', 180, 0.5, 0.06, 0.05, 0.02);
+    this.amb = { g, nodes };
+    if (time !== 'night') this.birdT = setInterval(() => {
+      if (!this.ok() || paused || Math.random() < 0.55) return;
+      const n = 2 + Math.floor(Math.random() * 4), base = 2600 + Math.random() * 1600;
+      for (let i = 0; i < n; i++) setTimeout(() => this.tone(base * (1 + Math.random() * 0.15), 0.07, 0.025, 'sine', 1.35), i * 110);
+    }, 1700);
   },
 };
 
@@ -2753,9 +3114,11 @@ function updateCamera(dt) {
     _wantT.set(bx * 0.3 + cx * 0.25, 0.6, bz * 0.5 + cz * 0.25);
     wantZoom = portrait ? 1.0 : 0.95;
     if (rally.state === 'serve' && rally.server) { _wantT.set(rally.server.pos.x * 0.4, 0.6, rally.server.pos.z * 0.5); wantZoom *= 0.9; }
-    if (rally.state === 'dead' && deadTimer < 1.9) { cam.cine += dt; wantYaw += cam.cine * 0.25; wantZoom = portrait ? 1.5 : 1.9; _wantT.set(2.5, 0.6, 0); }
-    else cam.cine = Math.max(0, cam.cine - dt * 2);
+    if (rally.state === 'dead' && deadTimer < 1.9 && !rally.pano) { cam.cine += dt; wantYaw += cam.cine * 0.25; wantZoom = portrait ? 1.5 : 1.9; _wantT.set(2.5, 0.6, 0); }
+    else if (!rally.pano) cam.cine = Math.max(0, cam.cine - dt * 2);
   } else if (settings.view === 'court') wantZoom = 1.6;
+  // Changeover: slow orbit far out so the whole venue is on screen
+  if (rally.state === 'dead' && rally.pano && deadTimer < 4.3 && settings.view !== 'roof') { cam.cine += dt; wantYaw += cam.cine * 0.32; wantZoom = portrait ? 2.6 : 3.1; _wantT.set(0, 0.6, 0); }
   if (cam.intro > 0) { cam.intro -= dt; wantYaw += cam.intro * 0.5; wantZoom *= 1 + cam.intro * 0.45; }
   wantZoom *= cam.userZoom;
   const k = 1 - Math.exp(-dt * 2.6);
@@ -2827,7 +3190,7 @@ function aimAt(e) {
   raycaster.setFromCamera(ndc, camera);
   const hit = new THREE.Vector3();
   if (!raycaster.ray.intersectPlane(groundPlane, hit)) return;
-  if (hit.z > -1 || hit.z < -HL + 0.3 || Math.abs(hit.x) > HW - 0.3) { say(tr('aimBad'), true); return; }
+  if (sideOf(hit.z) !== 1 || Math.abs(hit.z) < 1 || Math.abs(hit.z) > HL - 0.3 || Math.abs(hit.x) > HW - 0.3) { say(tr('aimBad'), true); return; }
   coach.aim = { x: hit.x, z: hit.z }; coach.aiming = false;
   aimMarker.position.set(hit.x, 0.09, hit.z); aimMarker.visible = true;
   say(tr('aimOk'), true); syncCoachUI();
@@ -2845,21 +3208,46 @@ function syncMeshes(dt, t) {
   trail.update();
   marker.material.opacity = 0.55 + Math.sin(t * 10) * 0.3;
   aimMarker.rotation.z = t * 2;
+  // Serve toss: the ball goes up and down above the server; for the human the top of the toss is the best moment to serve
+  let toss = 0;
+  if ((rally.state === 'serve' || rally.state === 'choose') && rally.server) {
+    const srv = rally.server;
+    toss = srv.isHuman ? Math.abs(Math.sin(simTime * 4)) : clamp(1 - Math.abs(serveTimer - 0.35) / 0.35, 0, 1);
+    if (rally.state === 'choose') toss = 0;
+    ballMesh.position.y = 0.85 + toss * 1.3;
+  }
   for (const p of players) {
     const m = p.mesh, u = m.userData;
-    m.position.set(p.pos.x, (p.jump > 0 ? Math.sin((0.35 - p.jump) / 0.35 * Math.PI) * 0.45 : 0) + 0.07, p.pos.z);
-    const toBall = Math.atan2(-(ball.p.x - p.pos.x), -(ball.p.z - p.pos.z)), base = p.team === 0 ? 0 : Math.PI;
+    m.rotation.order = 'YXZ';
+    const moving = Math.min(1, p.vel.length() / 3), live = rally.state === 'play' || rally.state === 'serve';
+    const happy = p.moodT > 0 && p.mood > 0, sad = p.moodT > 0 && p.mood < 0;
+    let y = p.jump > 0 ? Math.sin((0.35 - p.jump) / 0.35 * Math.PI) * 0.45 : 0;
+    if (p.hop > 0) y += Math.sin((0.22 - p.hop) / 0.22 * Math.PI) * 0.12;
+    if (happy) y += Math.abs(Math.sin(t * 9 + p.slot)) * 0.16;
+    const crouch = live && moving < 0.3 && !happy ? 0.05 + Math.sin(t * 6 + p.slot * 2) * 0.012 : 0;
+    m.position.set(p.pos.x, y + 0.07 - crouch, p.pos.z);
+    const toBall = Math.atan2(-(ball.p.x - p.pos.x), -(ball.p.z - p.pos.z)), base = teamSign(p.team) > 0 ? 0 : Math.PI;
     let diff = toBall - base; diff = Math.atan2(Math.sin(diff), Math.cos(diff));
-    m.rotation.y = base + clamp(diff, -1.1, 1.1);
-    const moving = Math.min(1, p.vel.length() / 3);
-    u.legL.rotation.x = Math.sin(p.walk * 3) * 0.7 * moving; u.legR.rotation.x = -Math.sin(p.walk * 3) * 0.7 * moving;
-    u.armL.rotation.x = -Math.sin(p.walk * 3) * 0.5 * moving;
+    let twist = 0;
+    if (p.swing > 0 && (p.swingKind === 'drive' || p.swingKind === 'volley' || p.swingKind === 'lob' || p.swingKind === 'drop' || p.swingKind === 'rescue')) twist = (p.swingSide || 1) * Math.sin((1 - p.swing / 0.3) * Math.PI) * 0.6;
+    m.rotation.y = base + clamp(diff, -1.1, 1.1) + twist;
+    // Lean into the run, slump after losing a point
+    m.rotation.x = -0.16 * moving - (sad ? 0.28 : 0) - crouch * 1.5;
+    const stride = moving > 0.05 ? Math.sin(p.walk * 3) * 0.7 * moving : 0;
+    u.legL.rotation.x = stride + crouch * 4; u.legR.rotation.x = -stride + crouch * 4;
+    u.armL.rotation.set(-stride * 0.7, 0, 0);
+    if (rally.server === p && toss > 0) u.armL.rotation.set(-1.2 - toss * 1.7, 0, 0);
     if (p.swing > 0) {
       const k = 1 - p.swing / 0.3;
       if (p.swingKind === 'smash' || p.swingKind === 'bandeja') u.armR.rotation.set(-3.0 + k * 2.4, 0, 0);
+      else if (p.swingKind === 'bajada') u.armR.rotation.set(-2.2 + k * 2.2, 0, 0.6 - k * 0.6);
       else if (p.swingKind === 'serve') u.armR.rotation.set(0.6 - k * 1.8, 0, 0);
+      else if ((p.swingSide || 1) < 0) u.armR.rotation.set(0.2, 0, -1.2 + k * 2.3);
       else u.armR.rotation.set(0.2, 0, 1.3 - k * 2.4);
-    } else u.armR.rotation.set(-0.5 + Math.sin(p.walk * 3) * 0.3 * moving, 0, 0.35);
+    } else if (happy) { const w = Math.sin(t * 12 + p.slot) * 0.25; u.armR.rotation.set(-2.9 + w, 0, 0.2); u.armL.rotation.set(-2.9 - w, 0, -0.2); }
+    else if (sad) { u.armR.rotation.set(0.15, 0, 0.1); u.armL.rotation.set(0.15, 0, -0.1); }
+    else if (rally.server === p && toss > 0) u.armR.rotation.set(-1.4 * toss, 0, 0.5);
+    else u.armR.rotation.set(-0.5 + stride * 0.4 - crouch * 4, 0, 0.35);
   }
   const hp = human.player;
   humanTag.visible = !demo && !!hp;
@@ -2941,7 +3329,7 @@ function syncOverlays() {
   $('touch').hidden = demo || !arcade || !isTouch;
   $('keys').hidden = demo || !arcade || isTouch;
   $('coachbar').hidden = demo || arcade || !narrowMQ.matches;
-  $('hudPause').hidden = demo;
+  $('hudPause').hidden = demo; $('sideChoice').hidden = true;
 }
 narrowMQ.addEventListener('change', syncOverlays);
 bindSeg('segMode', () => settings.mode, (v) => { if (v !== settings.mode) { settings.mode = v; newMatch(false); } });
@@ -2973,7 +3361,7 @@ $('optSize').addEventListener('input', (e) => { settings.pixelSize = +e.target.v
 $('optOutline').addEventListener('change', (e) => { settings.outline = e.target.checked; saveSettings(); });
 $('optDither').addEventListener('change', (e) => { settings.dither = e.target.checked; saveSettings(); });
 $('optAuto').addEventListener('change', (e) => { settings.autoHit = e.target.checked; saveSettings(); });
-$('optSound').addEventListener('change', (e) => { settings.sound = e.target.checked; if (settings.sound) Sfx.unlock(); });
+$('optSound').addEventListener('change', (e) => { settings.sound = e.target.checked; if (settings.sound) Sfx.unlock(); else Sfx.ambient(); });
 $('rotL').addEventListener('click', () => { cam.userYaw -= 0.4; });
 $('rotR').addEventListener('click', () => { cam.userYaw += 0.4; });
 $('zoomIn').addEventListener('click', () => { cam.userZoom = clamp(cam.userZoom / 1.2, 0.45, 1.8); });
@@ -3048,7 +3436,39 @@ function loadTour() {
 }
 function saveTour() { try { localStorage.setItem('terrazza-padel-tour-v1', JSON.stringify(tour.data)); } catch (e) { /* ignore */ } }
 const tourDef = (id) => TOURS.find((t) => t.id === id);
-const rankPoints = () => Object.entries(tour.data.best).reduce((s, [id, r]) => s + (tourDef(id) ? Math.round(TIERS[tourDef(id).tier].pts * RES_SHARE[r]) : 0), 0);
+// Season ranking: a fixed pool of AI pairs collects points across the season like the user; the top 8 qualify for the Finals.
+const resPts = (res) => Object.entries(res || {}).reduce((s, [id, r]) => s + (tourDef(id) ? ptsFor(id, r) : 0), 0);
+const better = (a, b) => !b || RES_ORDER.indexOf(a) > RES_ORDER.indexOf(b);
+function seasonData() {
+  const d = tour.data;
+  if (!d.season) {
+    const r = mulberry32(0x5eed), names = AI_NAMES.filter((n) => !DEFAULT_NAMES.includes(n));
+    for (let i = names.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [names[i], names[j]] = [names[j], names[i]]; }
+    const pool = [], n = Math.floor(names.length / 2);
+    for (let i = 0; i < n; i++) { const st = Math.round(50 + ((n - 1 - i) / (n - 1)) * 44 + (r() - 0.5) * 6); pool.push({ n: [names[i * 2], names[i * 2 + 1]], s: st, carry: Math.round((st - 46) * 26), res: {} }); }
+    d.season = { n: 1, pool, res: {} };
+  }
+  return d.season;
+}
+const pairPts = (P) => P.carry + resPts(P.res);
+function rankingList() {
+  const S = seasonData(), rows = S.pool.map((P, i) => ({ i, name: P.n.join('/'), pts: pairPts(P), me: false }));
+  rows.push({ i: -1, name: [nameFor(0), nameFor(1)].join('/'), pts: resPts(S.res), me: true });
+  return rows.sort((a, b) => b.pts - a.pts || (a.me ? -1 : b.me ? 1 : 0));
+}
+const myRank = () => rankingList().findIndex((x) => x.me) + 1;
+// Exit round of pair i in a finished draw
+function exitRes(cur, i) {
+  let res = cur.groups ? 'RR' : null;
+  for (const rd of cur.rounds) for (const m of rd) if (m[0] === i || m[1] === i) res = m[2] === i ? (rd.length === 1 ? 'W' : res) : ROUND_OF[rd.length];
+  return res || 'R16';
+}
+function endSeason() {
+  const S = seasonData(), rank = myRank(), r = Math.random;
+  for (const P of S.pool) { P.carry = Math.round(pairPts(P) * 0.3 + (P.s - 46) * 14); P.res = {}; P.s = clamp(Math.round(P.s + (r() - 0.5) * 8), 48, 95); }
+  S.res = {}; S.n++;
+  return _t('seasonEnd', { n: S.n - 1, r: rank, m: S.n });
+}
 const titleCount = () => Object.values(tour.data.titles).reduce((a, b) => a + b, 0);
 const ptsFor = (id, r) => Math.round(TIERS[tourDef(id).tier].pts * RES_SHARE[r]);
 const tourName = (id) => VENUES[id].name;
@@ -3090,11 +3510,15 @@ function simMatch(cur, a, b) {
 function bracketOrder(n) { let a = [1, 2]; while (a.length < n) { const m = a.length * 2 + 1, b = []; for (const s of a) b.push(s, m - s); a = b; } return a; }
 function startTour(id, fast) {
   const T = tourDef(id), seed = (Date.now() & 0xffffff) ^ (T.draw * 977);
-  const r = mulberry32(seed), pool = AI_NAMES.filter((n) => !DEFAULT_NAMES.includes(n) && ![nameFor(0), nameFor(1)].includes(n));
-  for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
-  const ai = [];
-  for (let i = 0; i < T.draw - 1; i++) ai.push({ n: [pool[i * 2], pool[i * 2 + 1]], s: Math.round(48 + r() * 46) });
-  ai.sort((a, b) => b.s - a.s);
+  const r = mulberry32(seed), S = seasonData(), mine = [nameFor(0), nameFor(1)], need = T.draw - 1;
+  // Smaller events draw from the lower part of the ranking, Majors and Finals from the top
+  const ranked = S.pool.map((P, i) => ({ i, pts: pairPts(P) })).filter((x) => !S.pool[x.i].n.some((n) => mine.includes(n))).sort((a, b) => b.pts - a.pts);
+  const span = Math.max(0, ranked.length - need - 2), lvl = { bronze: 1, silver: 0.75, gold: 0.5, platinum: 0.25, major: 0, finals: 0 }[T.tier];
+  const start = T.tier === 'finals' ? 0 : Math.min(span, Math.round(lvl * span * 0.8 + r() * span * 0.2));
+  let win = ranked.slice(start, start + need + (T.tier === 'finals' ? 0 : 2));
+  for (let i = win.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [win[i], win[j]] = [win[j], win[i]]; }
+  win = win.slice(0, need).sort((a, b) => b.pts - a.pts);
+  const ai = win.map((x) => ({ n: [...S.pool[x.i].n], s: S.pool[x.i].s, pid: x.i }));
   const pairs = [{ n: null, s: 72, me: true }, ...ai];
   const cur = { id, fast: !!fast, pairs, rounds: [], done: false, res: null, live: null, last: null };
   if (T.groups) {
@@ -3151,6 +3575,7 @@ function recordResult(won, line) {
       if (A[0].i === 0 || A[1].i === 0) { cur.rounds.push([[A[0].i, B[1].i, -1, ''], [B[0].i, A[1].i, -1, '']]); msg = tr('groupThrough'); }
       else { cur.rounds.push([[A[0].i, B[1].i, -1, ''], [B[0].i, A[1].i, -1, '']]); finishTour(cur, 'RR'); msg = _t('groupOut', { p: ptsFor(cur.id, 'RR') }); }
     }
+    if (cur.seasonMsg) { msg += ' ' + cur.seasonMsg; delete cur.seasonMsg; }
     saveTour(); return msg;
   }
   const rd = cur.rounds[cur.rounds.length - 1], code = ROUND_OF[rd.length];
@@ -3160,6 +3585,7 @@ function recordResult(won, line) {
     finishTour(cur, code); msg = _t('outIn', { r: tr('roundsIn')[code], p: ptsFor(cur.id, code) });
   } else if (rd.length === 1) { finishTour(cur, 'W'); msg = _t('wonTour', { p: ptsFor(cur.id, 'W') }); }
   else { advance(cur); msg = _t('through', { r: tr('rounds')[ROUND_OF[rd.length / 2]] }); }
+  if (cur.seasonMsg) { msg += ' ' + cur.seasonMsg; delete cur.seasonMsg; }
   saveTour(); return msg;
 }
 function advance(cur) {
@@ -3173,6 +3599,10 @@ function advance(cur) {
 function finishTour(cur, res) {
   while (cur.rounds.length && cur.rounds[cur.rounds.length - 1].some((m) => m[2] < 0)) advance(cur);
   cur.done = true; cur.res = res;
+  const S = seasonData();
+  if (better(res, S.res[cur.id])) S.res[cur.id] = res;
+  cur.pairs.forEach((p, i) => { const P = i > 0 && p.pid != null ? S.pool[p.pid] : null; if (!P) return; const x = exitRes(cur, i); if (better(x, P.res[cur.id])) P.res[cur.id] = x; });
+  if (tourDef(cur.id).tier === 'finals') cur.seasonMsg = endSeason();
   const prev = tour.data.best[cur.id];
   if (!prev || RES_ORDER.indexOf(res) > RES_ORDER.indexOf(prev)) tour.data.best[cur.id] = res;
   if (res === 'W') tour.data.titles[cur.id] = (tour.data.titles[cur.id] || 0) + 1;
@@ -3291,15 +3721,18 @@ function renderArcade() {
   $('arcadeFmt').textContent = fmtText(arcadeFmt());
 }
 function renderTour() {
-  const pts = rankPoints(), cur = tour.data.cur;
-  $('tourHead').textContent = _t('rankPts', { p: pts }) + ' · ' + _t('titlesN', { n: titleCount() });
+  const S = seasonData(), cur = tour.data.cur, list = rankingList(), rank = list.findIndex((x) => x.me) + 1;
+  $('tourHead').textContent = _t('seasonHead', { n: S.n, r: rank, p: resPts(S.res) }) + ' · ' + _t('titlesN', { n: titleCount() });
+  const top = list.slice(0, 10), meRow = list[rank - 1];
+  $('rankBox').innerHTML = `<h4>${esc(_t('rankTitle', { n: S.n }))}</h4><table class="stand rank"><tr><th></th><th></th><th>${tr('ptsCol')}</th></tr>`
+    + (rank > 10 ? [...top, null, meRow] : top).map((x) => (x ? `<tr class="${x.me ? 'me' : ''}${list.indexOf(x) < 8 ? ' q' : ''}"><td>${list.indexOf(x) + 1}</td><td>${esc(x.name)}</td><td>${x.pts}</td></tr>` : '<tr><td></td><td>…</td><td></td></tr>')).join('') + `</table><p class="note">${esc(tr('rankNote'))}</p>`;
   $('tourList').innerHTML = TOURS.map((T) => {
-    const locked = T.unlock && pts < T.unlock, best = tour.data.best[T.id], live = cur && cur.id === T.id && !cur.done;
+    const locked = T.unlock && rank > 8, best = tour.data.best[T.id], live = cur && cur.id === T.id && !cur.done;
     const f = Object.assign({ bestOf: 3 }, T.fmt);
     return `<button class="trow" data-id="${T.id}"${locked ? ' disabled' : ''}>
       <i class="tier" style="--c:${TIERS[T.tier].col}">${T.tier.toUpperCase()}</i>${swatch(T.id)}
       <b>${esc(tourName(T.id))}</b><span class="city">${esc(cityName(T.id))} · ${_t('pairsN', { n: T.draw })}</span>
-      <span class="fmt">${locked ? esc(_t('locked', { p: T.unlock })) : esc(shortFmt(f))}</span>
+      <span class="fmt">${locked ? esc(_t('lockedTop', { r: rank })) : esc(shortFmt(f))}</span>
       ${live ? `<span class="live">${esc(nextUserMatch(cur)?.label || '')}</span>` : best ? `<span class="best">${esc(_t('best', { r: tr('res')[best] }))}${tour.data.titles[T.id] ? ' ★'.repeat(Math.min(3, tour.data.titles[T.id])) : ''}</span>` : ''}
     </button>`;
   }).join('');
@@ -3422,7 +3855,7 @@ window.padel = {
   get state() { return { rally: { ...rally, server: rally.server?.team, lastHitter: rally.lastHitter?.name, designated: rally.designated.map((d) => d && d.team + ':' + d.slot) }, score: JSON.parse(JSON.stringify(score)), ball: ball.p.toArray().map((v) => +v.toFixed(2)), demo, mode: settings.mode }; },
   step(n = 120) { for (let i = 0; i < n; i++) simStep(); syncMeshes(n * DT, performance.now() / 1000); },
   frameCam(dt = 0.016, n = 1) { for (let i = 0; i < n; i++) updateCamera(dt); },
-  newMatch, settings, coach, players, ball, debugLog, cam, setVenue, VENUES, tour, FMT, score, award: (t, r = 'double') => award(t, r),
+  newMatch, settings, coach, players, ball, debugLog, cam, setVenue, VENUES, tour, FMT, score, award: (t, r = 'double') => award(t, r), chooseSide, serveFault, rally, evCount, _dbg: { startPoint, replan, planShot, stepBall, planOutShot, rankingList, myRank, startTour, recordResult, seasonData },
 };
 </script>
 </body>
