@@ -10,7 +10,7 @@ Italian and English. The language follows the browser the first time and can be 
 
 - **Arcade:** a single match. Pick one of eight stadiums (Milan, Rome, Naples, Cortina, Barcelona, Buenos Aires, Dubai, Paris), the length (mini set, one set, best of three) and what happens at 40-40 (advantage, golden point, star point).
 - **Tournament:** a tour of eight events, one per stadium, with categories from Bronze to Major and the Finals in Milan. Each event has its own draw (8 or 16 pairs, knockout; the Finals have two round-robin groups and then semi-finals) and its own format from the FIP rules. You can play every event in the official format or in the quick one (4-game mini sets with a super tie-break). The other matches of the draw are simulated, and opponents get stronger with the category and the round. Progress is saved on the device, also in the middle of a match.
-- **Ranking and seasons:** a pool of 21 computer pairs plays the same circuit and collects points like you. Your best result in each event counts for the season; smaller events draw their field from the lower part of the ranking, Majors from the top. The top 8 pairs of the ranking play the Finals, and after the Finals a new season starts (the computer pairs keep part of their points, and their strength drifts a little).
+- **Ranking and seasons:** a pool of 21 computer pairs plays the same circuit and collects points like you. Your best result in each event counts for the season; smaller events draw their field from the lower part of the ranking, Majors from the top. The top 8 pairs of the ranking play the Finals, and after the Finals a new season starts (the computer pairs keep part of their points, and their strength drifts a little). Results from before seasons existed count for season 1.
 
 ## How to play
 
@@ -18,9 +18,9 @@ Italian and English. The language follows the browser the first time and can be 
 - **Allena / Coach:** the match plays itself and you give orders to your pair: tactic (defend, normal, attack), next shot (lob, drop shot, smash), where to serve, and a target for the next shot.
 - Names: type yours on the start card; partner and opponents can be renamed in the options panel (Players). Empty fields use the default names.
 
-Keyboard: `WASD` or arrows to move, `J` or Space to hit and serve, `K` lob, `L` smash, `1`–`3` tactic in coach mode, `P` pause, `C` camera. Drag on the court to rotate, mouse wheel to zoom.
+Keyboard: `WASD` or arrows to move, `J` or Space to hit and serve, `K` lob, `L` smash (with left or right held, from mid court: vibora), `1`–`3` tactic in coach mode, `P` pause, `C` camera. Drag on the court to rotate, mouse wheel to zoom.
 
-iPhone: stick on the left, Hit / Lob / Smash on the right, pause button at the top right, options from the top bar. In coach mode the orders sit in a bar at the bottom. Vibration on hits and won points (can be turned off).
+iPhone: stick on the left, Hit / Lob / Smash on the right (Smash with the stick to one side from mid court plays the vibora), pause button at the top right, options from the top bar. In coach mode the orders sit in a bar at the bottom. Vibration on hits and won points (can be turned off).
 
 ### Install on a phone
 
@@ -34,7 +34,7 @@ The game opens full screen and works offline after the first visit.
 Padel rules on a 10 x 20 m court with two side doors per half, checked against the FIP Rules of Padel (2023 edition):
 
 - Serve underhand into the diagonal box. A serve that lands outside the box, hits the fence after the bounce, or hits a wall before reaching the box is a fault; two faults lose the point. A serve that clips the net and lands in the box is a let and is replayed (on the second serve, only that serve).
-- One bounce on the floor, then the ball may hit the glass and stay in play. Hitting the opponents' glass or fence before the bounce loses the point. Waiting for the ball off the back glass and driving it down is the bajada.
+- One bounce on the floor, then the ball may hit the glass and stay in play. Hitting the opponents' glass or fence before the bounce loses the point. Waiting for the ball off the back glass and driving it down is the bajada. The vibora is a sliced overhead from mid court: it bounces low and skids into the side glass.
 - A ball that goes over the back wall after a legal bounce wins the point at once (por cuatro). Over the side wall or through a door it can still be chased: the player runs out through the door and plays it back before it bounces outside (por tres if they don't make it). The kick smash near the net tries exactly that.
 - Change of ends after the first game and then every two games, and every six points in a tie-break; the camera shows the whole venue during the changeover.
 - On the golden point and on the decisive star point the receiving pair chooses whether to receive on the right or on the left. Scoring: 6-game sets won by two with a tie-break to 7 at 6-6 (or 4-game mini sets with a tie-break at 4-4); at 40-40 advantage, golden point or star point (two advantages, then a decisive point on the third deuce; the star point is not in the 2023 FIP text this check used, so it follows the description published by the FIP for the 2026 season); the deciding set can be replaced by a match tie-break to 7 or a super tie-break to 10. In a tie-break the first server serves one point, then two each, and the pair that did not serve first starts the next set.
@@ -51,7 +51,7 @@ No build step: GitHub Pages serves the folder as it is.
 ## Release
 
 1. Change the code.
-2. Bump `CACHE` in `sw.js` (`terrazza-padel-r2` → `r3` …), otherwise installed copies keep the old files.
+2. Bump `CACHE` in `sw.js` (`terrazza-padel-r4` → `r5` …), otherwise installed copies keep the old files.
 3. Test, commit, push to `main`.
 
 ## Test

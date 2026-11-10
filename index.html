@@ -775,6 +775,7 @@ const STR = {
       volley: ['Volée di {p}.', '{p} chiude a rete.'],
       bandeja: ['Bandeja di {p}.', '{p} gioca la bandeja.'],
       drop: ['Dejada di {p}!', '{p} accarezza una palla corta.'],
+      vibora: ['Vibora di {p}!', '{p} taglia la vibora verso il vetro laterale.', 'Che vibora di {p}!'],
       bajada: ['Bajada di {p}!', '{p} aspetta la palla dal vetro e la tira giù forte.'],
       rescue: ['{p} la riprende da fuori campo!', 'Che recupero di {p} da fuori!'],
     },
@@ -893,6 +894,7 @@ const STR = {
       volley: ['Volley by {p}.', '{p} finishes at the net.'],
       bandeja: ['Bandeja by {p}.', '{p} plays the bandeja.'],
       drop: ['Drop shot by {p}!', '{p} strokes a short ball.'],
+      vibora: ['Vibora by {p}!', '{p} slices a vibora into the side glass.', 'What a vibora by {p}!'],
       bajada: ['Bajada by {p}!', '{p} waits for it off the glass and drives it down.'],
       rescue: ['{p} plays it back from outside the court!', 'What a rescue by {p} from outside!'],
     },
@@ -2301,6 +2303,7 @@ function stepBall(b, dt, ev, deterministic = false) {
       const vin = -b.v.y;
       b.v.y = vin * surf.e; b.v.x *= surf.f; b.v.z *= surf.f;
       // Kick smash (por tres): the ball jumps up and sideways towards the side wall
+      if (b.slice) { b.slice = false; b.v.y *= 0.6; b.v.x = Math.sign(b.p.x || 1) * Math.max(Math.abs(b.v.x), 5.5); b.v.z *= 0.8; }
       if (b.kick) { b.kick = false; b.v.y = Math.max(b.v.y, 9); b.v.x = Math.sign(b.p.x || 1) * 2.4; b.v.z *= 0.15; }
       if (b.v.y < 0.35) { b.v.y = 0; if (!b.rolled) { b.rolled = true; ev && ev.push({ type: 'roll', side: sideOf(b.p.z) }); } }
       else ev && ev.push({ type: 'floor', side: sideOf(b.p.z), x: b.p.x, z: b.p.z, speed: vin });
@@ -2326,7 +2329,7 @@ function stepBall(b, dt, ev, deterministic = false) {
   }
 }
 function predict(maxT = 3.4) {
-  const b = { p: ball.p.clone(), v: ball.v.clone(), out: ball.out, rolled: ball.rolled, inbound: ball.inbound, outBounced: ball.outBounced, outFar: ball.outFar, kick: ball.kick };
+  const b = { p: ball.p.clone(), v: ball.v.clone(), out: ball.out, rolled: ball.rolled, inbound: ball.inbound, outBounced: ball.outBounced, outFar: ball.outFar, kick: ball.kick, slice: ball.slice };
   let outside = rally.outside;
   const rt = 1 - rally.hitterTeam;
   let bounces = rally.bounces, crossed = rally.crossed; const isServe = rally.isServe;
@@ -2373,6 +2376,7 @@ function planShot(from, type, team, o) {
     case 'smash': depth = o.depth ?? 5.5; speed = o.speed ?? 28; break;
     case 'drop': depth = o.depth ?? 2.6; speed = 8; clear = 0.2; break;
     case 'bajada': depth = o.depth ?? 7.4; speed = o.speed ?? 23; clear = 0.25; break;
+    case 'vibora': depth = o.depth ?? 6.4; speed = o.speed ?? 24; clear = 0.3; break;
     default: depth = o.depth ?? 7.6; speed = o.speed ?? 18;
   }
   const target = o.wild ? new THREE.Vector3(o.x, BALL_R, s * depth) : new THREE.Vector3(clamp(o.x, -4.6, 4.6), BALL_R, s * depth);
@@ -2565,7 +2569,7 @@ function startPoint(serveNum = 1) {
   receiver.pos.set(-sxs * 2.6, 0, -sg * 9.2); rPartner.pos.set(sxs * 2.4, 0, -sg * 6.2);
   for (const p of players) { p.target.copy(p.pos); p.vel.set(0, 0, 0); p.plan = null; p.swing = 0; p.frozenUntil = 0; }
   Object.assign(rally, { state: choose ? 'choose' : 'serve', server: srv, serveNum, replay: 0, outside: false, offBack: false, pano: false, hitterTeam: st, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: -sxs, designated: [null, null], shotType: 'serve', lastErr: false, hits: 0, lastHitter: srv });
-  ball.out = false; ball.rolled = false; ball.inbound = false; ball.outBounced = false; ball.outFar = false; ball.kick = false; ball.v.set(0, 0, 0);
+  ball.out = false; ball.rolled = false; ball.inbound = false; ball.outBounced = false; ball.outFar = false; ball.kick = false; ball.slice = false; ball.v.set(0, 0, 0);
   ball.p.set(srv.pos.x - 0.25 * sg, 0.85, srv.pos.z - 0.35 * sg);
   serveTimer = srv.isHuman ? 0 : 1.2;
   human.pressAt = -10; human.autoServe = false; trail.reset();
@@ -2631,13 +2635,14 @@ function legalFor(p) {
 }
 function doHit(p, type, o) {
   const lv = lvOf(p);
-  if (!p.isHuman) o.speed = (o.speed ?? (type === 'smash' ? 29 : type === 'volley' ? 16.5 : type === 'bajada' ? 23 : 20)) * lv.power * (o.powerMul || 1);
+  if (!p.isHuman) o.speed = (o.speed ?? (type === 'smash' ? 29 : type === 'volley' ? 16.5 : type === 'bajada' ? 23 : type === 'vibora' ? 24 : 20)) * lv.power * (o.powerMul || 1);
   const fromOut = Math.abs(ball.p.x) > HW + 0.05;
   if (fromOut) type = 'rescue';
   tally('shot:' + type);
   ball.v.copy(fromOut ? planOutShot(ball.p, p.team, o) : planShot(ball.p, type, p.team, o));
   ball.out = false; ball.outBounced = false; ball.outFar = false; ball.inbound = fromOut;
   ball.kick = type === 'smash' && o.depth < 4 && Math.abs(o.x ?? 0) > 2;
+  ball.slice = type === 'vibora';
   p.swingSide = (ball.p.x - p.pos.x) * teamSign(p.team) >= 0 ? 1 : -1;
   for (const q of teams[1 - p.team]) q.hop = 0.22;
   Object.assign(rally, { outside: false, offBack: false, hitterTeam: p.team, bounces: 0, crossed: false, isServe: false, netTouched: false, shotType: type, hitZ: p.pos.z, lastHitTime: simTime, lastErr: !!(o.wild || o.noClear), hits: rally.hits + 1, lastHitter: p });
@@ -2732,7 +2737,7 @@ function aiTryHit(p) {
   let type = 'drive';
   const smashP = tac === 'attack' ? 0.92 : tac === 'safe' ? 0.45 : 0.75;
   if (y > 1.75 && nearNet && Math.random() < smashP) type = 'smash';
-  else if (y > 1.75) type = Math.random() < 0.6 ? 'bandeja' : 'drive';
+  else if (y > 1.75) { const k = Math.random(), vib = tac === 'attack' ? 0.5 : tac === 'safe' ? 0.12 : 0.3; type = k < vib ? 'vibora' : k < vib + 0.4 ? 'bandeja' : 'drive'; }
   else if (rally.bounces === 0 && Math.abs(ball.p.z) < 5) type = 'volley';
   else if (oppsAtNet && Math.random() < (tac === 'safe' ? 0.6 : 0.4)) type = 'lob';
   else if (Math.abs(p.pos.z) > 8 && y < 0.6 && Math.random() < 0.3) type = 'lob';
@@ -2752,6 +2757,7 @@ function aiTryHit(p) {
   if (type === 'lob') o.depth = 8.8 + Math.random() * 0.6;
   if (type === 'drop') o.depth = 2.2 + Math.random() * 1.2;
   if (type === 'bajada') o.depth = 6.8 + Math.random() * 1.6;
+  if (type === 'vibora') { o.x = Math.sign(x || ball.p.x || 1) * (3.4 + Math.random() * 0.6); o.depth = 6 + Math.random() * 1.5; }
   if (Math.abs(ball.p.x) > HW + 0.05) { o.x = Math.sign(ball.p.x) * (1 + Math.random() * 2); o.depth = 6 + Math.random() * 2.5; }
   let errMul = Math.abs(ball.p.x) > HW + 0.05 ? 1.8 : 1;
   if (isC) {
@@ -2841,11 +2847,13 @@ function humanTryHit(p) {
   if (type === 'drive' && atNet) type = 'volley';
   if (rally.offBack && y > 1.2 && (type === 'smash' || type === 'bandeja' || type === 'drive')) type = 'bajada';
   const ix = human.input.x, iy = human.input.y;
+  if (pressed === 'smash' && type === 'smash' && Math.abs(ix) > 0.5 && iy <= 0.5 && Math.abs(ball.p.z) > 4.5) type = 'vibora';
   const o = { x: Math.abs(ix) > 0.2 ? ix * 4 : -Math.sign(ball.p.x || 1) * 2.2 + gauss() * 0.4 };
   if (type === 'drive' || type === 'volley') o.depth = clamp(7.2 + iy * 1.6, 5, 9);
   if (type === 'smash') o.depth = iy > 0.5 ? 3.2 : 5.6;
   if (type === 'smash' && o.depth < 4) { o.speed = 31; if (Math.abs(o.x) > 2) o.x = Math.sign(o.x) * 3.1; }
   if (type === 'bajada') o.depth = clamp(7.4 + iy * 1.2, 5.5, 9);
+  if (type === 'vibora') { o.x = Math.sign(ix) * 3.8; o.depth = clamp(6.4 + iy, 5.2, 7.6); }
   if (Math.abs(ball.p.x) > HW + 0.05) o.depth = clamp(6.8 + iy * 1.4, 5, 8.8);
   human.pressAt = -10;
   doHit(p, type, o);
@@ -3229,7 +3237,8 @@ function syncMeshes(dt, t) {
     const toBall = Math.atan2(-(ball.p.x - p.pos.x), -(ball.p.z - p.pos.z)), base = teamSign(p.team) > 0 ? 0 : Math.PI;
     let diff = toBall - base; diff = Math.atan2(Math.sin(diff), Math.cos(diff));
     let twist = 0;
-    if (p.swing > 0 && (p.swingKind === 'drive' || p.swingKind === 'volley' || p.swingKind === 'lob' || p.swingKind === 'drop' || p.swingKind === 'rescue')) twist = (p.swingSide || 1) * Math.sin((1 - p.swing / 0.3) * Math.PI) * 0.6;
+    if (p.swing > 0 && p.swingKind === 'vibora') twist = -Math.sin((1 - p.swing / 0.3) * Math.PI) * 0.7;
+    else if (p.swing > 0 && (p.swingKind === 'drive' || p.swingKind === 'volley' || p.swingKind === 'lob' || p.swingKind === 'drop' || p.swingKind === 'rescue')) twist = (p.swingSide || 1) * Math.sin((1 - p.swing / 0.3) * Math.PI) * 0.6;
     m.rotation.y = base + clamp(diff, -1.1, 1.1) + twist;
     // Lean into the run, slump after losing a point
     m.rotation.x = -0.16 * moving - (sad ? 0.28 : 0) - crouch * 1.5;
@@ -3241,6 +3250,7 @@ function syncMeshes(dt, t) {
       const k = 1 - p.swing / 0.3;
       if (p.swingKind === 'smash' || p.swingKind === 'bandeja') u.armR.rotation.set(-3.0 + k * 2.4, 0, 0);
       else if (p.swingKind === 'bajada') u.armR.rotation.set(-2.2 + k * 2.2, 0, 0.6 - k * 0.6);
+      else if (p.swingKind === 'vibora') u.armR.rotation.set(-2.7 + k * 2.3, 0, -0.7 + k * 1.6);
       else if (p.swingKind === 'serve') u.armR.rotation.set(0.6 - k * 1.8, 0, 0);
       else if ((p.swingSide || 1) < 0) u.armR.rotation.set(0.2, 0, -1.2 + k * 2.3);
       else u.armR.rotation.set(0.2, 0, 1.3 - k * 2.4);
@@ -3447,6 +3457,12 @@ function seasonData() {
     const pool = [], n = Math.floor(names.length / 2);
     for (let i = 0; i < n; i++) { const st = Math.round(50 + ((n - 1 - i) / (n - 1)) * 44 + (r() - 0.5) * 6); pool.push({ n: [names[i * 2], names[i * 2 + 1]], s: st, carry: Math.round((st - 46) * 26), res: {} }); }
     d.season = { n: 1, pool, res: {} };
+  }
+  // Players who already had results before seasons existed (v7) start season 1 with them, so they keep their place for the Finals
+  if (!d.season.carried) {
+    d.season.carried = true;
+    if (d.season.n === 1) for (const [id, r] of Object.entries(d.best || {})) if (tourDef(id) && better(r, d.season.res[id])) d.season.res[id] = r;
+    saveTour();
   }
   return d.season;
 }
