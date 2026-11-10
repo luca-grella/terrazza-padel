@@ -25,8 +25,13 @@ async function connect() {
 const send = (method, params = {}) => new Promise((res, rej) => { const i = ++id; pending.set(i, { res, rej }); ws.send(JSON.stringify({ id: i, method, params })); });
 const ev = (expr) => send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true }).then((r) => { if (r.exceptionDetails) throw new Error(JSON.stringify(r.exceptionDetails).slice(0, 400)); return r.result.value; });
 async function shot(name) { const r = await send('Page.captureScreenshot', { format: 'png' }); writeFileSync(join(out, name + '.png'), Buffer.from(r.data, 'base64')); }
-async function rect(sel) { return ev(`(() => { const r = document.querySelector(${JSON.stringify(sel)}).getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height }; })()`); }
-async function tap(sel) { const c = await rect(sel); await touch('touchStart', c.x, c.y, 1); await sleep(60); await touch('touchEnd', c.x, c.y, 1); await sleep(120); }
+async function rect(sel) { return ev(`(() => { const e = document.querySelector(${JSON.stringify(sel)}); e.scrollIntoView({ block: 'nearest' }); const r = e.getBoundingClientRect(); return { x: r.left + r.width / 2, y: r.top + r.height / 2, w: r.width, h: r.height }; })()`); }
+async function tap(sel) {
+  const c = await rect(sel);
+  if (mobile) { await touch('touchStart', c.x, c.y, 1); await sleep(60); await touch('touchEnd', c.x, c.y, 1); }
+  else for (const type of ['mousePressed', 'mouseReleased']) await send('Input.dispatchMouseEvent', { type, x: c.x, y: c.y, button: 'left', clickCount: 1 });
+  await sleep(120);
+}
 const touch = (type, x, y, idt) => send('Input.dispatchTouchEvent', { type, touchPoints: type === 'touchEnd' ? [] : [{ x, y, id: idt }] });
 const result = { errors: logs };
 try {
@@ -53,6 +58,11 @@ try {
   // type a name on the start card
   await tap('#nm_0b'); await send('Input.insertText', { text: 'Luca' }); await sleep(200);
   await ev('document.activeElement.blur()');
+  // arcade: pick a stadium (the world is rebuilt behind the card), then play
+  await tap('#goArcade'); await sleep(300);
+  await tap('#venueGrid [data-v="napoli"]'); await sleep(800);
+  result.venue = await ev('window.padel.settings.venue');
+  await shot('1b-arcade');
   await tap('#goPlay'); await sleep(2500);
   result.names = await ev('window.padel.players.map((p) => p.name)');
   result.vs = await ev('document.getElementById("vsLine").textContent');
@@ -88,6 +98,22 @@ try {
   // coach mode: long simulated match, then the score and the last commentary line
   result.sim = await ev(`(() => { const P = window.padel; P.settings.mode = 'coach'; P.newMatch(false); for (let i = 0; i < 300; i++) P.step(240); return { score: P.state.score, points: P.debugLog.length, comm: document.getElementById('commNow').textContent, coachWho: document.getElementById('coachWho').textContent }; })()`);
   await sleep(300); await shot('7-coach');
+  // tournament: back to the menu, enter the Bronze event in the quick format, play the first match
+  await ev('window.padel.newMatch(true)'); await sleep(300);
+  if (await ev('!document.getElementById("cardResult").hidden')) await tap('#resMenu');
+  for (const sel of ['#cardArcade [data-back]', '#cardTour [data-back]', '#cardTourDet [data-back]']) if (await ev(`!document.querySelector('${sel}').closest('.card').hidden`)) { await tap(sel); await sleep(200); }
+  if (await ev('!document.getElementById("cardTour").hidden')) { await tap('#cardTour [data-back]'); await sleep(200); }
+  await tap('#goTour'); await sleep(300); await shot('8-tour-list');
+  await tap('.trow[data-id="napoli"]'); await sleep(300);
+  await tap('#segTourLen [data-v="fast"]'); await sleep(100);
+  await tap('#detEnter'); await sleep(500); await shot('9-tour-draw');
+  await tap('#detPlay'); await sleep(2500);
+  result.tour = { header: await ev('document.getElementById("topEyebrow").textContent + " | " + document.getElementById("topTitle").textContent'), vs: await ev('document.getElementById("vsLine").textContent'), fmt: await ev('JSON.stringify(window.padel.FMT)') };
+  await shot('10-tour-match');
+  result.tour.end = await ev(`(() => { const P = window.padel; for (let i = 0; i < 60 && !P.score.over; i++) P.award(0); P.step(600); return document.getElementById('cardResult').innerText.replace(/\s+/g, ' '); })()`);
+  await sleep(300); await shot('11-result');
+  await tap('#resCont'); await sleep(400); await shot('12-next-round');
+  result.tour.next = await ev('document.getElementById("detNextLbl").textContent');
 } catch (e) { result.fatal = String(e.stack || e); }
 writeFileSync(join(out, 'result.json'), JSON.stringify(result, null, 2));
 console.log(JSON.stringify(result, null, 1));

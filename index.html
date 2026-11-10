@@ -11,7 +11,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Terrazza Padel">
 <meta name="application-name" content="Terrazza Padel">
-<meta name="description" content="Padel 2 contro 2 in pixel art su un tetto di Milano. 2 vs 2 pixel-art padel on a Milan rooftop.">
+<meta name="description" content="Padel 2 contro 2 in pixel art su otto terrazze nel mondo, con tornei. 2 vs 2 pixel-art padel on eight rooftops, with tournaments.">
 <title>Terrazza Padel</title>
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
@@ -340,13 +340,77 @@ button { touch-action: manipulation; }
   #panel h2 { font-size: 23px; }
   #panel h2 small { font-size: 17px; }
 }
+
+/* Menus: arcade stadium picker, tour list, tournament page, result */
+#start .card { max-height: 100%; overflow-y: auto; overscroll-behavior: contain; box-sizing: border-box; -webkit-overflow-scrolling: touch; }
+#start .card.wide { width: min(600px, 100%); }
+#start h3 { margin: 0; font-family: var(--pixel); font-weight: 400; font-size: 22px; color: var(--g); }
+#start .note { margin: 0; font-size: 15px; line-height: 1.25; color: var(--ink-2); }
+#start .note.warn { color: #a33b22; }
+#start .row2 { font-size: 16px; }
+#start .back { font-family: var(--pixel); font-size: 15px; padding: 5px 10px 6px; background: var(--cream); color: var(--g); cursor: pointer; }
+.sw { width: 18px; height: 18px; flex: none; display: inline-block; background: linear-gradient(90deg, var(--a) 0 33%, var(--b) 0 66%, var(--c) 0); box-shadow: 0 0 0 2px var(--g); margin: 2px; }
+.vgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+@media (min-width: 560px) { #start .vgrid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.vtile { font-family: var(--pixel); border: 0; margin: 2px; padding: 7px 8px 8px; background: var(--cream); color: var(--ink); cursor: pointer; text-align: left;
+  display: grid; grid-template-columns: auto 1fr; column-gap: 8px; align-items: center;
+  box-shadow: 0 -2px 0 var(--g), 0 2px 0 var(--g), -2px 0 0 var(--g), 2px 0 0 var(--g), inset -3px -3px 0 var(--cream-d), inset 3px 3px 0 #fff; }
+.vtile .sw { grid-row: span 2; }
+.vtile b { font-weight: 400; font-size: 18px; line-height: 1; }
+.vtile span { font-size: 13px; color: var(--ink-2); line-height: 1.1; }
+.vtile[aria-pressed="true"] { background: var(--g); color: var(--sand); box-shadow: 0 -2px 0 var(--g), 0 2px 0 var(--g), -2px 0 0 var(--g), 2px 0 0 var(--g), inset 3px 3px 0 var(--g2); }
+.vtile[aria-pressed="true"] span { color: var(--gold); }
+.vtile:disabled { opacity: 0.45; cursor: default; }
+.vgrid.mini .vtile { padding: 5px 6px 6px; }
+.vgrid.mini .vtile b { font-size: 16px; }
+.tlist { display: grid; gap: 10px; }
+.trow { font-family: var(--pixel); border: 0; margin: 2px; padding: 8px 10px 9px; background: var(--cream); color: var(--ink); cursor: pointer; text-align: left;
+  display: grid; grid-template-columns: auto auto 1fr; column-gap: 8px; row-gap: 1px; align-items: center;
+  box-shadow: 0 -2px 0 var(--g), 0 2px 0 var(--g), -2px 0 0 var(--g), 2px 0 0 var(--g), inset -3px -3px 0 var(--cream-d), inset 3px 3px 0 #fff; }
+.trow:active:not(:disabled) { transform: translateY(2px); }
+.trow:disabled { opacity: 0.55; cursor: default; }
+.trow b { font-weight: 400; font-size: 20px; line-height: 1; }
+.trow .city, .trow .fmt, .trow .best, .trow .live { grid-column: 1 / -1; font-size: 14px; line-height: 1.15; color: var(--ink-2); }
+.trow .best { color: var(--teal); }
+.trow .live { color: #a33b22; }
+.tier { font-style: normal; font-family: var(--pixel); font-size: 12px; letter-spacing: 0.06em; color: #fff; background: var(--c, var(--g)); padding: 2px 6px 3px; box-shadow: inset -2px -2px 0 rgba(0,0,0,0.25), inset 2px 2px 0 rgba(255,255,255,0.3); }
+#cardTourDet h2 { font-size: clamp(38px, 9vw, 54px); }
+#cardTourDet .rules { font-size: 15px; line-height: 1.3; color: var(--ink); background: var(--cream); padding: 8px 10px; margin: 2px; box-shadow: 0 0 0 2px var(--g); }
+#cardTourDet .rules b { font-weight: 400; color: var(--g); text-transform: uppercase; }
+#cardTourDet #detNext { display: grid; gap: 10px; }
+#cardTourDet .next { display: grid; gap: 2px; font-size: 18px; }
+#cardTourDet .next b { font-weight: 400; color: var(--g); font-size: 22px; }
+.btn.big { font-size: 20px; padding: 10px 4px 12px; cursor: pointer; }
+.btn.small { font-size: 14px; padding: 5px 8px 6px; justify-self: start; background: var(--cream); cursor: pointer; }
+#start .result { margin: 0; font-size: 18px; color: var(--g); }
+.drawbox { display: grid; gap: 4px; font-size: 15px; }
+.drawbox h4 { margin: 8px 0 0; font-family: var(--pixel); font-weight: 400; font-size: 17px; color: var(--g); text-transform: uppercase; letter-spacing: 0.04em; }
+.drawbox ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.drawbox li { line-height: 1.2; color: var(--ink-2); }
+.drawbox li b { font-weight: 400; color: var(--ink); }
+.drawbox li i { font-style: normal; color: #a99e8c; }
+.drawbox li em { font-style: normal; color: var(--teal); white-space: nowrap; }
+.drawbox .me { color: #c2412d; }
+.drawbox .tbd { color: #a99e8c; }
+.stand { border-collapse: collapse; font-size: 15px; width: 100%; }
+.stand th { font-weight: 400; color: var(--ink-2); text-align: right; padding: 0 4px; }
+.stand td { padding: 1px 4px; text-align: right; }
+.stand td:first-child { text-align: left; }
+.stand tr.q td:first-child::before { content: '› '; color: var(--teal); }
+#cardResult { text-align: center; }
+#cardResult .res-big { font-family: var(--pixel); font-size: clamp(48px, 13vw, 72px); line-height: 0.9; color: var(--g); text-shadow: 3px 3px 0 var(--gold); }
+#cardResult .res-score { font-family: var(--pixel); font-size: 30px; color: var(--ink); }
+#cardResult p { font-size: 17px; }
+#cardResult .res-msg { color: var(--g); }
+#btnMenu { width: calc(100% - 4px); cursor: pointer; }
+#top .status { overflow: hidden; text-overflow: ellipsis; }
 </style>
 </head>
 <body>
 
 
 <header id="top">
-  <div class="brand"><div class="eyebrow" data-i18n="eyebrow">Finale · Campo centrale · Milano</div><h1>Terrazza Open</h1></div>
+  <div class="brand"><div class="eyebrow" id="topEyebrow">Campo centrale · Milano</div><h1 id="topTitle">Terrazza Open</h1></div>
   <div class="match"><div class="vs" id="vsLine"></div><div class="status" id="statusLine"></div></div>
   <button id="panelBtn" aria-expanded="false" aria-controls="panel" data-i18n="options">Opzioni</button>
 </header>
@@ -385,6 +449,11 @@ button { touch-action: manipulation; }
       <div class="row2"><span data-i18n="opponents">Avversari</span><div class="seg" id="segLevel"><button data-v="easy" data-i18n="lvEasy">Facili</button><button data-v="normal" data-i18n="lvNormal">Normali</button><button data-v="hard" data-i18n="lvHard">Forti</button></div></div>
       <div class="row2"><span data-i18n="speed">Velocità</span><div class="seg" id="segSpeed"><button data-v="0.5">½×</button><button data-v="1">1×</button><button data-v="2">2×</button><button data-v="4">4×</button></div></div>
       <div class="grid2"><button class="btn primary" id="btnNew" data-i18n="newMatch">Nuova partita</button><button class="btn" id="btnPause" data-i18n="pause">Pausa</button></div>
+      <button class="btn" id="btnMenu" data-i18n="menu">Menu</button>
+    </section>
+    <section>
+      <h2><span><i class="ico ico-globe"></i><span data-i18n="stadium">Stadio</span></span> <small id="venueNote"></small></h2>
+      <div class="vgrid mini" id="segVenue"></div>
     </section>
     <section>
       <h2><span><i class="ico ico-people"></i><span data-i18n="secPlayers">Giocatori</span></span></h2>
@@ -438,17 +507,62 @@ button { touch-action: manipulation; }
 </main>
 
 <div id="start">
-  <div class="card">
-    <div class="card-top"><div class="eyebrow" data-i18n="startEyebrow">Terrazza Open · Milano</div><div class="seg mini" id="segLang2"><button data-v="it">IT</button><button data-v="en">EN</button></div></div>
+  <div class="card" id="cardHome">
+    <div class="card-top"><div class="eyebrow" data-i18n="startEyebrow">Padel in pixel art</div><div class="seg mini" id="segLang2"><button data-v="it">IT</button><button data-v="en">EN</button></div></div>
     <h2>Terrazza Padel</h2>
     <p data-i18n="startIntro"></p>
     <label class="field inline"><span data-i18n="yourName">Come ti chiami?</span><input id="nm_0b" maxlength="14" autocomplete="off" spellcheck="false"></label>
     <div class="modes">
-      <button class="mode play" id="goPlay"><b data-i18n="play">Gioca</b><span data-i18n="playDesc"></span></button>
-      <button class="mode coach" id="goCoach"><b data-i18n="coachMode">Allena</b><span data-i18n="coachDesc"></span></button>
+      <button class="mode play" id="goArcade"><b data-i18n="arcade">Arcade</b><span data-i18n="arcadeDesc"></span></button>
+      <button class="mode coach" id="goTour"><b data-i18n="tourMode">Torneo</b><span data-i18n="tourDesc"></span></button>
     </div>
     <div class="seg" id="segLevel2"><button data-v="easy" data-i18n="lvEasy2">Avversari facili</button><button data-v="normal" data-i18n="lvNormal">Normali</button><button data-v="hard" data-i18n="lvHard">Forti</button></div>
     <p class="hint" data-i18n="startHint"></p>
+  </div>
+  <div class="card wide" id="cardArcade" hidden>
+    <div class="card-top"><button class="px-btn back" data-back="cardHome" data-i18n="back">Indietro</button><div class="eyebrow" data-i18n="arcade">Arcade</div></div>
+    <h3 data-i18n="stadium">Stadio</h3>
+    <div class="vgrid" id="venueGrid"></div>
+    <p class="note" id="venueDesc"></p>
+    <div class="row2"><span data-i18n="matchLen">Durata</span><div class="seg" id="segLen"><button data-v="mini" data-i18n="lenMini">Mini set</button><button data-v="set1" data-i18n="lenSet1">1 set</button><button data-v="set3" data-i18n="lenSet3">3 set</button></div></div>
+    <div class="row2"><span data-i18n="deuceLbl">Sul 40-40</span><div class="seg" id="segDeuce"><button data-v="adv" data-i18n="dAdv">Vantaggi</button><button data-v="golden" data-i18n="dGolden">Punto d'oro</button><button data-v="star" data-i18n="dStar">Star point</button></div></div>
+    <p class="note" id="arcadeFmt"></p>
+    <div class="modes">
+      <button class="mode play" id="goPlay"><b data-i18n="play">Gioca</b><span data-i18n="playDesc"></span></button>
+      <button class="mode coach" id="goCoach"><b data-i18n="coachMode">Allena</b><span data-i18n="coachDesc"></span></button>
+    </div>
+  </div>
+  <div class="card wide" id="cardTour" hidden>
+    <div class="card-top"><button class="px-btn back" data-back="cardHome" data-i18n="back">Indietro</button><div class="eyebrow" data-i18n="tourTitle">Circuito</div></div>
+    <h3 id="tourHead"></h3>
+    <div class="tlist" id="tourList"></div>
+  </div>
+  <div class="card wide" id="cardTourDet" hidden>
+    <div class="card-top"><button class="px-btn back" data-back="cardTour" data-i18n="back">Indietro</button><i class="tier" id="detTier"></i></div>
+    <h2 id="detName"></h2>
+    <p id="detCity"></p>
+    <div class="rules"><b data-i18n="rules">Regole</b> <span id="detRules"></span></div>
+    <div class="row2" id="detLenRow"><span data-i18n="matchLen">Durata</span><div class="seg" id="segTourLen"><button data-v="official" data-i18n="tOfficial">Ufficiale</button><button data-v="fast" data-i18n="tFast">Rapida</button></div></div>
+    <p class="note" id="detFastNote" data-i18n="fastNote"></p>
+    <p class="note warn" id="detOther" hidden></p>
+    <button class="btn primary big" id="detEnter"></button>
+    <div id="detNext" hidden>
+      <div class="next"><b id="detNextLbl"></b><span id="detNextVs"></span></div>
+      <div class="modes">
+        <button class="mode play" id="detPlay"><b data-i18n="play">Gioca</b><span data-i18n="playDesc"></span></button>
+        <button class="mode coach" id="detCoach"><b data-i18n="coachMode">Allena</b><span data-i18n="coachDesc"></span></button>
+      </div>
+      <button class="btn small" id="detWithdraw"></button>
+    </div>
+    <p class="result" id="detResult" hidden></p>
+    <div id="detDrawWrap" hidden><h3 data-i18n="draw">Tabellone</h3><div class="drawbox" id="detDraw"></div></div>
+  </div>
+  <div class="card" id="cardResult" hidden>
+    <div class="res-big"></div>
+    <div class="res-score"></div>
+    <p class="res-vs"></p>
+    <p class="res-msg"></p>
+    <div class="grid2"><button class="btn primary" id="resCont" data-i18n="cont">Continua</button><button class="btn primary" id="resRematch" data-i18n="rematch">Rivincita</button><button class="btn" id="resMenu" data-i18n="menu">Menu</button></div>
   </div>
 </div>
 
@@ -496,8 +610,8 @@ function haptic(pattern = 12) {
   }, { passive: false });
   document.addEventListener('touchmove', (e) => {
     if (e.touches.length > 1) { e.preventDefault(); return; }
-    const sc = e.target.closest?.('#panel, input[type=range]');
-    if (!sc || (sc.id === 'panel' && sc.scrollHeight <= sc.clientHeight + 1)) e.preventDefault();
+    const sc = e.target.closest?.('#panel, .card, input[type=range]');
+    if (!sc || (sc.type !== 'range' && sc.scrollHeight <= sc.clientHeight + 1)) e.preventDefault();
   }, { passive: false });
   document.addEventListener('contextmenu', (e) => { if (!e.target.closest?.('input')) e.preventDefault(); });
 })();
@@ -514,7 +628,7 @@ const STR_LANGS = ['it', 'en'];
 const settings = {
   pixel: true, pixelSize: 2, outline: true, dither: true,
   time: 'day', view: 'tv', level: 'normal', autoHit: true, sound: false,
-  surface: 'blue', speed: '1', mode: 'arcade', haptics: true,
+  surface: 'blue', speed: '1', mode: 'arcade', haptics: true, venue: 'milano', matchLen: 'set1', deuce: 'golden',
   lang: /^it\b/i.test(navigator.language || 'it') ? 'it' : 'en', names: ['', '', '', ''],
 };
 try {
@@ -553,8 +667,8 @@ const STR = {
     secView: 'Vista', camera: 'Camera', vCourt: 'Campo', vRoof: 'Terrazza', rotZoom: 'Ruota, zoom',
     rotL: 'Ruota a sinistra', rotR: 'Ruota a destra', zoomOut: 'Allontana', zoomIn: 'Avvicina', camReset: 'Reimposta la camera',
     optOutline: 'Contorni', optDither: 'Retino', optSound: 'Suono', optAuto: 'Colpo automatico', optHaptic: 'Vibrazione',
-    secLang: 'Lingua', startEyebrow: 'Terrazza Open · Milano',
-    startIntro: 'Padel 2 contro 2 su un tetto di Milano. Dopo il rimbalzo la palla può toccare i vetri e restare in gioco. Sullo sfondo gira una partita dimostrativa.',
+    secLang: 'Lingua', startEyebrow: 'Padel in pixel art',
+    startIntro: 'Padel 2 contro 2 su otto terrazze nel mondo. Dopo il rimbalzo la palla può toccare i vetri e restare in gioco. Sullo sfondo gira una partita dimostrativa.',
     playDesc: 'Muovi il giocatore con la freccia gialla; il compagno lo guida il computer.',
     coachDesc: 'La partita va da sola: tu dai gli ordini alla tua coppia.',
     startHint: 'Su iPhone: Condividi › Aggiungi alla schermata Home per giocare a schermo intero.',
@@ -586,7 +700,40 @@ const STR = {
     pauseSmall: 'Premi P o Riprendi per continuare', pauseSmallTouch: 'Tocca Riprendi per continuare',
     goPlay: 'Si gioca!', goPlaySmall: 'Servi con J o Spazio', goPlaySmallTouch: 'Servi con Colpo',
     goCoach: 'Allena la tua coppia', goCoachBar: 'Ordini dalla barra in basso', goCoachPanel: 'Ordini dal pannello Allenatore',
-    welcome: 'Benvenuti alla finale del Terrazza Open: {a} contro {b}.',
+    welcome: 'Benvenuti al {n}: {a} contro {b}.', welcomeR: '{r} del {n}: {a} contro {b}.',
+    centreCourt: 'Campo centrale', arcade: 'Arcade', arcadeDesc: 'Partita singola: scegli lo stadio e il formato.',
+    tourMode: 'Torneo', tourDesc: 'Il circuito: 8 tornei con le regole ufficiali.', back: 'Indietro', stadium: 'Stadio',
+    matchLen: 'Durata', lenMini: 'Mini set', lenSet1: '1 set', lenSet3: '3 set', deuceLbl: 'Sul 40-40',
+    dAdv: 'Vantaggi', dGolden: 'Punto d\'oro', dStar: 'Star point',
+    deuceNote: {
+      adv: 'Sul 40-40 si gioca il vantaggio: per vincere il game servono due punti di fila.',
+      golden: 'Sul 40-40 punto d\'oro: il punto successivo decide il game e chi riceve sceglie il lato.',
+      star: 'Sul 40-40 star point: si giocano due vantaggi; al terzo 40-40 il punto successivo decide il game.',
+    },
+    fmtSets: { 6: 'Set a 6 game con 2 di scarto, tie-break sul 6-6.', 4: 'Mini set a 4 game con 2 di scarto, tie-break sul 4-4.' },
+    fmtDecider: { one: 'Un set solo.', set: 'Al meglio di 3 set.', stb10: 'Due set; sull\'1-1 super tie-break a 10 punti.', tb7: 'Due set; sull\'1-1 match tie-break a 7 punti.' },
+    fmtTb: 'Tie-break a 7 punti con 2 di scarto: chi inizia serve un punto, poi si servono due punti a testa.',
+    vd: {
+      milano: 'Tetto in città, tra il Duomo e i grattacieli.', roma: 'Terrazza tra pini e cipressi, con la cupola sullo sfondo.',
+      napoli: 'Sul golfo, con il vulcano di fronte.', cortina: 'Sulla neve, tra le guglie delle Dolomiti.',
+      barcellona: 'Davanti alla spiaggia, tra palme e ombrelloni.', buenosaires: 'Case colorate e jacarande in fiore.',
+      dubai: 'In cima a un grattacielo, di sera.', parigi: 'Tetti di zinco e la torre di ferro sul fiume.',
+    },
+    tourTitle: 'Circuito', rankPts: 'Punti ranking: {p}', titlesN: 'Titoli: {n}', pairsN: '{n} coppie',
+    groupsFmt: 'Due gironi all\'italiana da 4 coppie; le prime due di ogni girone vanno in semifinale.',
+    locked: 'Si sblocca con {p} punti ranking', best: 'Migliore: {r}',
+    res: { W: 'Vinto', F: 'Finale', SF: 'Semifinale', QF: 'Quarti', R16: 'Ottavi', RR: 'Gironi' },
+    rounds: { R16: 'Ottavi di finale', QF: 'Quarti di finale', SF: 'Semifinale', F: 'Finale' },
+    roundsIn: { R16: 'agli ottavi', QF: 'ai quarti', SF: 'in semifinale', F: 'in finale', RR: 'nei gironi' },
+    groupDay: 'Girone {g} · giornata {d}', groupLbl: 'Girone {g}', rules: 'Regole', draw: 'Tabellone',
+    tOfficial: 'Ufficiale', tFast: 'Rapida', fastNote: 'Rapida: mini set a 4 game e super tie-break a 10 sull\'1-1, formato previsto dal regolamento FIP.',
+    enter: 'Iscriviti', restart: 'Rigioca il torneo', withdraw: 'Ritirati', withdrawSure: 'Tocca ancora per ritirarti',
+    otherRunning: 'Hai un torneo in corso a {c}: se ti iscrivi qui, quello si chiude.', nextMatch: 'Prossimo match: {r}', vsPair: 'contro {t}',
+    tbd: 'da definire', champions: 'Il torneo lo vincono {t}.', outIn: 'Eliminati {r}. +{p} punti ranking.', wonTour: 'Campioni! +{p} punti ranking.',
+    through: 'Passate al turno successivo: {r}.', groupNext: 'Avanti con il girone: giornata {d}.', groupOut: 'Fuori ai gironi. +{p} punti ranking.', groupThrough: 'Passate il girone: si va in semifinale.',
+    resWin: 'Vittoria!', resLoss: 'Sconfitta', resIn: 'Contro {t}', cont: 'Continua', rematch: 'Rivincita', menu: 'Menu', resumeMatch: 'Riprendi il match',
+    matchTo: 'Partita a {t}!', tbLbl: 'tie-break', mtbLbl: 'match tie-break', stbLbl: 'super tie-break', goldLbl: 'punto d\'oro', starLbl: 'star point',
+    beat: 'b.', setPt: 'set point', matchPt: 'match point', winsCol: 'V', setsCol: 'Set', inTour: 'nel torneo',
     screen: ['BENVENUTI', 'TERRAZZA OPEN'], updated: 'Nuova versione pronta: riapri il gioco per usarla.',
   },
   en: {
@@ -614,8 +761,8 @@ const STR = {
     secView: 'View', camera: 'Camera', vCourt: 'Court', vRoof: 'Rooftop', rotZoom: 'Rotate, zoom',
     rotL: 'Rotate left', rotR: 'Rotate right', zoomOut: 'Zoom out', zoomIn: 'Zoom in', camReset: 'Reset the camera',
     optOutline: 'Outlines', optDither: 'Dither', optSound: 'Sound', optAuto: 'Auto hit', optHaptic: 'Vibration',
-    secLang: 'Language', startEyebrow: 'Terrazza Open · Milan',
-    startIntro: '2 vs 2 padel on a Milan rooftop. After the bounce the ball can hit the glass and stay in play. A demo match is running in the background.',
+    secLang: 'Language', startEyebrow: 'Pixel-art padel',
+    startIntro: '2 vs 2 padel on eight rooftops around the world. After the bounce the ball can hit the glass and stay in play. A demo match is running in the background.',
     playDesc: 'Move the player with the yellow arrow; the computer plays your partner.',
     coachDesc: 'The match plays itself: you give orders to your pair.',
     startHint: 'On iPhone: Share › Add to Home Screen to play full screen.',
@@ -647,7 +794,40 @@ const STR = {
     pauseSmall: 'Press P or Resume to continue', pauseSmallTouch: 'Tap Resume to continue',
     goPlay: 'Let\'s play!', goPlaySmall: 'Serve with J or Space', goPlaySmallTouch: 'Serve with Hit',
     goCoach: 'Coach your pair', goCoachBar: 'Orders from the bottom bar', goCoachPanel: 'Orders from the Coach panel',
-    welcome: 'Welcome to the Terrazza Open final: {a} against {b}.',
+    welcome: 'Welcome to the {n}: {a} against {b}.', welcomeR: '{r} of the {n}: {a} against {b}.',
+    centreCourt: 'Centre Court', arcade: 'Arcade', arcadeDesc: 'Single match: pick the stadium and the format.',
+    tourMode: 'Tournament', tourDesc: 'The tour: 8 tournaments with the official rules.', back: 'Back', stadium: 'Stadium',
+    matchLen: 'Length', lenMini: 'Mini set', lenSet1: '1 set', lenSet3: 'Best of 3', deuceLbl: 'At 40-40',
+    dAdv: 'Advantage', dGolden: 'Golden point', dStar: 'Star point',
+    deuceNote: {
+      adv: 'At 40-40 you play advantage: you need two points in a row to win the game.',
+      golden: 'At 40-40 golden point: the next point decides the game and the receiving pair picks the side.',
+      star: 'At 40-40 star point: two advantages are played; at the third 40-40 the next point decides the game.',
+    },
+    fmtSets: { 6: 'Sets of 6 games won by 2, tie-break at 6-6.', 4: 'Mini sets of 4 games won by 2, tie-break at 4-4.' },
+    fmtDecider: { one: 'One set only.', set: 'Best of 3 sets.', stb10: 'Two sets; at one set all, a super tie-break to 10.', tb7: 'Two sets; at one set all, a match tie-break to 7.' },
+    fmtTb: 'Tie-break to 7 points won by 2: the first server serves one point, then two each.',
+    vd: {
+      milano: 'A city rooftop between the cathedral and the towers.', roma: 'A terrace among pines and cypresses, the dome behind.',
+      napoli: 'On the bay, facing the volcano.', cortina: 'On the snow, among the Dolomite peaks.',
+      barcellona: 'By the beach, with palms and umbrellas.', buenosaires: 'Colourful houses and jacarandas in bloom.',
+      dubai: 'On top of a skyscraper, in the evening.', parigi: 'Zinc roofs and the iron tower by the river.',
+    },
+    tourTitle: 'Tour', rankPts: 'Ranking points: {p}', titlesN: 'Titles: {n}', pairsN: '{n} pairs',
+    groupsFmt: 'Two round-robin groups of 4 pairs; the top two of each group reach the semi-finals.',
+    locked: 'Unlocks at {p} ranking points', best: 'Best: {r}',
+    res: { W: 'Won', F: 'Final', SF: 'Semi-final', QF: 'Quarter-final', R16: 'Round of 16', RR: 'Groups' },
+    rounds: { R16: 'Round of 16', QF: 'Quarter-final', SF: 'Semi-final', F: 'Final' },
+    roundsIn: { R16: 'in the round of 16', QF: 'in the quarter-finals', SF: 'in the semi-finals', F: 'in the final', RR: 'in the groups' },
+    groupDay: 'Group {g} · match {d}', groupLbl: 'Group {g}', rules: 'Rules', draw: 'Draw',
+    tOfficial: 'Official', tFast: 'Quick', fastNote: 'Quick: 4-game mini sets and a super tie-break to 10 at one set all, a format the FIP rules allow.',
+    enter: 'Enter', restart: 'Play it again', withdraw: 'Withdraw', withdrawSure: 'Tap again to withdraw',
+    otherRunning: 'You have a tournament running in {c}: entering this one ends it.', nextMatch: 'Next match: {r}', vsPair: 'against {t}',
+    tbd: 'to be decided', champions: '{t} win the tournament.', outIn: 'Out {r}. +{p} ranking points.', wonTour: 'Champions! +{p} ranking points.',
+    through: 'Through to the next round: {r}.', groupNext: 'On with the group: match {d}.', groupOut: 'Out in the groups. +{p} ranking points.', groupThrough: 'Through the group: on to the semi-finals.',
+    resWin: 'You win!', resLoss: 'You lose', resIn: 'Against {t}', cont: 'Continue', rematch: 'Rematch', menu: 'Menu', resumeMatch: 'Resume the match',
+    matchTo: 'Match to {t}!', tbLbl: 'tie-break', mtbLbl: 'match tie-break', stbLbl: 'super tie-break', goldLbl: 'golden point', starLbl: 'star point',
+    beat: 'd.', setPt: 'set point', matchPt: 'match point', winsCol: 'W', setsCol: 'Sets', inTour: 'in the tournament',
     screen: ['WELCOME', 'TERRAZZA OPEN'], updated: 'New version ready: reopen the game to use it.',
   },
 };
@@ -799,7 +979,9 @@ const pixelArt = new PixelArt(renderer);
 /* Helpers                                                             */
 /* ================================================================== */
 function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
-const srand = mulberry32(20261110);
+let srand = mulberry32(20261110);
+let WORLD = new THREE.Group();
+scene.add(WORLD);
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 const rnd = (a = 0, b = 1) => a + Math.random() * (b - a);
 const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
@@ -812,7 +994,7 @@ function lam(color, flat = false) {
   if (!matCache.has(key)) matCache.set(key, new THREE.MeshLambertMaterial({ color, flatShading: flat }));
   return matCache.get(key);
 }
-function box(w, h, d, color, x = 0, y = 0, z = 0, parent = scene, opt = {}) {
+function box(w, h, d, color, x = 0, y = 0, z = 0, parent = WORLD, opt = {}) {
   const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), opt.mat || lam(color));
   m.position.set(x, y, z);
   m.castShadow = opt.cast !== false; m.receiveShadow = opt.recv !== false;
@@ -838,7 +1020,7 @@ function textTex(text, { w = 512, h = 48, bg = '#f3eadb', fg = '#2a2233', font =
 function plane(w, h, mat, x, y, z, rx = 0, ry = 0) {
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat);
   m.position.set(x, y, z); m.rotation.set(rx, ry, 0); m.receiveShadow = true;
-  scene.add(m); return m;
+  WORLD.add(m); return m;
 }
 
 /* ================================================================== */
@@ -900,36 +1082,38 @@ function buildRoof() {
   // Grey paving with random lighter and darker slabs
   const pave = canvasTex(256, 256, (g, w, h) => {
     const T = 16, r = mulberry32(7);
-    g.fillStyle = '#a89d90'; g.fillRect(0, 0, w, h);
+    const pv = VEN.pave;
+    g.fillStyle = pv[0]; g.fillRect(0, 0, w, h);
     for (let i = 0; i < 150; i++) {
       const tw = 1 + Math.floor(r() * 3), th = 1 + Math.floor(r() * 2);
-      const k = r(); g.fillStyle = k < 0.42 ? '#c9bfae' : k < 0.84 ? '#8e8478' : '#d9cfbc';
+      const k = r(); g.fillStyle = k < 0.42 ? pv[1] : k < 0.84 ? pv[2] : pv[3];
       g.fillRect(Math.floor(r() * 16) * T, Math.floor(r() * 16) * T, tw * T, th * T);
     }
   }, { repeat: true });
   pave.repeat.set(ROOF_W / 16, ROOF_L / 16);
-  const edge = lam(0x9c8b74);
+  if (VEN.paveDeco) VEN.paveDeco(pave);
+  const edge = lam(VEN.edge);
   const slab = new THREE.Mesh(new THREE.BoxGeometry(ROOF_W, 0.5, ROOF_L), [edge, edge, new THREE.MeshLambertMaterial({ map: pave }), edge, edge, edge]);
-  slab.position.y = -0.25; slab.receiveShadow = true; scene.add(slab);
+  slab.position.y = -0.25; slab.receiveShadow = true; WORLD.add(slab);
   const bodyH = -0.5 - STREET_Y;
-  const body = new THREE.Mesh(scaledBox(ROOF_W, bodyH, ROOF_L), makeFacadeMaterial('#e0b878'));
-  body.position.y = STREET_Y + bodyH / 2; body.receiveShadow = true; scene.add(body);
+  const body = new THREE.Mesh(scaledBox(ROOF_W, bodyH, ROOF_L), VEN.bodyMat ? VEN.bodyMat() : makeFacadeMaterial(VEN.body));
+  body.position.y = STREET_Y + bodyH / 2; body.receiveShadow = true; WORLD.add(body);
   // Apron around the court, same family of colour as the court
   apronMat = new THREE.MeshLambertMaterial({ color: SURFACES[settings.surface].apron });
   plane(APRON_W * 2, APRON_L * 2, apronMat, 0, 0.012, 0, -Math.PI / 2);
   // Cream walkways
-  const path = canvasTex(32, 32, (g, w, h) => { g.fillStyle = '#dfd3b5'; g.fillRect(0, 0, w, h); g.fillStyle = '#cbbd9c'; g.fillRect(0, 0, w, 1); g.fillRect(0, 0, 1, h); g.fillRect(0, 16, w, 1); g.fillRect(16, 0, 1, h); }, { repeat: true });
+  const path = canvasTex(32, 32, (g, w, h) => { g.fillStyle = VEN.path[0]; g.fillRect(0, 0, w, h); g.fillStyle = VEN.path[1]; g.fillRect(0, 0, w, 1); g.fillRect(0, 0, 1, h); g.fillRect(0, 16, w, 1); g.fillRect(16, 0, 1, h); }, { repeat: true });
   for (const [x, z, w, l] of [[-16.5, 0, 3, ROOF_L - 1], [2.5, -16.5, 35, 3], [2.5, 16.5, 35, 3]]) plane(w, l, new THREE.MeshLambertMaterial({ map: repTex(path, w / 2, l / 2) }), x, 0.013, z, -Math.PI / 2);
   // Lawns in two-tone squares
-  const grassTex = canvasTex(32, 32, (g, w, h) => { g.fillStyle = '#3b8a4c'; g.fillRect(0, 0, w, h); g.fillStyle = '#4b9d5a'; g.fillRect(0, 0, 16, 16); g.fillRect(16, 16, 16, 16); }, { repeat: true });
+  const grassTex = canvasTex(32, 32, (g, w, h) => { g.fillStyle = VEN.lawn[0]; g.fillRect(0, 0, w, h); g.fillStyle = VEN.lawn[1]; g.fillRect(0, 0, 16, 16); g.fillRect(16, 16, 16, 16); }, { repeat: true });
   for (const [x, z, w, l] of GRASS) plane(w, l, new THREE.MeshLambertMaterial({ map: repTex(grassTex, w / 4, l / 4) }), x, 0.011, z, -Math.PI / 2);
-  const pc = 0xe3d7c3, cap = 0xf3eadb;
+  const [pc, cap] = VEN.parapet;
   box(ROOF_W, 0.8, 0.35, pc, 0, 0.4, -ROOF_L / 2 + 0.175); box(ROOF_W, 0.8, 0.35, pc, 0, 0.4, ROOF_L / 2 - 0.175);
   box(0.35, 0.8, ROOF_L, pc, -ROOF_W / 2 + 0.175, 0.4, 0); box(0.35, 0.8, ROOF_L, pc, ROOF_W / 2 - 0.175, 0.4, 0);
-  box(ROOF_W + 0.1, 0.08, 0.45, cap, 0, 0.84, -ROOF_L / 2 + 0.175, scene, { cast: false });
-  box(ROOF_W + 0.1, 0.08, 0.45, cap, 0, 0.84, ROOF_L / 2 - 0.175, scene, { cast: false });
-  box(0.45, 0.08, ROOF_L, cap, -ROOF_W / 2 + 0.175, 0.84, 0, scene, { cast: false });
-  box(0.45, 0.08, ROOF_L, cap, ROOF_W / 2 - 0.175, 0.84, 0, scene, { cast: false });
+  box(ROOF_W + 0.1, 0.08, 0.45, cap, 0, 0.84, -ROOF_L / 2 + 0.175, WORLD, { cast: false });
+  box(ROOF_W + 0.1, 0.08, 0.45, cap, 0, 0.84, ROOF_L / 2 - 0.175, WORLD, { cast: false });
+  box(0.45, 0.08, ROOF_L, cap, -ROOF_W / 2 + 0.175, 0.84, 0, WORLD, { cast: false });
+  box(0.45, 0.08, ROOF_L, cap, ROOF_W / 2 - 0.175, 0.84, 0, WORLD, { cast: false });
 }
 
 const speedBoard = { tex: null, canvas: null };
@@ -943,18 +1127,17 @@ function drawSpeed(kmh) {
   g.fillStyle = '#f3eadb'; g.font = '500 22px "Pixelify Sans", monospace'; g.textAlign = 'left'; g.fillText('km/h', 160, 56);
   speedBoard.tex.needsUpdate = true;
 }
-const SPONSORS = ['CAFFÈ DEL TETTO', 'BANCA NAVIGLI', 'TRAM 1928', 'OTTICA BRERA', 'GELATERIA LAMBRO', 'ACQUA DEL DUOMO'];
 const boardTex = (t) => textTex(t, { w: 256, h: 48, bg: '#1d2a44', fg: '#f3eadb', font: '700 24px "Pixelify Sans", monospace' });
 
 function buildCourt() {
-  box(HW * 2 + 1.2, 0.06, HL * 2 + 1.2, 0x55606e, 0, 0.03, 0, scene, { cast: false });
+  box(HW * 2 + 1.2, 0.06, HL * 2 + 1.2, 0x55606e, 0, 0.03, 0, WORLD, { cast: false });
   turfMat = new THREE.MeshLambertMaterial({ map: turfTexture(settings.surface) });
   plane(HW * 2, HL * 2, turfMat, 0, 0.065, 0, -Math.PI / 2);
 
   const glassMat = new THREE.MeshLambertMaterial({ color: 0xc6ecf4, transparent: true, opacity: 0.18, depthWrite: false, side: THREE.DoubleSide });
   const addGlass = (w, h, d, x, y, z) => {
     const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), glassMat);
-    m.position.set(x, y, z); m.renderOrder = 2; scene.add(m); pixelArt.hideInNormalPass.push(m);
+    m.position.set(x, y, z); m.renderOrder = 2; WORLD.add(m); pixelArt.hideInNormalPass.push(m);
   };
   for (const s of [-1, 1]) {
     addGlass(HW * 2, BACK_GLASS_H, 0.04, 0, BACK_GLASS_H / 2 + 0.06, s * HL);
@@ -969,7 +1152,7 @@ function buildCourt() {
   const addMesh = (w, h, x, y, z, rotY) => {
     const t = meshTex.clone(); t.needsUpdate = true; t.repeat.set(w * 2, h * 2);
     const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshLambertMaterial({ map: t, transparent: true, depthWrite: false, side: THREE.DoubleSide }));
-    m.position.set(x, y, z); m.rotation.y = rotY; m.renderOrder = 1; scene.add(m); pixelArt.hideInNormalPass.push(m);
+    m.position.set(x, y, z); m.rotation.y = rotY; m.renderOrder = 1; WORLD.add(m); pixelArt.hideInNormalPass.push(m);
   };
   const frame = 0x23272f;
   for (const s of [-1, 1]) {
@@ -988,7 +1171,7 @@ function buildCourt() {
       box(0.09, 0.07, 2, frame, sx * HW, BACK_H + 0.06, s * 9);
     }
   }
-  const ads = [['TERRAZZA OPEN · MILANO', '#8c3a26', '#f3eadb'], ['CAFFÈ DEL TETTO', '#e98a2f', '#2a2233'], ['BANCA NAVIGLI', '#1f7a6c', '#f3eadb'], ['GELATERIA LAMBRO', '#f3eadb', '#c2412d']];
+  const ads = VEN.ads;
   for (const s of [-1, 1]) {
     const m = plane(HW * 2 - 0.4, 0.42, new THREE.MeshLambertMaterial({ map: textTex(ads[0][0], { bg: ads[0][1], fg: ads[0][2] }) }), 0, 0.32, s * (HL - 0.04), 0, s > 0 ? Math.PI : 0);
     m.receiveShadow = false;
@@ -1003,7 +1186,7 @@ function buildCourt() {
   netTex.repeat.set(40, 4);
   const net = plane(HW * 2, NET_H - 0.08, new THREE.MeshLambertMaterial({ map: netTex, transparent: true, depthWrite: false, side: THREE.DoubleSide }), 0, (NET_H - 0.08) / 2 + 0.07, 0);
   pixelArt.hideInNormalPass.push(net);
-  box(HW * 2, 0.13, 0.05, 0xf4f4f0, 0, NET_H + 0.02, 0, scene, { cast: false });
+  box(HW * 2, 0.13, 0.05, 0xf4f4f0, 0, NET_H + 0.02, 0, WORLD, { cast: false });
   for (const sx of [-1, 1]) box(0.16, NET_POST_H + 0.1, 0.16, frame, sx * (HW + 0.05), (NET_POST_H + 0.1) / 2 + 0.06, 0);
 
   // Floodlight towers at the corners of the apron
@@ -1015,61 +1198,61 @@ function buildCourt() {
   box(0.95, 0.1, 0.95, white, ux, 2.0, 0); box(0.1, 0.8, 0.95, white, ux + 0.45, 2.45, 0);
   for (const dz of [-0.4, 0.4]) { box(0.08, 0.5, 0.08, white, ux - 0.4, 2.3, dz); box(0.6, 0.06, 0.08, white, ux - 0.1, 2.55, dz); }
   for (const dz of [-0.4, 0.4]) for (const dx of [-0.4, 0.4]) box(0.08, 2.0, 0.08, white, ux + dx, 1.0, dz);
-  for (const y of [0.6, 1.3]) for (const dz of [-0.4, 0.4]) box(0.9, 0.05, 0.06, white, ux, y, dz, scene, { cast: false });
+  for (const y of [0.6, 1.3]) for (const dz of [-0.4, 0.4]) box(0.9, 0.05, 0.06, white, ux, y, dz, WORLD, { cast: false });
   for (const dz of [-0.3, 0.3]) { const r = box(0.06, 2.2, 0.06, white, ux - 0.75, 1.0, dz); r.rotation.z = -0.3; }
-  for (let y = 0.35; y < 2; y += 0.4) box(0.06, 0.05, 0.6, white, ux - 0.47 - (2 - y) * 0.15, y, 0, scene, { cast: false });
+  for (let y = 0.35; y < 2; y += 0.4) box(0.06, 0.05, 0.6, white, ux - 0.47 - (2 - y) * 0.15, y, 0, WORLD, { cast: false });
   const ump = makePerson({ shirt: 0x1d2a44, shorts: 0x1d2a44, racket: null, scale: 1.1, cap: 0xf3eadb });
   ump.position.set(ux, 1.45, 0); ump.rotation.y = Math.PI / 2;
   ump.userData.legL.rotation.x = ump.userData.legR.rotation.x = Math.PI / 2;
-  scene.add(ump);
+  WORLD.add(ump);
   // Speed board on a post in front of the grandstand boards
   speedBoard.canvas = document.createElement('canvas'); speedBoard.canvas.width = 256; speedBoard.canvas.height = 96;
   speedBoard.tex = new THREE.CanvasTexture(speedBoard.canvas); speedBoard.tex.colorSpace = THREE.SRGBColorSpace;
   drawSpeed(0);
-  const sbG = new THREE.Group(); sbG.position.set(APRON_W - 0.25, 0, 3.5); sbG.rotation.y = -Math.PI / 2; scene.add(sbG);
+  const sbG = new THREE.Group(); sbG.position.set(APRON_W - 0.25, 0, 3.5); sbG.rotation.y = -Math.PI / 2; WORLD.add(sbG);
   box(0.12, 2.2, 0.12, frame, 0, 1.1, -0.1, sbG);
   box(2.0, 0.85, 0.15, 0x15121b, 0, 2.55, -0.05, sbG);
   const sb = new THREE.Mesh(new THREE.PlaneGeometry(1.9, 0.75), new THREE.MeshBasicMaterial({ map: speedBoard.tex }));
   sb.position.set(0, 2.55, 0.04); sbG.add(sb);
   // Tournament name painted on the apron: along the near side and across both ends
-  const big = canvasTex(1024, 128, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = '#f3eadb'; g.font = '700 104px "Pixelify Sans", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('TERRAZZA OPEN', w / 2, h / 2 + 6); });
+  const big = canvasTex(1024, 128, (g, w, h) => { g.clearRect(0, 0, w, h); g.fillStyle = '#f3eadb'; g.font = '700 104px "Pixelify Sans", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(VEN.paint, w / 2, h / 2 + 6); });
   const paint = (w, h, x, z, rz) => {
     const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshLambertMaterial({ map: big, transparent: true, depthWrite: false }));
-    m.rotation.set(-Math.PI / 2, 0, rz); m.position.set(x, 0.022, z); m.receiveShadow = true; scene.add(m); pixelArt.hideInNormalPass.push(m);
+    m.rotation.set(-Math.PI / 2, 0, rz); m.position.set(x, 0.022, z); m.receiveShadow = true; WORLD.add(m); pixelArt.hideInNormalPass.push(m);
   };
   paint(13, 2.1, 0, 12.9, Math.PI); paint(13, 2.1, 0, -12.9, 0);
   // Tall dark green boards across both ends of the apron
-  const endTex = (t) => textTex(t, { w: 512, h: 64, bg: '#1f5136', fg: '#f3eadb', font: '700 40px "Fraunces", Georgia, serif' });
+  const endTex = (t) => textTex(t, { w: 512, h: 64, bg: VEN.endBg, fg: VEN.endFg || '#f3eadb', font: '700 40px "Fraunces", Georgia, serif' });
   for (const s of [-1, 1]) for (let i = 0; i < 4; i++) {
     const x = -6.3 + i * 4.2, z = s * (APRON_L + 0.12);
-    box(4.15, 1.3, 0.14, 0x1f5136, x, 0.65, z);
-    box(4.15, 0.08, 0.2, 0xe9e4d8, x, 1.33, z, scene, { cast: false });
-    plane(4.0, 1.0, new THREE.MeshLambertMaterial({ map: endTex(i % 2 ? 'TERRAZZA' : 'OPEN · MILANO') }), x, 0.65, z - s * 0.08, 0, s > 0 ? Math.PI : 0);
+    box(4.15, 1.3, 0.14, new THREE.Color(VEN.endBg).getHex(), x, 0.65, z);
+    box(4.15, 0.08, 0.2, 0xe9e4d8, x, 1.33, z, WORLD, { cast: false });
+    plane(4.0, 1.0, new THREE.MeshLambertMaterial({ map: endTex(VEN.ends[i % 2]) }), x, 0.65, z - s * 0.08, 0, s > 0 ? Math.PI : 0);
   }
   // TV cameraman on the near end and ball baskets on the near side
   const camMan = makePerson({ shirt: 0x2a2f3a, shorts: 0x2a2f3a, racket: null, scale: 1.1, cap: 0x2a2f3a });
-  camMan.position.set(-7.4, 0, 12.4); camMan.rotation.y = Math.PI * 0.75; scene.add(camMan);
+  camMan.position.set(-7.4, 0, 12.4); camMan.rotation.y = Math.PI * 0.75; WORLD.add(camMan);
   box(0.35, 0.35, 0.7, 0x1b1d24, -7.15, 1.7, 12.15).rotation.y = Math.PI * 0.75;
   for (const z of [-2.4, 2.4]) {
     for (const dx of [-0.2, 0.2]) box(0.05, 0.7, 0.05, 0xc9ccd2, -6.6 + dx, 0.35, z);
     box(0.55, 0.4, 0.55, 0xc9ccd2, -6.6, 0.85, z);
-    box(0.48, 0.12, 0.48, 0xd9f24a, -6.6, 1.06, z, scene, { cast: false });
+    box(0.48, 0.12, 0.48, 0xd9f24a, -6.6, 1.06, z, WORLD, { cast: false });
   }
   // Line judges and ball kids
   const seated = (x, z, rotY) => {
     box(0.5, 0.06, 0.5, 0x23272f, x, 0.5, z); box(0.06, 0.5, 0.06, 0x23272f, x, 0.25, z);
     const p = makePerson({ shirt: 0x1d2a44, shorts: 0x1d2a44, racket: null, scale: 1.1, cap: 0xf3eadb });
-    p.position.set(x, 0.05, z); p.rotation.y = rotY; p.userData.legL.rotation.x = p.userData.legR.rotation.x = Math.PI / 2; scene.add(p);
+    p.position.set(x, 0.05, z); p.rotation.y = rotY; p.userData.legL.rotation.x = p.userData.legR.rotation.x = Math.PI / 2; WORLD.add(p);
   };
   for (const s of [-1, 1]) { seated(-7.6, s * 6.5, -Math.PI / 2); seated(7.4, s * 6.5, Math.PI / 2); seated(s * 7.4, 14.7, 0); seated(s * 7.4, -14.7, Math.PI); }
-  const kid = (x, z, rotY) => { const p = makePerson({ shirt: 0xe98a2f, shorts: 0x1d2a44, racket: null, scale: 0.95, cap: 0xe98a2f }); p.position.set(x, 0, z); p.rotation.y = rotY; scene.add(p); };
+  const kid = (x, z, rotY) => { const p = makePerson({ shirt: 0xe98a2f, shorts: 0x1d2a44, racket: null, scale: 0.95, cap: 0xe98a2f }); p.position.set(x, 0, z); p.rotation.y = rotY; WORLD.add(p); };
   kid(5.7, 0.9, Math.PI / 2); kid(-5.7, -0.9, -Math.PI / 2);
   for (const sx of [-1, 1]) { kid(sx * 3.2, 10.8, 0); kid(sx * 3.2, -10.8, Math.PI); }
 }
 
 function buildTower(x, z, lampMat) {
   const H = 12, w = 0.9, steel = 0x464b5e;
-  const g = new THREE.Group(); g.position.set(x, 0, z); scene.add(g);
+  const g = new THREE.Group(); g.position.set(x, 0, z); WORLD.add(g);
   // Diagonal lattice strut down to the paving, away from the court
   const sx = Math.sign(x), sl = Math.hypot(5.5, 3.2);
   for (const f of [-1, 1]) { const st = box(0.09, sl, 0.09, steel, sx * 1.6, 2.75, f * w / 2, g); st.rotation.z = sx * Math.atan2(3.2, 5.5); }
@@ -1093,7 +1276,7 @@ function buildTower(x, z, lampMat) {
   box(1.4, 0.08, 1.2, steel, 0, H, 0, g);
   const spot = new THREE.SpotLight(0xfff0d0, 560, 0, 0.55, 0.5, 2);
   spot.position.set(x, H + 0.6, z); spot.target.position.set(x * 0.15, 0, z * 0.35);
-  scene.add(spot, spot.target); nightOnly.push(spot);
+  WORLD.add(spot, spot.target); nightOnly.push(spot);
 }
 
 /* Instanced crowd: body, head and hair boxes per spectator. */
@@ -1101,7 +1284,7 @@ const crowd = { list: [], body: null, head: null, hair: null, cheer: 0, cheerTea
 function addSpectator(x, y, z, standing = false) { crowd.list.push({ x, y, z, standing, phase: srand() * 6.28, team: srand() < 0.5 ? 0 : 1 }); }
 function finishCrowd() {
   const n = crowd.list.length;
-  const mk = (geo) => { const m = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color: 0xffffff }), n); m.castShadow = true; m.receiveShadow = true; scene.add(m); return m; };
+  const mk = (geo) => { const m = new THREE.InstancedMesh(geo, new THREE.MeshLambertMaterial({ color: 0xffffff }), n); m.castShadow = true; m.receiveShadow = true; WORLD.add(m); return m; };
   crowd.body = mk(new THREE.BoxGeometry(0.42, 0.5, 0.32));
   crowd.head = mk(new THREE.BoxGeometry(0.27, 0.27, 0.27));
   crowd.hair = mk(new THREE.BoxGeometry(0.29, 0.08, 0.29));
@@ -1131,26 +1314,26 @@ const umbTex = (a, b) => canvasTex(64, 8, (g, w, h) => { for (let i = 0; i < 8; 
 function umbrella(x, z, a, b, y0 = 0, r = 1.4) {
   box(0.06, 2.3, 0.06, 0x23272f, x, y0 + 1.15, z);
   const c = new THREE.Mesh(new THREE.ConeGeometry(r, 0.55, 8, 1, true), new THREE.MeshLambertMaterial({ map: umbTex(a, b), side: THREE.DoubleSide }));
-  c.position.set(x, y0 + 2.35, z); c.castShadow = true; scene.add(c);
+  c.position.set(x, y0 + 2.35, z); c.castShadow = true; WORLD.add(c);
 }
 
 function buildStands() {
-  const seatA = 0x8d94a3, seatB = 0xd9d4c7, conc = 0xcfc3ae;
+  const [seatA, seatB] = VEN.seats, conc = 0xcfc3ae;
   // Long covered grandstand on the far side, facing the court and the camera
   const rows = 12, rd = 0.8, rh = 0.45, x0 = APRON_W + 0.75, len = 27;
   for (let r = 0; r < rows; r++) {
     const x = x0 + r * rd + rd / 2, top = rh * (r + 1);
     box(rd, top, len, conc, x, top / 2, 0);
-    box(0.4, 0.14, len, r % 2 ? seatA : seatB, x + 0.12, top + 0.07, 0, scene, { cast: false });
+    box(0.4, 0.14, len, r % 2 ? seatA : seatB, x + 0.12, top + 0.07, 0, WORLD, { cast: false });
     for (let z = -len / 2 + 0.35; z < len / 2 - 0.3; z += 0.55) if (srand() > 0.06) addSpectator(x + 0.1, top, z + (srand() - 0.5) * 0.06);
   }
   const back = x0 + rows * rd, roofY = rows * rh + 2.6;
-  box(0.3, roofY + 0.2, len + 0.3, 0xb35a3a, back + 0.15, (roofY + 0.2) / 2, 0);
+  box(0.3, roofY + 0.2, len + 0.3, VEN.standWall, back + 0.15, (roofY + 0.2) / 2, 0);
   const L = Math.hypot(rows * rd, rows * rh), a = Math.atan2(rows * rh, rows * rd);
   for (const sz of [-1, 1]) { const rail = box(L, 0.9, 0.08, 0xf3f3ee, x0 + rows * rd / 2, rows * rh / 2 + 0.6, sz * (len / 2 + 0.05)); rail.rotation.z = a; }
   const panelW = 5.2, nP = 9, pw = (len + 0.6) / nP;
   for (let i = 0; i < nP; i++) {
-    const pnl = box(panelW, 0.14, pw - 0.06, i % 2 ? 0xaed6ee : 0xfdfcf8, back - panelW / 2 + 0.2, roofY + 0.35, -len / 2 - 0.3 + pw / 2 + i * pw);
+    const pnl = box(panelW, 0.14, pw - 0.06, i % 2 ? VEN.standRoof[0] : VEN.standRoof[1], back - panelW / 2 + 0.2, roofY + 0.35, -len / 2 - 0.3 + pw / 2 + i * pw);
     pnl.rotation.z = 0.1;
   }
   const xp = back - panelW + 0.5, py = rh * (Math.floor((xp - x0) / rd) + 1);
@@ -1161,26 +1344,25 @@ function buildStands() {
   for (let i = 0; i < nB; i++) {
     const z = -APRON_L + 1 + bw / 2 + i * bw, st = BOARD_STYLES[i % 4];
     box(0.14, 1.1, bw, 0x8d94a3, APRON_W + 0.12, 0.55, z);
-    box(0.24, 0.08, bw, 0xe9e4d8, APRON_W + 0.12, 1.12, z, scene, { cast: false });
-    plane(bw - 0.12, 0.95, new THREE.MeshLambertMaterial({ map: textTex(SPONSORS[i % 6], { w: 384, h: 112, bg: st[0], fg: st[1], font: '700 50px "Pixelify Sans", monospace' }) }), APRON_W + 0.04, 0.55, z, 0, -Math.PI / 2);
+    box(0.24, 0.08, bw, 0xe9e4d8, APRON_W + 0.12, 1.12, z, WORLD, { cast: false });
+    plane(bw - 0.12, 0.95, new THREE.MeshLambertMaterial({ map: textTex(VEN.sponsors[i % VEN.sponsors.length], { w: 384, h: 112, bg: st[0], fg: st[1], font: '700 50px "Pixelify Sans", monospace' }) }), APRON_W + 0.04, 0.55, z, 0, -Math.PI / 2);
   }
-  umbrella(x0 + 0.45, -4.5, '#ffffff', '#1f8a4c', rh, 1.0);
-  umbrella(x0 + 0.45, 7.5, '#ffffff', '#1f8a4c', rh, 1.0);
+  umbrella(x0 + 0.45, -4.5, '#ffffff', VEN.umbStand, rh, 1.0);
+  umbrella(x0 + 0.45, 7.5, '#ffffff', VEN.umbStand, rh, 1.0);
   finishCrowd();
 }
 
-function makeTree(x, z, s = 1) {
-  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); scene.add(g);
+function makeTree(x, z, s = 1, y = 0, greens = [0x2f7a34, 0x3a8a3a, 0x256b2c, 0x46993f]) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(s); WORLD.add(g);
   box(0.24, 1.6, 0.24, 0x6b4a2e, 0, 0.8, 0, g);
-  const greens = [0x2f7a34, 0x3a8a3a, 0x256b2c, 0x46993f];
   const geo = new THREE.IcosahedronGeometry(0.85, 0);
   [[0, 2.0, 0, 1.15], [0.5, 1.75, 0.25, 0.85], [-0.45, 1.8, -0.3, 0.9], [0.05, 2.6, 0.05, 0.8]].forEach(([dx, dy, dz, sc], i) => {
     const m = new THREE.Mesh(geo, lam(greens[(i + Math.floor(Math.abs(x * 7 + z))) & 3], true));
     m.position.set(dx, dy, dz); m.scale.setScalar(sc); m.rotation.set(srand() * 3, srand() * 3, 0); m.castShadow = true; g.add(m);
   });
 }
-function makePine(x, z, s = 1) {
-  const g = new THREE.Group(); g.position.set(x, 0, z); g.scale.setScalar(s); scene.add(g);
+function makePine(x, z, s = 1, y = 0) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(s); WORLD.add(g);
   box(0.25, 1.0, 0.25, 0x6b4a2e, 0, 0.5, 0, g);
   [[1.3, 1.6, 1.5], [1.0, 1.4, 2.5], [0.65, 1.2, 3.4]].forEach(([r, h, y]) => { const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 6), lam(0x1f5e33, true)); m.position.y = y; m.castShadow = true; g.add(m); });
 }
@@ -1188,7 +1370,7 @@ function addLoungeGuest(x, z) {
   const p = makePerson({ shirt: pick(SHIRTS), hair: pick(HAIR), skin: pick(SKIN), racket: null, scale: 1.1 });
   p.position.set(x, 0.12, z); p.rotation.y = srand() * 6.28;
   p.userData.legL.rotation.x = p.userData.legR.rotation.x = Math.PI / 2;
-  scene.add(p);
+  WORLD.add(p);
 }
 function buildProps() {
   // Wooden deck with café tables and striped umbrellas at the south end
@@ -1197,21 +1379,21 @@ function buildProps() {
   }, { repeat: true });
   wood.repeat.set(15, 4.5);
   plane(30, 9, new THREE.MeshLambertMaterial({ map: wood }), 0, 0.014, -23.5, -Math.PI / 2);
-  const cols = [['#ffffff', '#1f8a4c'], ['#c2412d', '#2f5fb3'], ['#ffffff', '#1f8a4c'], ['#ffd23a', '#ffffff'], ['#ffffff', '#c2412d']];
+  const cols = VEN.umbs;
   [[-10, -20.2], [-5, -22.6], [0, -20.2], [5, -22.6], [10, -20.2], [-7.5, -26], [-2.5, -26.4], [2.5, -26]].forEach(([x, z], i) => {
     box(0.9, 0.06, 0.9, 0xf3eadb, x, 0.74, z); box(0.1, 0.72, 0.1, 0x23272f, x, 0.37, z);
     for (const d of [-1, 1]) { box(0.45, 0.45, 0.45, 0xf3eadb, x + d * 0.85, 0.23, z); if (srand() < 0.7) addLoungeGuest(x + d * 0.85, z); }
     umbrella(x, z, cols[i % 5][0], cols[i % 5][1]);
   });
   // Bar kiosk
-  const bar = new THREE.Group(); bar.position.set(10.5, 0, -26.6); scene.add(bar);
+  const bar = new THREE.Group(); bar.position.set(10.5, 0, -26.6); WORLD.add(bar);
   box(4.4, 2.3, 2.4, 0x8a5a3c, 0, 1.15, 0, bar);
   box(4.6, 1.05, 0.5, 0xf3eadb, 0, 0.53, 1.45, bar);
   box(4.6, 0.08, 0.7, 0x5b3a26, 0, 1.08, 1.45, bar);
-  const stripes = umbTex('#f3eadb', '#c2412d'); stripes.wrapS = THREE.RepeatWrapping; stripes.repeat.set(3, 1);
+  const stripes = umbTex('#f3eadb', VEN.awning); stripes.wrapS = THREE.RepeatWrapping; stripes.repeat.set(3, 1);
   const awn = new THREE.Mesh(new THREE.BoxGeometry(4.8, 0.08, 1.6), new THREE.MeshLambertMaterial({ map: stripes }));
   awn.position.set(0, 2.4, 1.6); awn.rotation.x = 0.28; awn.castShadow = true; bar.add(awn);
-  const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.45), new THREE.MeshLambertMaterial({ map: textTex('BAR DEL TETTO', { w: 256, h: 40, bg: '#2a2233', fg: '#e98a2f', font: '700 26px "Pixelify Sans", monospace' }) }));
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.2, 0.45), new THREE.MeshLambertMaterial({ map: textTex(VEN.bar, { w: 256, h: 40, bg: '#2a2233', fg: '#e98a2f', font: '700 26px "Pixelify Sans", monospace' }) }));
   sign.position.set(0, 2.62, 1.22); bar.add(sign);
   // String lights over the deck
   const bulbMat = new THREE.MeshLambertMaterial({ color: 0xfff1c0, emissive: 0xffd27a, emissiveIntensity: 0 });
@@ -1225,15 +1407,15 @@ function buildProps() {
       _m4.makeTranslation(p0[0] + (p1[0] - p0[0]) * t, 3.25 - sag, p0[1] + (p1[1] - p0[1]) * t); bulbs.setMatrixAt(bi++, _m4);
     }
   }
-  bulbs.count = bi; scene.add(bulbs);
+  bulbs.count = bi; WORLD.add(bulbs);
   // Trees on the lawns
-  for (const [x, z, s] of [[-21, -10, 1.1], [-23.5, -3.5, 1], [-20.5, 3, 1.15], [-23, 9.5, 1], [-21, 13.5, 1.1], [-22, -24, 1.2], [-23, 21.5, 1.1], [22.5, 27, 1], [23, 8, 1.1], [23.3, -1, 1]]) makeTree(x, z, s);
-  for (const [x, z, s] of [[-23.5, -12.5, 1.1], [-20, -1, 1], [-24, 5, 1.2], [-20.5, 10.5, 1], [-23.5, -28, 1.2], [-20.5, -20, 1], [-21, 26, 1.2], [24.5, -29, 1.1], [23.5, 23.5, 1.2], [23, -8, 1.1], [24.2, 15, 1]]) makePine(x, z, s);
+  for (const [x, z, s] of [[-21, -10, 1.1], [-23.5, -3.5, 1], [-20.5, 3, 1.15], [-23, 9.5, 1], [-21, 13.5, 1.1], [-22, -24, 1.2], [-23, 21.5, 1.1], [22.5, 27, 1], [23, 8, 1.1], [23.3, -1, 1]]) VEN.trees[0](x, z, s);
+  for (const [x, z, s] of [[-23.5, -12.5, 1.1], [-20, -1, 1], [-24, 5, 1.2], [-20.5, 10.5, 1], [-23.5, -28, 1.2], [-20.5, -20, 1], [-21, 26, 1.2], [24.5, -29, 1.1], [23.5, 23.5, 1.2], [23, -8, 1.1], [24.2, 15, 1]]) VEN.trees[1](x, z, s);
   // Low clipped hedges along the lawn edges that face the walkways
-  const hedgeMat = lam(0x2a6b3a, true);
-  for (const [x, z, w, l] of GRASS) {
+  const hedgeMat = lam(VEN.hedge || 0x2a6b3a, true);
+  if (VEN.hedge !== null) for (const [x, z, w, l] of GRASS) {
     const ex = x > 0 ? x - w / 2 + 0.25 : x + w / 2 - 0.25;
-    const h = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.55, l - 1.2), hedgeMat); h.position.set(ex, 0.28, z); h.castShadow = h.receiveShadow = true; scene.add(h);
+    const h = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.55, l - 1.2), hedgeMat); h.position.set(ex, 0.28, z); h.castShadow = h.receiveShadow = true; WORLD.add(h);
   }
   // Denser grove on the outer lawns
   const gr = mulberry32(99);
@@ -1241,17 +1423,17 @@ function buildProps() {
     const side = i % 2 ? -1 : 1, x = side < 0 ? -24.6 + gr() * 4.2 : 22.2 + gr() * 3.0, z = -29 + gr() * 58;
     if (side > 0 && z < -15) continue;
     if (Math.abs(z + 16.5) < 1.8 || Math.abs(z - 16.5) < 1.8) continue;
-    (gr() < 0.5 ? makeTree : makePine)(x, z, 0.75 + gr() * 0.4);
+    (gr() < 0.5 ? VEN.trees[0] : VEN.trees[1])(x, z, 0.75 + gr() * 0.4);
   }
   // Lampposts along the walkways
   const lampGlow = new THREE.MeshLambertMaterial({ color: 0xfff4d6, emissive: 0xffd88a, emissiveIntensity: 0 });
   glowMats.push({ mat: lampGlow, day: 0.1, sunset: 0.8, night: 2.0 });
   const lamppost = (x, z) => {
     box(0.26, 0.35, 0.26, 0x1f232b, x, 0.17, z); box(0.1, 3.0, 0.1, 0x1f232b, x, 1.8, z);
-    box(0.34, 0.06, 0.34, 0x1f232b, x, 3.3, z, scene, { cast: false });
-    box(0.28, 0.42, 0.28, 0, x, 3.54, z, scene, { mat: lampGlow, cast: false });
-    for (const [dx, dz] of [[-0.14, -0.14], [0.14, -0.14], [-0.14, 0.14], [0.14, 0.14]]) box(0.04, 0.44, 0.04, 0x1f232b, x + dx, 3.54, z + dz, scene, { cast: false });
-    const cap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.26, 4), lam(0x1f232b)); cap.rotation.y = Math.PI / 4; cap.position.set(x, 3.88, z); cap.castShadow = true; scene.add(cap);
+    box(0.34, 0.06, 0.34, 0x1f232b, x, 3.3, z, WORLD, { cast: false });
+    box(0.28, 0.42, 0.28, 0, x, 3.54, z, WORLD, { mat: lampGlow, cast: false });
+    for (const [dx, dz] of [[-0.14, -0.14], [0.14, -0.14], [-0.14, 0.14], [0.14, 0.14]]) box(0.04, 0.44, 0.04, 0x1f232b, x + dx, 3.54, z + dz, WORLD, { cast: false });
+    const cap = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.26, 4), lam(0x1f232b)); cap.rotation.y = Math.PI / 4; cap.position.set(x, 3.88, z); cap.castShadow = true; WORLD.add(cap);
   };
   for (let z = -27; z <= 27; z += 6) lamppost(-14.7, z);
   for (const x of [-4, 4, 14]) { lamppost(x, -15.1); lamppost(x, 15.1); }
@@ -1262,10 +1444,11 @@ function buildProps() {
     box(0.9, 0.5, 2.2, 0xb5653d, x - 0.9, 0.25, z);
     for (let k = 0; k < 26 && fi < 160; k++) { _m4.makeTranslation(x - 0.9 + (srand() - 0.5) * 0.7, 0.56, z + (srand() - 0.5) * 2); flowers.setMatrixAt(fi, _m4); flowers.setColorAt(fi++, fc.setHex(pick([0xe86a92, 0xffc857, 0xffffff, 0xc2412d]))); }
   }
-  flowers.count = fi; scene.add(flowers);
+  flowers.count = fi; WORLD.add(flowers);
   // Fountain on the far lawn, picnic tables beside it
+  if (VEN.fountain === false) return;
   const stone = 0xd9d2c4, fx = 22.6, fz = -22.5;
-  const ring = (r, hgt, col, y) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, hgt, 20), lam(col)); m.position.set(fx, y, fz); m.castShadow = m.receiveShadow = true; scene.add(m); return m; };
+  const ring = (r, hgt, col, y) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r, hgt, 20), lam(col)); m.position.set(fx, y, fz); m.castShadow = m.receiveShadow = true; WORLD.add(m); return m; };
   ring(3.2, 0.06, 0xd8cdb5, 0.03); ring(2.6, 0.06, 0xc9bda3, 0.05);
   ring(2.1, 0.55, stone, 0.3); ring(1.85, 0.56, 0x5aa6d6, 0.31).castShadow = false;
   ring(0.35, 1.5, stone, 0.8); ring(0.95, 0.22, stone, 1.55); ring(0.8, 0.24, 0x7dbde3, 1.58).castShadow = false;
@@ -1279,24 +1462,25 @@ function buildProps() {
     box(0.5, 0.07, 2.4, 0x8a5a3c, -13.7, 0.45, z); box(0.07, 0.45, 2.4, 0x8a5a3c, -13.45, 0.7, z);
     for (const dz of [-1, 1]) box(0.45, 0.42, 0.08, 0x2a2f3a, -13.7, 0.21, z + dz);
   }
-  for (const [x, z] of [[-13.6, -6], [-13.6, 6], [-6, -16.9], [6, -16.9]]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.7, 8), lam(0x2f5e3a)); b.position.set(x, 0.35, z); b.castShadow = true; scene.add(b); }
+  for (const [x, z] of [[-13.6, -6], [-13.6, 6], [-6, -16.9], [6, -16.9]]) { const b = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 0.7, 8), lam(0x2f5e3a)); b.position.set(x, 0.35, z); b.castShadow = true; WORLD.add(b); }
 }
 
 function buildClub() {
   // Brick clubhouse with a slate roof at the north end, facing the court
-  const cz = 23, w = 24, d = 9, h = 7, front = cz - d / 2, trim = 0xeadfc8, slate = 0x56699a;
-  const body = new THREE.Mesh(scaledBox(w, h, d), makeFacadeMaterial('#a9553b'));
-  body.position.set(0, h / 2, cz); body.castShadow = body.receiveShadow = true; scene.add(body);
+  const C = VEN.club, cz = 23, w = 24, d = 9, h = 7, front = cz - d / 2, trim = C.trim, slate = C.roof;
+  const body = new THREE.Mesh(scaledBox(w, h, d), makeFacadeMaterial(C.facade));
+  body.position.set(0, h / 2, cz); body.castShadow = body.receiveShadow = true; WORLD.add(body);
   box(w + 0.3, 0.9, d + 0.3, trim, 0, 0.45, cz);
-  box(w + 0.1, 0.18, d + 0.1, trim, 0, 3.5, cz, scene, { cast: false });
+  box(w + 0.1, 0.18, d + 0.1, trim, 0, 3.5, cz, WORLD, { cast: false });
   box(w + 0.5, 0.35, d + 0.5, trim, 0, h + 0.17, cz);
   for (const sx of [-1, 1]) for (const sz of [-1, 1]) box(0.5, h, 0.5, trim, sx * w / 2, h / 2, cz + sz * d / 2);
+  if (C.style !== 'flat') {
   const sh = new THREE.Shape(); sh.moveTo(-(d + 0.6) / 2, 0); sh.lineTo((d + 0.6) / 2, 0); sh.lineTo(0, 3.6); sh.closePath();
   const roof = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: w + 0.6, bevelEnabled: false }), lam(slate, true));
-  roof.rotation.y = Math.PI / 2; roof.position.set(-(w + 0.6) / 2, h + 0.35, cz); roof.castShadow = true; roof.receiveShadow = true; scene.add(roof);
+  roof.rotation.y = Math.PI / 2; roof.position.set(-(w + 0.6) / 2, h + 0.35, cz); roof.castShadow = true; roof.receiveShadow = true; WORLD.add(roof);
   const ra = Math.atan2(3.6, (d + 0.6) / 2);
   for (let k = 1; k < 5; k++) for (const s of [-1, 1]) {
-    const t = k / 5, st = box(w + 0.62, 0.05, 0.1, 0x46588a, 0, h + 0.38 + t * 3.6, cz + s * (1 - t) * (d + 0.6) / 2, scene, { cast: false });
+    const t = k / 5, st = box(w + 0.62, 0.05, 0.1, C.ridge ?? 0x46588a, 0, h + 0.38 + t * 3.6, cz + s * (1 - t) * (d + 0.6) / 2, WORLD, { cast: false });
     st.rotation.x = s * ra;
   }
   for (const x of [-8.5, -4, 4, 8.5]) {
@@ -1305,23 +1489,27 @@ function buildClub() {
     box(1.6, 0.16, 1.8, slate, x, y + 1.05, z - 0.2);
     const win = plane(0.7, 0.75, lam(0x2c3550), x, y + 0.35, z - 0.96, 0, Math.PI); win.receiveShadow = false;
   }
-  for (const x of [-7, 7]) { box(0.8, 2.4, 0.8, 0xa9553b, x, h + 3.0, cz + 1.6); box(1.0, 0.18, 1.0, trim, x, h + 4.25, cz + 1.6); }
+  for (const x of [-7, 7]) { box(0.8, 2.4, 0.8, new THREE.Color(C.facade).getHex(), x, h + 3.0, cz + 1.6); box(1.0, 0.18, 1.0, trim, x, h + 4.25, cz + 1.6); }
+  if (C.snow) for (const s of [-1, 1]) { const sn = box(w + 0.7, 0.18, (d + 0.6) / 2 * 1.12, 0xf4f7fb, 0, h + 0.5 + 1.8, cz + s * (d + 0.6) / 4, WORLD, { cast: false }); sn.rotation.x = s * ra; }
+  }
   // Cream entrance block in the middle of the facade
-  const cream = 0xece2c8;
+  const cream = C.cream ?? 0xece2c8;
   box(8.4, h + 1.2, 1.6, cream, 0, (h + 1.2) / 2, front + 0.1);
   box(8.8, 0.3, 1.9, trim, 0, h + 1.35, front + 0.1);
-  for (const x of [-3.2, 3.2]) box(0.5, h + 1.2, 0.3, 0xd8ccb0, x, (h + 1.2) / 2, front - 0.72, scene, { cast: false });
+  for (const x of [-3.2, 3.2]) box(0.5, h + 1.2, 0.3, 0xd8ccb0, x, (h + 1.2) / 2, front - 0.72, WORLD, { cast: false });
   // Square clock tower with a pyramid slate roof
   const tz = cz - 1.0, tw = 3.4, tH = 7.2, tb = h + 0.4;
+  if (C.tower !== false) {
   box(tw, tH, tw, cream, 0, tb + tH / 2, tz);
   box(tw + 0.4, 0.35, tw + 0.4, trim, 0, tb + tH + 0.17, tz);
-  box(tw + 0.2, 0.25, tw + 0.2, trim, 0, tb + tH - 2.9, tz, scene, { cast: false });
+  box(tw + 0.2, 0.25, tw + 0.2, trim, 0, tb + tH - 2.9, tz, WORLD, { cast: false });
   const pyr = new THREE.Mesh(new THREE.ConeGeometry((tw + 0.6) * 0.72, 2.6, 4), lam(slate, true));
-  pyr.rotation.y = Math.PI / 4; pyr.position.set(0, tb + tH + 1.65, tz); pyr.castShadow = true; scene.add(pyr);
-  box(0.12, 0.9, 0.12, 0x2a2233, 0, tb + tH + 3.3, tz, scene, { cast: false });
+  pyr.rotation.y = Math.PI / 4; pyr.position.set(0, tb + tH + 1.65, tz); pyr.castShadow = true; WORLD.add(pyr);
+  box(0.12, 0.9, 0.12, 0x2a2233, 0, tb + tH + 3.3, tz, WORLD, { cast: false });
+  }
   // Big dark scoreboard screen on the left wing
   const scrDraw = (g, cw, ch) => {
-    const txt = tr('screen');
+    const txt = [tr('screen')[0], VEN.paint];
     g.fillStyle = '#121418'; g.fillRect(0, 0, cw, ch);
     g.fillStyle = '#1f2329'; for (let y = 0; y < ch; y += 4) g.fillRect(0, y, cw, 1);
     g.fillStyle = '#ffc94a'; g.font = '700 40px "Pixelify Sans", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
@@ -1331,6 +1519,7 @@ function buildClub() {
   window.__drawScreen = () => { const c = scr.image; scrDraw(c.getContext('2d'), c.width, c.height); scr.needsUpdate = true; };
   box(5.4, 3.0, 0.3, 0x23262d, -7.6, 4.3, front - 0.12);
   const sm = plane(5.0, 2.6, new THREE.MeshBasicMaterial({ map: scr }), -7.6, 4.3, front - 0.3, 0, Math.PI); sm.receiveShadow = false;
+  if (C.tower !== false) {
   const clock = canvasTex(64, 64, (g) => {
     g.fillStyle = '#f7f3ea'; g.beginPath(); g.arc(32, 32, 30, 0, 7); g.fill(); g.lineWidth = 3; g.strokeStyle = '#2a2233'; g.stroke();
     for (let i = 0; i < 12; i++) { const a = i / 12 * Math.PI * 2; g.fillStyle = '#2a2233'; g.fillRect(32 + Math.sin(a) * 24 - 1, 32 - Math.cos(a) * 24 - 1, 3, 3); }
@@ -1339,19 +1528,20 @@ function buildClub() {
   const clockMat = new THREE.MeshLambertMaterial({ map: clock, transparent: true });
   for (const [px, pz, ry] of [[0, tz - tw / 2 - 0.02, Math.PI], [-tw / 2 - 0.02, tz, -Math.PI / 2], [tw / 2 + 0.02, tz, Math.PI / 2]]) {
     const cf = new THREE.Mesh(new THREE.CircleGeometry(1.15, 16), clockMat);
-    cf.position.set(px, tb + tH - 1.45, pz); cf.rotation.y = ry; scene.add(cf);
+    cf.position.set(px, tb + tH - 1.45, pz); cf.rotation.y = ry; WORLD.add(cf);
+  }
   }
   // Portico, balcony and sign
   for (const x of [-3, -1, 1, 3]) box(0.35, 3.4, 0.35, trim, x, 1.7, front - 1.7);
   box(8, 0.3, 2.1, trim, 0, 3.55, front - 1.0);
   box(8, 0.12, 0.12, trim, 0, 4.5, front - 1.98);
-  for (let x = -3.9; x <= 3.91; x += 0.6) box(0.1, 0.8, 0.1, trim, x, 4.1, front - 1.98, scene, { cast: false });
+  for (let x = -3.9; x <= 3.91; x += 0.6) box(0.1, 0.8, 0.1, trim, x, 4.1, front - 1.98, WORLD, { cast: false });
   for (const x of [-2, 0, 2]) plane(1.2, 2.4, lam(0x3a2a22), x, 1.3, front - 0.72, 0, Math.PI);
   for (const x of [-2, 0, 2]) plane(1.0, 1.3, lam(0x2c3550), x, 6.3, front - 0.72, 0, Math.PI);
-  const sign = plane(6, 0.85, new THREE.MeshLambertMaterial({ map: textTex('TERRAZZA PADEL CLUB', { w: 512, h: 72, bg: '#1f5136', fg: '#ffd98a', font: '700 38px "Fraunces", Georgia, serif' }) }), 0, 5.05, front - 0.73, 0, Math.PI);
+  const sign = plane(6, 0.85, new THREE.MeshLambertMaterial({ map: textTex(C.sign, { w: 512, h: 72, bg: C.signBg || '#1f5136', fg: C.signFg || '#ffd98a', font: '700 38px "Fraunces", Georgia, serif' }) }), 0, 5.05, front - 0.73, 0, Math.PI);
   sign.receiveShadow = false;
-  for (const [x, col] of [[-4.6, 0x1f7a6c], [4.6, 0xe98a2f]]) { box(0.07, 3, 0.07, 0xdddddd, x, 5.1, front - 1.9); box(1.0, 0.6, 0.04, col, x + 0.52, 6.25, front - 1.9, scene, { cast: false }); }
-  for (const x of [-5.5, 5.5]) { box(1.6, 0.6, 0.8, 0xb5653d, x, 0.3, front - 0.8); const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 0), lam(0x3a8a3a, true)); m.position.set(x, 0.85, front - 0.8); m.scale.set(1.4, 0.8, 0.7); m.castShadow = true; scene.add(m); }
+  for (const [x, col] of [[-4.6, 0x1f7a6c], [4.6, 0xe98a2f]]) { box(0.07, 3, 0.07, 0xdddddd, x, 5.1, front - 1.9); box(1.0, 0.6, 0.04, col, x + 0.52, 6.25, front - 1.9, WORLD, { cast: false }); }
+  for (const x of [-5.5, 5.5]) { box(1.6, 0.6, 0.8, 0xb5653d, x, 0.3, front - 0.8); const m = new THREE.Mesh(new THREE.IcosahedronGeometry(0.55, 0), lam(0x3a8a3a, true)); m.position.set(x, 0.85, front - 0.8); m.scale.set(1.4, 0.8, 0.7); m.castShadow = true; WORLD.add(m); }
 }
 
 /* Facades with windows that glow at dusk and night. */
@@ -1387,35 +1577,421 @@ function buildCity() {
     if (z > 30) top -= 8;
     const h = top - STREET_Y, m = pick(mats), roof = srand() < 0.25 ? greenRoof : roofMat;
     const b = new THREE.Mesh(scaledBox(w, h, d), [m, m, roof, roofMat, m, m]);
-    b.position.set(x, STREET_Y + h / 2, z); b.receiveShadow = true; scene.add(b);
-    if (roof === greenRoof && srand() < 0.6) { const t = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 0), lam(0x3f8a3a, true)); t.position.set(x, top + 1.2, z); scene.add(t); }
-    else if (srand() < 0.35) box(w * 0.3, 1.6, d * 0.3, 0x857d76, x + w * 0.2, top + 0.8, z - d * 0.15, scene, { cast: false });
+    b.position.set(x, STREET_Y + h / 2, z); b.receiveShadow = true; WORLD.add(b);
+    if (roof === greenRoof && srand() < 0.6) { const t = new THREE.Mesh(new THREE.IcosahedronGeometry(1.4, 0), lam(0x3f8a3a, true)); t.position.set(x, top + 1.2, z); WORLD.add(t); }
+    else if (srand() < 0.35) box(w * 0.3, 1.6, d * 0.3, 0x857d76, x + w * 0.2, top + 0.8, z - d * 0.15, WORLD, { cast: false });
   }
   const tower = new THREE.Mesh(scaledBox(9, 95, 9), makeFacadeMaterial('#8fb3d4'));
-  tower.position.set(-34, STREET_Y + 47.5, -56); scene.add(tower);
-  box(1, 14, 1, 0xdddddd, -34, STREET_Y + 102, -56, scene, { cast: false });
+  tower.position.set(-34, STREET_Y + 47.5, -56); WORLD.add(tower);
+  box(1, 14, 1, 0xdddddd, -34, STREET_Y + 102, -56, WORLD, { cast: false });
   const leafMat = lam(0x3f8a3a, true);
   for (const [x, z, h] of [[30, -44, 74], [41, -52, 62]]) {
-    const t = new THREE.Mesh(scaledBox(9, h, 9), makeFacadeMaterial('#c9c1b4')); t.position.set(x, STREET_Y + h / 2, z); scene.add(t);
+    const t = new THREE.Mesh(scaledBox(9, h, 9), makeFacadeMaterial('#c9c1b4')); t.position.set(x, STREET_Y + h / 2, z); WORLD.add(t);
     const leaves = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(0.9, 0), leafMat, 200); let n = 0;
     for (let y = 4; y < h - 2 && n < 200; y += 3.2) for (let k = 0; k < 6 && n < 200; k++) {
       const side = Math.floor(srand() * 4), along = (srand() - 0.5) * 8;
       const px = side < 2 ? x + (side ? 4.8 : -4.8) : x + along, pz = side >= 2 ? z + (side === 2 ? 4.8 : -4.8) : z + along;
       _m4.compose(new THREE.Vector3(px, STREET_Y + y, pz), new THREE.Quaternion(), new THREE.Vector3(1, 0.8 + srand() * 0.6, 1)); leaves.setMatrixAt(n++, _m4);
     }
-    leaves.count = n; scene.add(leaves);
+    leaves.count = n; WORLD.add(leaves);
   }
   const marble = 0xefe6dc, cx = 6, cz = -78;
-  box(22, 26, 46, marble, cx, STREET_Y + 13, cz, scene, { cast: false });
+  box(22, 26, 46, marble, cx, STREET_Y + 13, cz, WORLD, { cast: false });
   const spires = new THREE.InstancedMesh(new THREE.ConeGeometry(0.5, 6, 6), lam(marble), 48); let n = 0;
   for (let i = 0; i < 12; i++) for (const sx of [-1, 1]) {
     _m4.makeTranslation(cx + sx * 10.5, STREET_Y + 29, cz - 22 + i * 4); spires.setMatrixAt(n++, _m4);
     _m4.makeTranslation(cx + sx * 6, STREET_Y + 28, cz - 22 + i * 4 + 2); spires.setMatrixAt(n++, _m4);
   }
-  spires.count = n; scene.add(spires);
-  box(3, 30, 3, marble, cx, STREET_Y + 40, cz, scene, { cast: false });
-  const top = new THREE.Mesh(new THREE.ConeGeometry(1.6, 9, 6), lam(marble)); top.position.set(cx, STREET_Y + 59.5, cz); scene.add(top);
-  box(0.6, 1.4, 0.6, 0xffc857, cx, STREET_Y + 64.5, cz, scene, { cast: false });
+  spires.count = n; WORLD.add(spires);
+  box(3, 30, 3, marble, cx, STREET_Y + 40, cz, WORLD, { cast: false });
+  const top = new THREE.Mesh(new THREE.ConeGeometry(1.6, 9, 6), lam(marble)); top.position.set(cx, STREET_Y + 59.5, cz); WORLD.add(top);
+  box(0.6, 1.4, 0.6, 0xffc857, cx, STREET_Y + 64.5, cz, WORLD, { cast: false });
+}
+
+/* ================================================================== */
+/* Venues: every stadium is a 52 x 64 m terrace; what changes is the   */
+/* paving, the club, the trees, the boards and the world below.        */
+/* ================================================================== */
+const waterTexs = [];
+const fx3 = (c) => new THREE.Color(c).getHex();
+function makePalm(x, z, s = 1, y = 0) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(s); WORLD.add(g);
+  const lean = (srand() - 0.5) * 0.6;
+  for (let i = 0; i < 7; i++) box(0.28 - i * 0.015, 0.62, 0.28 - i * 0.015, i % 2 ? 0x8a6a45 : 0x75573a, lean * i * 0.12, 0.31 + i * 0.6, 0, g);
+  const top = new THREE.Group(); top.position.set(lean * 0.84, 4.25, 0); g.add(top);
+  for (let k = 0; k < 8; k++) {
+    const leaf = new THREE.Group(); leaf.rotation.y = k / 8 * Math.PI * 2 + srand() * 0.4; top.add(leaf);
+    const l = box(0.36, 0.07, 1.8, k % 2 ? 0x2f8a3a : 0x46a24c, 0, -0.32, 0.82, leaf); l.rotation.x = 0.5;
+  }
+  box(0.36, 0.3, 0.36, 0x6b4a2e, 0, -0.1, 0, top);
+}
+function makeCypress(x, z, s = 1, y = 0) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(s); WORLD.add(g);
+  box(0.22, 0.8, 0.22, 0x5b3e28, 0, 0.4, 0, g);
+  const m = new THREE.Mesh(new THREE.ConeGeometry(0.62, 5.2, 6), lam(0x1f4f2a, true)); m.position.y = 3.2; m.castShadow = true; g.add(m);
+}
+function makeStonePine(x, z, s = 1, y = 0) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(s); WORLD.add(g);
+  const lean = (srand() - 0.5) * 0.5;
+  for (let i = 0; i < 5; i++) box(0.24, 0.8, 0.24, 0x6e4a33, lean * i * 0.15, 0.4 + i * 0.78, 0, g);
+  for (const [r, h, dy, c] of [[2.3, 0.7, 4.3, 0x2f6b37], [1.6, 0.6, 4.85, 0x3b7d40]]) {
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(r, r * 0.86, h, 8), lam(c, true)); m.position.set(lean * 0.7, dy, 0); m.castShadow = true; g.add(m);
+  }
+}
+function makeLemon(x, z, s = 1, y = 0) {
+  makeTree(x, z, s * 0.8, y, [0x2d7a3a, 0x358a3f, 0x2a6f35, 0x3f9947]);
+  for (let i = 0; i < 7; i++) box(0.16, 0.16, 0.16, 0xffd23a, x + (srand() - 0.5) * 1.6 * s, y + (1.3 + srand() * 1.1) * s, z + (srand() - 0.5) * 1.6 * s, WORLD, { cast: false });
+}
+function makeJacaranda(x, z, s = 1, y = 0) { makeTree(x, z, s, y, [0x8a6bd1, 0x7a5bc0, 0x9c7fe0, 0x6d4fb0]); }
+function makeSnowPine(x, z, s = 1, y = 0) {
+  const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(s); WORLD.add(g);
+  box(0.25, 1.0, 0.25, 0x5b3e28, 0, 0.5, 0, g);
+  [[1.3, 1.6, 1.5], [1.0, 1.4, 2.5], [0.65, 1.2, 3.4]].forEach(([r, h, yy]) => {
+    const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, 6), lam(0x1d5532, true)); m.position.y = yy; m.castShadow = true; g.add(m);
+    const c = new THREE.Mesh(new THREE.ConeGeometry(r * 0.55, h * 0.55, 6), lam(0xf4f7fb, true)); c.position.y = yy + h * 0.24; g.add(c);
+  });
+}
+// Instanced cones for forests far below the terrace (cheap: a few draw calls for hundreds of trees)
+function forest(points, col, snow) {
+  const tiers = [[1.3, 1.6, 1.5], [1.0, 1.4, 2.5], [0.65, 1.2, 3.4]];
+  for (const [r, h, yy] of tiers) {
+    const im = new THREE.InstancedMesh(new THREE.ConeGeometry(r, h, 6), lam(col, true), points.length);
+    const cap = snow ? new THREE.InstancedMesh(new THREE.ConeGeometry(r * 0.55, h * 0.55, 6), lam(0xf4f7fb, true), points.length) : null;
+    points.forEach(([x, y, z, s], i) => {
+      _m4.compose(new THREE.Vector3(x, y + yy * s, z), new THREE.Quaternion(), new THREE.Vector3(s, s, s)); im.setMatrixAt(i, _m4);
+      if (cap) { _m4.compose(new THREE.Vector3(x, y + (yy + h * 0.24) * s, z), new THREE.Quaternion(), new THREE.Vector3(s, s, s)); cap.setMatrixAt(i, _m4); }
+    });
+    WORLD.add(im); if (cap) WORLD.add(cap);
+  }
+}
+function flatGround(w, l, col, x, y, z, map) {
+  const m = plane(w, l, map ? new THREE.MeshLambertMaterial({ map }) : lam(col), x, y, z, -Math.PI / 2);
+  m.receiveShadow = false; return m;
+}
+function water(base, light, dark) {
+  const t = canvasTex(64, 64, (g, w, h) => {
+    g.fillStyle = base; g.fillRect(0, 0, w, h); const r = mulberry32(5);
+    for (let i = 0; i < 46; i++) { g.fillStyle = r() < 0.6 ? light : dark; g.fillRect(Math.floor(r() * w), Math.floor(r() * h), 3 + Math.floor(r() * 6), 1); }
+  }, { repeat: true });
+  t.magFilter = THREE.NearestFilter; waterTexs.push(t); return t;
+}
+function sea(col = ['#2f6fa8', '#5d9bd0', '#245a8c']) { const t = water(...col); t.repeat.set(75, 75); return flatGround(600, 600, 0, 0, STREET_Y - 0.4, 0, t); }
+function boat(x, z, sail) {
+  const g = new THREE.Group(); g.position.set(x, STREET_Y - 0.3, z); g.rotation.y = srand() * 6.28; WORLD.add(g);
+  box(1.4, 0.5, 4, 0xf4f2ec, 0, 0.25, 0, g); box(1.0, 0.5, 1.4, sail ? 0x8a5a3c : 0x2a3f73, 0, 0.7, -0.3, g);
+  if (sail) { box(0.08, 4.2, 0.08, 0xdddddd, 0, 2.6, 0.4, g); const sl = box(0.05, 3.2, 1.6, 0xfdfcf8, 0, 2.6, 1.2, g); sl.rotation.x = 0.05; }
+}
+function peak(x, z, r, h, rock, snow = 0xf4f7fb, sides = 6) {
+  const ry = srand() * 3;
+  const m = new THREE.Mesh(new THREE.ConeGeometry(r, h, sides), lam(rock, true)); m.position.set(x, STREET_Y + h / 2, z); m.rotation.y = ry; WORLD.add(m);
+  if (snow !== null) { const c = new THREE.Mesh(new THREE.ConeGeometry(r * 0.34, h * 0.34, sides), lam(snow, true)); c.position.set(x, STREET_Y + h - h * 0.17 + 0.05, z); c.rotation.y = ry; WORLD.add(c); }
+  return m;
+}
+function hump(x, z, r, h, col, y = STREET_Y) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(1, 9, 4, 0, Math.PI * 2, 0, Math.PI / 2), lam(col, true));
+  m.position.set(x, y, z); m.scale.set(r, h, r * (0.6 + srand() * 0.5)); m.rotation.y = srand() * 3; WORLD.add(m); return m;
+}
+function house(x, z, w, d, h, wall, roof, { y = STREET_Y, snow = false, pitch = 0.55 } = {}) {
+  const b = box(w, h, d, 0, x, y + h / 2, z, WORLD, { mat: makeFacadeMaterial(wall), cast: false });
+  b.geometry.dispose(); b.geometry = scaledBox(w, h, d);
+  const sh = new THREE.Shape(); sh.moveTo(-d / 2 - 0.3, 0); sh.lineTo(d / 2 + 0.3, 0); sh.lineTo(0, (d / 2 + 0.3) * pitch * 2); sh.closePath();
+  const rf = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: w + 0.4, bevelEnabled: false }), lam(roof, true));
+  rf.rotation.y = Math.PI / 2; rf.position.set(x - (w + 0.4) / 2, y + h, z); WORLD.add(rf);
+  if (snow) { const s2 = new THREE.Mesh(new THREE.ExtrudeGeometry(sh, { depth: w + 0.5, bevelEnabled: false }), lam(0xf4f7fb, true)); s2.rotation.y = Math.PI / 2; s2.scale.set(1, 0.55, 1); s2.position.set(x - (w + 0.5) / 2, y + h + (d / 2 + 0.3) * pitch * 2 * 0.45 + 0.02, z); WORLD.add(s2); }
+}
+// Generic city below the terrace: a grid of blocks with a per-venue palette, height rule and roof style.
+function cityBelow(o) {
+  if (o.ground !== null) flatGround(600, 600, o.ground ?? 0x3b3d48, 0, STREET_Y, 0);
+  const mats = o.facades.map(makeFacadeMaterial);
+  const roofs = (o.roofs || [0x857d76]).map((c) => lam(c, true));
+  const step = o.step || 15;
+  const tileGeo = new THREE.ConeGeometry(Math.SQRT1_2, 1, 4); tileGeo.rotateY(Math.PI / 4);
+  for (let gx = -125; gx <= 125; gx += step) for (let gz = -150; gz <= 90; gz += step) {
+    const x = gx + (srand() - 0.5) * 5, z = gz + (srand() - 0.5) * 5;
+    if (Math.abs(x) < 32 && Math.abs(z) < 38) continue;
+    if (o.skip && o.skip(x, z)) continue;
+    if (srand() < (o.gaps ?? 0.12)) { if (o.park) o.park(x, z); continue; }
+    const w = (o.wMin ?? 8) + srand() * 6, d = (o.wMin ?? 8) + srand() * 6;
+    const top = o.top(x, z), h = top - STREET_Y, m = pick(mats), rm = pick(roofs);
+    const b = new THREE.Mesh(scaledBox(w, h, d), [m, m, rm, rm, m, m]);
+    b.position.set(x, STREET_Y + h / 2, z); b.receiveShadow = true; WORLD.add(b);
+    if (o.roof === 'tile') { const t = new THREE.Mesh(tileGeo, rm); t.scale.set(w + 0.6, 2.2 + srand() * 1.2, d + 0.6); t.position.set(x, top + t.scale.y / 2, z); WORLD.add(t); }
+    else if (o.roof === 'mansard') { box(w - 1.4, 2.4, d - 1.4, o.mansard ?? 0x6f7f95, x, top + 1.2, z, WORLD, { cast: false }); for (let k = 0; k < 3; k++) box(0.5, 1.2, 0.5, 0xb36a4a, x - w / 3 + k * w / 3, top + 2.9, z, WORLD, { cast: false }); }
+    else if (o.roof === 'flat' && srand() < 0.35) box(w * 0.3, 1.6, d * 0.3, 0x857d76, x + w * 0.2, top + 0.8, z - d * 0.15, WORLD, { cast: false });
+    if (o.extra) o.extra(x, z, top, w, d);
+  }
+}
+const stoneTex = () => canvasTex(64, 64, (g, w, h) => {
+  g.fillStyle = '#8f8a86'; g.fillRect(0, 0, w, h); const r = mulberry32(3);
+  for (let row = 0; row < 8; row++) for (let c = 0; c < 4; c++) { const k = r(); g.fillStyle = k < 0.33 ? '#a29c96' : k < 0.66 ? '#7d7874' : '#98928c'; g.fillRect(c * 16 + (row % 2) * 8 - 8, row * 8, 15, 7); }
+}, { repeat: true });
+
+/* ---- the world below each terrace ---- */
+function belowRoma() {
+  cityBelow({
+    ground: 0x6d6457, roof: 'tile', roofs: [0xb5532f, 0xa8492a, 0xc0643a, 0x9e4426],
+    facades: ['#e3b778', '#d9935f', '#c96f45', '#efd3a0', '#d8b48a', '#b8644a', '#f0c98a'],
+    top: (x, z) => -21 + srand() * 10 - (z > 30 ? 6 : 0),
+    skip: (x, z) => Math.hypot(x - 80, z - 14) < 30 || Math.hypot(x - 8, z + 86) < 26,
+    park: (x, z) => { for (let k = 0; k < 3; k++) makeStonePine(x + (srand() - 0.5) * 9, z + (srand() - 0.5) * 9, 1.6 + srand() * 0.6, STREET_Y); },
+  });
+  // A great dome over a long nave
+  const cx = 8, cz = -86, base = STREET_Y, cream = 0xefe3c8;
+  box(26, 22, 44, cream, cx, base + 11, cz + 6, WORLD, { cast: false });
+  const drum = new THREE.Mesh(new THREE.CylinderGeometry(9, 9, 8, 16), lam(cream)); drum.position.set(cx, base + 26, cz); WORLD.add(drum);
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(9, 16, 6, 0, Math.PI * 2, 0, Math.PI / 2), lam(0x8fa3a8, true)); dome.position.set(cx, base + 30, cz); dome.scale.y = 1.25; WORLD.add(dome);
+  box(2.4, 4, 2.4, cream, cx, base + 43, cz, WORLD, { cast: false });
+  const lan = new THREE.Mesh(new THREE.ConeGeometry(1.4, 3, 8), lam(0x8fa3a8)); lan.position.set(cx, base + 46.5, cz); WORLD.add(lan);
+  // An ancient oval arena, three rings of arches, one side broken down
+  const arch = canvasTex(64, 32, (g, w, h) => {
+    g.fillStyle = '#d9c39a'; g.fillRect(0, 0, w, h); g.fillStyle = '#5a4634';
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) { g.fillRect(c * 16 + 4, r * 10 + 3, 8, 7); g.fillRect(c * 16 + 5, r * 10 + 2, 6, 1); }
+    g.fillStyle = '#bfa77e'; for (let r = 0; r < 3; r++) g.fillRect(0, r * 10 + 1, w, 1);
+  }, { repeat: true });
+  arch.repeat.set(10, 1);
+  const am = new THREE.MeshLambertMaterial({ map: arch, side: THREE.DoubleSide });
+  const ring = new THREE.Mesh(new THREE.CylinderGeometry(20, 20, 18, 28, 1, true, 0, Math.PI * 1.55), am);
+  ring.position.set(80, base + 9, 14); ring.scale.z = 0.78; ring.rotation.y = 2.2; WORLD.add(ring);
+  const low = new THREE.Mesh(new THREE.CylinderGeometry(20, 20, 10, 28, 1, true, Math.PI * 1.55, Math.PI * 0.45), am);
+  low.position.set(80, base + 5, 14); low.scale.z = 0.78; low.rotation.y = 2.2; WORLD.add(low);
+  flatGround(30, 24, 0xc9b48a, 80, base + 0.05, 14);
+  for (let k = 0; k < 18; k++) makeCypress(-60 + srand() * 120, 50 + srand() * 30, 1.6, STREET_Y);
+}
+function belowNapoli() {
+  sea();
+  const land = 0x8d8170;
+  flatGround(220, 600, land, -144, STREET_Y, 0); flatGround(600, 220, land, 0, STREET_Y, 152);
+  box(72, 1.2, 82, 0xb9ab92, 0, STREET_Y + 0.4, 0, WORLD, { cast: false });
+  cityBelow({
+    ground: null, roof: 'flat', roofs: [0xd9cbb0, 0xc9b896],
+    facades: ['#f2c46b', '#e98a6a', '#f4e1b0', '#d9a3b8', '#a8cfd8', '#f0b37e', '#f7efe2'],
+    top: (x, z) => -24 + srand() * 12 + Math.max(0, -x - 40) * 0.25 + Math.max(0, z - 45) * 0.2,
+    skip: (x, z) => !(x < -36 || z > 44), wMin: 7,
+    extra: (x, z, top, w, d) => { if (srand() < 0.3) for (let k = 0; k < 3; k++) box(0.5, 0.06, d * 0.7, pick([0xffffff, 0xe86a92, 0x3a7be0]), x - w / 2 - 0.05, top - 2 - k * 2.4, z, WORLD, { cast: false }); },
+  });
+  // The volcano across the bay: two cones, the old rim and the new one
+  peak(150, -70, 70, 48, 0x6f6a7e, null, 9); peak(130, -40, 56, 38, 0x7b7488, null, 9);
+  // A castle on a rock in the water, a lighthouse on the pier
+  box(16, 3, 12, 0x8d8170, 52, STREET_Y + 1, -58, WORLD, { cast: false });
+  box(12, 8, 9, 0xc9b48a, 52, STREET_Y + 6.5, -58); for (const dx of [-5, 5]) box(3, 11, 3, 0xbfa77e, 52 + dx, STREET_Y + 8, -58);
+  box(3, 1, 40, 0x9a8f80, 40, STREET_Y + 0.3, 30, WORLD, { cast: false });
+  box(2, 10, 2, 0xf4f2ec, 40, STREET_Y + 5.5, 50); box(2.2, 1.6, 2.2, 0xc2412d, 40, STREET_Y + 11.3, 50);
+  for (let k = 0; k < 16; k++) boat(42 + srand() * 90, -110 + srand() * 140, srand() < 0.5);
+}
+function belowCortina() {
+  flatGround(600, 600, 0xe6edf5, 0, STREET_Y, 0);
+  const pts = [];
+  for (let k = 0; k < 420; k++) {
+    const a = srand() * Math.PI * 2, r = 36 + srand() * 110, x = Math.cos(a) * r, z = Math.sin(a) * r;
+    if (Math.abs(x) < 34 && Math.abs(z) < 40) continue;
+    pts.push([x, STREET_Y, z, 1.6 + srand() * 1.4]);
+  }
+  forest(pts, 0x1d5532, true);
+  // Village: wooden chalets and a church with a tall bell tower
+  for (let k = 0; k < 26; k++) {
+    const x = 40 + srand() * 50, z = -70 + srand() * 90;
+    house(x, z, 6 + srand() * 3, 5 + srand() * 2, 4 + srand() * 2, pick(['#8a5a3c', '#a06a45', '#efe6d6', '#7a4f33']), 0x4a3a30, { snow: true, pitch: 0.7 });
+  }
+  box(8, 9, 14, 0xefe6d6, 66, STREET_Y + 4.5, -34); box(3.4, 26, 3.4, 0xefe6d6, 66, STREET_Y + 13, -24);
+  const sp = new THREE.Mesh(new THREE.ConeGeometry(2.4, 8, 4), lam(0x5b6b80, true)); sp.rotation.y = Math.PI / 4; sp.position.set(66, STREET_Y + 30, -24); WORLD.add(sp);
+  // Pale limestone towers all around, snow on the tops
+  const rock = [0xc9bdb4, 0xb7aaa2, 0xd6cbc2];
+  for (let k = 0; k < 34; k++) {
+    const a = k / 34 * Math.PI * 2 + srand() * 0.15, r = 120 + srand() * 70;
+    const h = 45 + srand() * 55, x = Math.cos(a) * r, z = Math.sin(a) * r * 0.9;
+    peak(x, z, 22 + srand() * 18, h, pick(rock), 0xf4f7fb, 5);
+    if (srand() < 0.6) peak(x + (srand() - 0.5) * 20, z + (srand() - 0.5) * 20, 9 + srand() * 6, h * (0.7 + srand() * 0.5), pick(rock), 0xf4f7fb, 4);
+  }
+  for (const [x, z, r, h] of [[70, -95, 26, 40], [-60, -95, 30, 46], [95, 40, 24, 36]]) peak(x, z, r, h, 0xbfb3aa, 0xf4f7fb, 5);
+}
+function belowBarcellona() {
+  sea(['#2e7fb8', '#6db3e0', '#25679a']);
+  const land = 0x6f6a66;
+  flatGround(400, 600, land, -165, STREET_Y, 0);
+  flatGround(26, 600, 0, 48, STREET_Y + 0.02, 0, (() => { const t = canvasTex(32, 32, (g, w, h) => { g.fillStyle = '#e8d3a2'; g.fillRect(0, 0, w, h); g.fillStyle = '#dcc48f'; for (let i = 0; i < 30; i++) g.fillRect((i * 13) % w, (i * 7) % h, 2, 1); }, { repeat: true }); t.repeat.set(3, 60); return t; })());
+  box(6, 0.6, 600, 0xbfb5a5, 33, STREET_Y + 0.3, 0, WORLD, { cast: false });
+  for (let z = -140; z <= 120; z += 11) makePalm(33, z, 1.5, STREET_Y + 0.6);
+  for (let k = 0; k < 40; k++) { const x = 40 + srand() * 14, z = -140 + srand() * 260; umbrella(x, z, pick(['#ffffff', '#ffd23a', '#e86a92']), pick(['#2f5fb3', '#c2412d', '#1f8a4c']), STREET_Y, 1.2); }
+  cityBelow({
+    ground: null, roof: 'flat', roofs: [0xc9bda8, 0xb7aa94],
+    facades: ['#efe2c6', '#e6cfa6', '#d9b98c', '#f3ead6', '#cfa77e', '#e9d9bd'],
+    top: (x, z) => -20 + srand() * 8 + (srand() < 0.08 ? 14 : 0),
+    skip: (x, z) => x > 28 || Math.hypot(x + 12, z + 96) < 22, wMin: 10,
+  });
+  // A basilica of tall pierced spires, cranes still working on it
+  const sm = lam(0xcfc2a8, true);
+  for (const [dx, dz, h, r] of [[-6, -6, 48, 2.6], [-2, -8, 52, 2.6], [2, -8, 52, 2.6], [6, -6, 48, 2.6], [-6, 8, 40, 2.2], [6, 8, 40, 2.2], [0, 0, 64, 4.2]]) {
+    const c = new THREE.Mesh(new THREE.CylinderGeometry(0.4, r, h, 6), sm); c.position.set(-12 + dx, STREET_Y + h / 2, -96 + dz); WORLD.add(c);
+    box(1.2, 1.2, 1.2, 0xffc857, -12 + dx, STREET_Y + h + 0.4, -96 + dz, WORLD, { cast: false });
+  }
+  box(22, 20, 26, 0xcfc2a8, -12, STREET_Y + 10, -96, WORLD, { cast: false });
+  for (const dx of [-20, 18]) { box(0.8, 60, 0.8, 0xe9c46a, -12 + dx, STREET_Y + 30, -96); box(26, 0.8, 0.8, 0xe9c46a, -12 + dx + 8, STREET_Y + 60, -96); }
+  hump(-90, 60, 60, 26, 0x4f8a46); hump(-120, -10, 50, 20, 0x5a944e);
+  for (let k = 0; k < 12; k++) boat(70 + srand() * 80, -120 + srand() * 220, true);
+}
+function belowBuenosAires() {
+  cityBelow({
+    ground: 0x45434a, roof: 'flat', roofs: [0x8a8178, 0xa0522d, 0x7a7a80],
+    facades: ['#e9483b', '#f2c335', '#2f8fd8', '#3fb36b', '#f08a2f', '#8a5bd1', '#f4ede0', '#e86a92'],
+    top: (x, z) => (Math.hypot(x, z) > 85 ? -14 + srand() * 34 : -25 + srand() * 10),
+    skip: (x, z) => Math.abs(x - 62) < 13, wMin: 7,
+    park: (x, z) => { for (let k = 0; k < 3; k++) makeJacaranda(x + (srand() - 0.5) * 8, z + (srand() - 0.5) * 8, 1.6, STREET_Y); },
+  });
+  // The wide avenue with the obelisk
+  const av = canvasTex(32, 64, (g, w, h) => { g.fillStyle = '#3b3d48'; g.fillRect(0, 0, w, h); g.fillStyle = '#e9e4d8'; for (let y = 0; y < h; y += 16) { g.fillRect(10, y, 1, 8); g.fillRect(21, y, 1, 8); } }, { repeat: true });
+  av.repeat.set(1, 40);
+  flatGround(24, 600, 0, 62, STREET_Y + 0.03, 0, av);
+  box(4, 64, 4, 0xf4f2ec, 62, STREET_Y + 32, -12);
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(2.83, 4, 4), lam(0xf4f2ec)); tip.rotation.y = Math.PI / 4; tip.position.set(62, STREET_Y + 66, -12); WORLD.add(tip);
+  for (let z = -140; z <= 120; z += 9) for (const dx of [-11, 11]) makeJacaranda(62 + dx, z, 1.4, STREET_Y);
+}
+function belowDubai() {
+  flatGround(600, 600, 0xcfae78, 0, STREET_Y, 0);
+  cityBelow({
+    ground: null, roof: 'flat', roofs: [0x9aa7b0, 0x7f8c96],
+    facades: ['#6fa3c4', '#8cc0d8', '#4f7f9f', '#b7d3e0', '#5c8fb0', '#d2dde4', '#e8dcc0'],
+    top: (x, z) => -24 + srand() * 14 + ((x > 30 || z > 45 || Math.hypot(x, z) > 95) && srand() < 0.4 ? 30 + srand() * 40 : 0), step: 19, gaps: 0.25,
+    skip: (x, z) => Math.hypot(x, z) > 135,
+    extra: (x, z, top) => { if (top > 10 && srand() < 0.5) { const sp = box(0.5, 10, 0.5, 0xdddddd, x, top + 5, z, WORLD, { cast: false }); sp.castShadow = false; } },
+  });
+  // The needle tower in steps
+  let y = STREET_Y, r = 9;
+  for (let k = 0; k < 6; k++) { const h = 34 - k * 3; const c = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.8, r, h, 6), makeFacadeMaterial('#a9c6d8')); c.position.set(-34, y + h / 2, -112); WORLD.add(c); y += h; r *= 0.72; }
+  const nd = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 1.2, 40, 6), lam(0xdfe6ea)); nd.position.set(-34, y + 20, -112); WORLD.add(nd);
+  for (let k = 0; k < 40; k++) { const a = srand() * Math.PI * 2, rr = 150 + srand() * 120; hump(Math.cos(a) * rr, Math.sin(a) * rr, 30 + srand() * 30, 10 + srand() * 14, pick([0xd9b77e, 0xe2c28a, 0xc9a46e])); }
+  for (let k = 0; k < 30; k++) makePalm(-120 + srand() * 240, -130 + srand() * 220, 1.6, STREET_Y);
+}
+function belowParigi() {
+  cityBelow({
+    ground: 0x4a4a52, roof: 'mansard', roofs: [0xd9ccb0],
+    facades: ['#e9dcc1', '#efe4cc', '#dccaa6', '#f3ead6', '#d9c7a3'],
+    top: (x, z) => -17 + srand() * 2.5, step: 14,
+    skip: (x, z) => Math.abs(x - 48) < 12 || Math.hypot(x - 84, z + 30) < 20,
+    park: (x, z) => { for (let k = 0; k < 4; k++) makeTree(x + (srand() - 0.5) * 9, z + (srand() - 0.5) * 9, 1.5, STREET_Y); },
+  });
+  // The river with stone quays and bridges
+  const t = water('#3f6f7a', '#6f9aa3', '#2f5862'); t.repeat.set(2, 75);
+  flatGround(16, 600, 0, 48, STREET_Y + 0.05, 0, t);
+  for (const dx of [-9, 9]) box(2, 1.2, 600, 0xcfc3ae, 48 + dx, STREET_Y + 0.6, 0, WORLD, { cast: false });
+  for (const z of [-90, -40, 20, 70]) { box(20, 1, 6, 0xcfc3ae, 48, STREET_Y + 2.2, z); for (const dx of [-4, 4]) box(1.4, 2, 1.4, 0xbfb3a0, 48 + dx, STREET_Y + 1, z); }
+  // The lattice tower
+  const lat = canvasTex(32, 32, (g, w, h) => { g.clearRect(0, 0, w, h); g.strokeStyle = '#5d4a3c'; g.lineWidth = 3; g.strokeRect(1, 1, w - 2, h - 2); g.beginPath(); g.moveTo(0, 0); g.lineTo(w, h); g.moveTo(w, 0); g.lineTo(0, h); g.stroke(); }, { repeat: true });
+  const tx = 84, tz = -30;
+  let y = STREET_Y;
+  for (const [rb, rt, h, rep] of [[15, 8, 20, 4], [8, 4, 24, 3], [4, 0.9, 46, 3]]) {
+    const tt = lat.clone(); tt.needsUpdate = true; tt.repeat.set(rep * 2, rep * 2);
+    const m = new THREE.Mesh(new THREE.CylinderGeometry(rt, rb, h, 4, 1, true), new THREE.MeshLambertMaterial({ map: tt, transparent: true, side: THREE.DoubleSide, alphaTest: 0.5 }));
+    m.rotation.y = Math.PI / 4; m.position.set(tx, y + h / 2, tz); WORLD.add(m);
+    y += h; box(rt * 1.6 + 1, 0.8, rt * 1.6 + 1, 0x5d4a3c, tx, y, tz);
+  }
+  box(0.4, 8, 0.4, 0x5d4a3c, tx, y + 4, tz);
+  flatGround(40, 40, 0x6f9a52, tx, STREET_Y + 0.04, tz);
+}
+
+const club = (o) => Object.assign({ trim: 0xeadfc8, roof: 0x56699a, tower: true, style: 'gable' }, o);
+const VENUES = {
+  milano: {
+    seed: 20261110, surface: 'blue', time: 'day', city: { it: 'Milano', en: 'Milan' }, name: 'Terrazza Open',
+    pave: ['#a89d90', '#c9bfae', '#8e8478', '#d9cfbc'], edge: 0x9c8b74, body: '#e0b878', path: ['#dfd3b5', '#cbbd9c'], lawn: ['#3b8a4c', '#4b9d5a'], parapet: [0xe3d7c3, 0xf3eadb],
+    ads: [['TERRAZZA OPEN · MILANO', '#8c3a26', '#f3eadb'], ['CAFFÈ DEL TETTO', '#e98a2f', '#2a2233'], ['BANCA NAVIGLI', '#1f7a6c', '#f3eadb'], ['GELATERIA LAMBRO', '#f3eadb', '#c2412d']],
+    paint: 'TERRAZZA OPEN', endBg: '#1f5136', ends: ['TERRAZZA', 'OPEN · MILANO'], seats: [0x8d94a3, 0xd9d4c7], standWall: 0xb35a3a, standRoof: [0xaed6ee, 0xfdfcf8],
+    sponsors: ['CAFFÈ DEL TETTO', 'BANCA NAVIGLI', 'TRAM 1928', 'OTTICA BRERA', 'GELATERIA LAMBRO', 'ACQUA DEL DUOMO'], umbStand: '#1f8a4c',
+    umbs: [['#ffffff', '#1f8a4c'], ['#c2412d', '#2f5fb3'], ['#ffffff', '#1f8a4c'], ['#ffd23a', '#ffffff'], ['#ffffff', '#c2412d']], awning: '#c2412d', bar: 'BAR DEL TETTO',
+    trees: [makeTree, makePine], hedge: 0x2a6b3a, club: club({ facade: '#a9553b', sign: 'TERRAZZA PADEL CLUB' }), below: buildCity,
+  },
+  roma: {
+    seed: 753, surface: 'terra', time: 'sunset', city: { it: 'Roma', en: 'Rome' }, name: 'Pini Open',
+    pave: ['#d8c9a8', '#e8dcc0', '#c4b48f', '#efe6d0'], edge: 0xbfae8a, body: '#e3b778', path: ['#c9a77a', '#b8946a'], lawn: ['#5f8a3c', '#6e9a46'], parapet: [0xe8dcc0, 0xf3ead6],
+    ads: [['PINI OPEN · ROMA', '#7a2e1f', '#f3e3c3'], ['FORNO TRASTEVERE', '#e9b44c', '#2a2233'], ['ACQUA DEI SETTE COLLI', '#1f5f8b', '#f3eadb'], ['SUPPLÌ & CO', '#f3eadb', '#a33b22']],
+    paint: 'PINI OPEN', endBg: '#7a2e1f', ends: ['PINI OPEN', 'ROMA'], seats: [0xc96f45, 0xefd3a0], standWall: 0x9e4426, standRoof: [0xf3ead6, 0xe9c46a],
+    sponsors: ['FORNO TRASTEVERE', 'ACQUA DEI SETTE COLLI', 'SUPPLÌ & CO', 'MOTO TEVERE', 'GELATO DI CAMPO', 'CARCIOFI 1870'], umbStand: '#a33b22',
+    umbs: [['#f3ead6', '#a33b22'], ['#e9b44c', '#ffffff'], ['#f3ead6', '#5f8a3c'], ['#a33b22', '#e9b44c'], ['#ffffff', '#1f5f8b']], awning: '#a33b22', bar: 'BAR DEI PINI',
+    trees: [makeStonePine, makeCypress], hedge: 0x3f6b2e, club: club({ facade: '#d9935f', trim: 0xf3ead6, roof: 0xb5532f, ridge: 0x8e3f22, sign: 'CIRCOLO DEI PINI', signBg: '#7a2e1f', signFg: '#f3e3c3' }), below: belowRoma,
+  },
+  napoli: {
+    seed: 1734, surface: 'blue', time: 'day', city: { it: 'Napoli', en: 'Naples' }, name: 'Golfo Open',
+    pave: ['#ece5d3', '#f7f2e6', '#dde6ee', '#5b93cc'], edge: 0xc9b896, body: '#f0b37e', path: ['#efe2c6', '#dccaa6'], lawn: ['#4f9a46', '#5aa64f'], parapet: [0xf4efe2, 0xffffff],
+    ads: [['GOLFO OPEN · NAPOLI', '#1f5f8b', '#f7efe2'], ['PIZZERIA DEL MOLO', '#c2412d', '#f7efe2'], ['CAFFÈ SOSPESO', '#2a2233', '#f2c335'], ['SFOGLIATELLA 1890', '#f7efe2', '#1f5f8b']],
+    paint: 'GOLFO OPEN', endBg: '#1f5f8b', ends: ['GOLFO OPEN', 'NAPOLI'], seats: [0x3a7bc0, 0xf4efe2], standWall: 0x1f5f8b, standRoof: [0xffffff, 0xf2c335],
+    sponsors: ['PIZZERIA DEL MOLO', 'CAFFÈ SOSPESO', 'SFOGLIATELLA 1890', 'LIMONCELLO DEL GOLFO', 'MOTOSCAFI PARTENOPE', 'ACQUA DEL VESUVIO'], umbStand: '#3a7bc0',
+    umbs: [['#ffffff', '#3a7bc0'], ['#f2c335', '#ffffff'], ['#ffffff', '#c2412d'], ['#3a7bc0', '#f2c335'], ['#ffffff', '#3a7bc0']], awning: '#3a7bc0', bar: 'CHIOSCO DEL GOLFO',
+    trees: [makePalm, makeLemon], hedge: 0x2f7a3a, club: club({ facade: '#f2c46b', trim: 0xf7efe2, roof: 0xd9cbb0, style: 'flat', tower: false, sign: 'CIRCOLO DEL GOLFO', signBg: '#1f5f8b', signFg: '#f7efe2' }), below: belowNapoli,
+  },
+  cortina: {
+    seed: 1956, surface: 'green', time: 'day', city: { it: 'Cortina', en: 'Cortina' }, name: 'Dolomiti Open',
+    pave: ['#e8eef5', '#f7fafd', '#d5dde8', '#ffffff'], edge: 0x8f8a86, bodyMat: () => new THREE.MeshLambertMaterial({ map: stoneTex() }), path: ['#c9b8a0', '#b5a48c'], lawn: ['#eef3f8', '#f8fbfe'], parapet: [0x7a5236, 0xf4f7fb],
+    ads: [['DOLOMITI OPEN · CORTINA', '#7a2e1f', '#f4f7fb'], ['RIFUGIO 2000', '#2a3f73', '#f4f7fb'], ['STRUDEL DI MALGA', '#e9b44c', '#2a2233'], ['SCI CLUB AMPEZZO', '#f4f7fb', '#7a2e1f']],
+    paint: 'DOLOMITI OPEN', endBg: '#7a2e1f', ends: ['DOLOMITI OPEN', 'CORTINA'], seats: [0x7a2e1f, 0xefe6d6], standWall: 0x5b3e28, standRoof: [0xf4f7fb, 0xe6edf5],
+    sponsors: ['RIFUGIO 2000', 'STRUDEL DI MALGA', 'SCI CLUB AMPEZZO', 'LATTERIA DEL PASSO', 'FUNIVIA STELLA', 'CIOCCOLATA CALDA'], umbStand: '#7a2e1f',
+    umbs: [['#f4f7fb', '#7a2e1f'], ['#7a2e1f', '#f4f7fb'], ['#2a3f73', '#f4f7fb'], ['#f4f7fb', '#1f5e33'], ['#e9b44c', '#7a2e1f']], awning: '#7a2e1f', bar: 'BAITA BAR',
+    trees: [makeSnowPine, makeSnowPine], hedge: null, fountain: false, club: club({ facade: '#7a5236', trim: 0xf0e6d6, roof: 0x4a3a30, ridge: 0x3a2c24, tower: false, snow: true, cream: 0xefe6d6, sign: 'RIFUGIO PADEL CLUB', signBg: '#4a3a30', signFg: '#f4f7fb' }), below: belowCortina,
+  },
+  barcellona: {
+    seed: 1992, surface: 'blue', time: 'day', city: { it: 'Barcellona', en: 'Barcelona' }, name: 'Platja Open',
+    pave: ['#d8cfc0', '#e8e0d0', '#c2b8a6', '#dcb28a'], edge: 0xb8ad9a, body: '#efe2c6', path: ['#e8d3a2', '#dcc48f'], lawn: ['#4f9a46', '#5aa64f'], parapet: [0xf3ead6, 0xffffff],
+    ads: [['PLATJA OPEN · BARCELONA', '#c2412d', '#ffd23a'], ['XIRINGUITO MAR', '#2e7fb8', '#ffffff'], ['PAELLA DE LA PLATJA', '#ffd23a', '#c2412d'], ['CAVA DEL PORT', '#ffffff', '#2e7fb8']],
+    paint: 'PLATJA OPEN', endBg: '#c2412d', ends: ['PLATJA OPEN', 'BARCELONA'], seats: [0xffd23a, 0xc2412d], standWall: 0x2e7fb8, standRoof: [0xffffff, 0xffd23a],
+    sponsors: ['XIRINGUITO MAR', 'PAELLA DE LA PLATJA', 'CAVA DEL PORT', 'GELATS RAMBLA', 'BICIS DEL MAR', 'TAPAS 1992'], umbStand: '#c2412d',
+    umbs: [['#ffd23a', '#c2412d'], ['#ffffff', '#2e7fb8'], ['#ffd23a', '#ffffff'], ['#c2412d', '#ffffff'], ['#ffffff', '#1f8a4c']], awning: '#2e7fb8', bar: 'XIRINGUITO',
+    trees: [makePalm, makePalm], hedge: 0x2f7a3a, club: club({ facade: '#f3ead6', trim: 0xc2412d, roof: 0xc2412d, ridge: 0x9e3322, tower: false, sign: 'CLUB DE PÀDEL MAR', signBg: '#2e7fb8', signFg: '#ffd23a' }), below: belowBarcellona,
+  },
+  buenosaires: {
+    seed: 1810, surface: 'green', time: 'sunset', city: { it: 'Buenos Aires', en: 'Buenos Aires' }, name: 'Barrio Open',
+    pave: ['#b9a48e', '#cdb9a1', '#a38f7a', '#d9c6ad'], edge: 0x8a7a68, body: '#d98b5f', path: ['#e0d2bb', '#cbbb9f'], lawn: ['#4a8f42', '#57a04c'], parapet: [0xf2c335, 0xf4ede0],
+    ads: [['BARRIO OPEN · BUENOS AIRES', '#2f8fd8', '#f2c335'], ['PARRILLA DON TITO', '#e9483b', '#f4ede0'], ['MATE DEL PUERTO', '#3fb36b', '#f4ede0'], ['ALFAJORES BOCA', '#f2c335', '#2f8fd8']],
+    paint: 'BARRIO OPEN', endBg: '#2f8fd8', ends: ['BARRIO OPEN', 'BUENOS AIRES'], seats: [0x2f8fd8, 0xf2c335], standWall: 0xe9483b, standRoof: [0xf2c335, 0x3fb36b],
+    sponsors: ['PARRILLA DON TITO', 'DULCE DE LECHE 1910', 'MATE DEL PUERTO', 'ALFAJORES BOCA', 'EMPANADAS LA ESQUINA', 'COLECTIVO 64'], umbStand: '#2f8fd8',
+    umbs: [['#f2c335', '#2f8fd8'], ['#e9483b', '#ffffff'], ['#3fb36b', '#f2c335'], ['#ffffff', '#8a5bd1'], ['#2f8fd8', '#ffffff']], awning: '#e9483b', bar: 'BAR NOTABLE',
+    trees: [makeJacaranda, makeTree], hedge: 0x2f6b3a, club: club({ facade: '#2f8fd8', trim: 0xf4ede0, roof: 0xc2412d, ridge: 0x9e3322, tower: false, sign: 'CLUB DEL BARRIO', signBg: '#e9483b', signFg: '#f2c335' }), below: belowBuenosAires,
+  },
+  dubai: {
+    seed: 2026, surface: 'blue', time: 'night', city: { it: 'Dubai', en: 'Dubai' }, name: 'Desert Open',
+    pave: ['#d9d6cf', '#e8e5de', '#c8c4bb', '#f2efe8'], edge: 0xc8c4bb, body: '#7fb2c9', path: ['#efe8da', '#ddd3c0'], lawn: ['#dcc08c', '#e6cc9a'], parapet: [0xcfd8de, 0xffffff],
+    ads: [['DESERT OPEN · DUBAI', '#0f2a3a', '#e9c46a'], ['SKY DATES', '#e9c46a', '#0f2a3a'], ['OASIS WATER', '#4fc3d9', '#ffffff'], ['DUNE MOTORS', '#ffffff', '#0f2a3a']],
+    paint: 'DESERT OPEN', endBg: '#0f2a3a', endFg: '#e9c46a', ends: ['DESERT OPEN', 'DUBAI'], seats: [0x0f2a3a, 0xe9c46a], standWall: 0x0f2a3a, standRoof: [0xffffff, 0xcfd8de],
+    sponsors: ['SKY DATES', 'OASIS WATER', 'DUNE MOTORS', 'PALM RESORTS', 'MARINA CAFÉ', 'FALCON AIR'], umbStand: '#0f2a3a',
+    umbs: [['#ffffff', '#e9c46a'], ['#0f2a3a', '#ffffff'], ['#ffffff', '#4fc3d9'], ['#e9c46a', '#ffffff'], ['#ffffff', '#0f2a3a']], awning: '#0f2a3a', bar: 'POOL BAR',
+    trees: [makePalm, makePalm], hedge: null, club: club({ facade: '#dfe6ea', trim: 0xffffff, roof: 0x9aa7b0, style: 'flat', tower: false, cream: 0xffffff, sign: 'SKY PADEL CLUB', signBg: '#0f2a3a', signFg: '#e9c46a' }), below: belowDubai,
+  },
+  parigi: {
+    seed: 1889, surface: 'terra', time: 'sunset', city: { it: 'Parigi', en: 'Paris' }, name: 'Seine Open',
+    pave: ['#b8b4ac', '#cbc7bf', '#a29e96', '#d9d5cd'], edge: 0xa29e96, body: '#e8dcc0', path: ['#d9c9a3', '#c9b78f'], lawn: ['#4f8a46', '#5a944e'], parapet: [0x3a3f4a, 0xe8dcc0],
+    ads: [['SEINE OPEN · PARIS', '#2a3f73', '#f3eadb'], ['BOULANGERIE DU QUAI', '#f3eadb', '#2a3f73'], ['CAFÉ DES ARTS', '#c2412d', '#f3eadb'], ['CROISSANT 1889', '#e9b44c', '#2a2233']],
+    paint: 'SEINE OPEN', endBg: '#2a3f73', ends: ['SEINE OPEN', 'PARIS'], seats: [0x2a3f73, 0xf3eadb], standWall: 0x2a3f73, standRoof: [0xf3eadb, 0xc2412d],
+    sponsors: ['BOULANGERIE DU QUAI', 'CAFÉ DES ARTS', 'CROISSANT 1889', 'BATEAUX DU PONT', 'MACARONS ROSE', 'VÉLO DE PARIS'], umbStand: '#c2412d',
+    umbs: [['#c2412d', '#ffffff'], ['#2a3f73', '#ffffff'], ['#ffffff', '#c2412d'], ['#1f5136', '#ffffff'], ['#ffffff', '#2a3f73']], awning: '#c2412d', bar: 'BISTROT DU TOIT',
+    trees: [makeTree, makeTree], hedge: 0x2a6b3a, club: club({ facade: '#e8dcc0', trim: 0xf3ead6, roof: 0x5b6b80, ridge: 0x46566a, cream: 0xf3ead6, sign: 'PADEL CLUB DE LA SEINE', signBg: '#2a3f73', signFg: '#f3eadb' }), below: belowParigi,
+  },
+};
+const VENUE_IDS = Object.keys(VENUES);
+let VEN = VENUES.milano;
+const inScene = (o) => { while (o.parent) o = o.parent; return o === scene; };
+function clearWorld() {
+  scene.remove(WORLD);
+  const keep = new Set(matCache.values()), texs = new Set();
+  WORLD.traverse((o) => {
+    if (o.geometry) o.geometry.dispose();
+    for (const m of [].concat(o.material || [])) {
+      if (keep.has(m)) continue;
+      for (const k of ['map', 'emissiveMap']) if (m[k] && m[k] !== winTex && m[k] !== winLit) texs.add(m[k]);
+      m.dispose();
+    }
+  });
+  for (const t of texs) t.dispose();
+  WORLD = new THREE.Group(); scene.add(WORLD);
+  nightOnly.length = 0; glowMats.length = 0; cityMats.length = 0; waterTexs.length = 0;
+  Object.assign(crowd, { list: [], body: null, head: null, hair: null });
+  pixelArt.hideInNormalPass = pixelArt.hideInNormalPass.filter(inScene);
+  window.__drawScreen = null;
+}
+function buildWorld(id) {
+  if (!VENUES[id]) id = 'milano';
+  if (WORLD.children.length) clearWorld();
+  VEN = VENUES[id]; VEN.id = id;
+  srand = mulberry32(VEN.seed);
+  buildRoof(); buildCourt(); buildStands(); buildProps(); buildClub(); VEN.below();
+  applyTime();
+  renderer.shadowMap.needsUpdate = true;
 }
 
 /* ================================================================== */
@@ -1457,6 +2033,21 @@ const LEVELS = {
   hard: { speed: 5.1, err: 0.04, jitter: 0.3, power: 1.08, react: 0.18, misread: 0.05 },
 };
 const REACH = 1.05, HUMAN_SPEED = 5.6;
+// Difficulty as a continuous value: 0 easy, 1 normal, 2 strong (a little beyond in late tournament rounds).
+function levelAt(f) {
+  const ks = ['easy', 'normal', 'hard'], i = clamp(Math.floor(f), 0, 1), k = f - i, a = LEVELS[ks[i]], b = LEVELS[ks[i + 1]], o = {};
+  for (const n in a) o[n] = a[n] + (b[n] - a[n]) * k;
+  o.err = Math.max(0.025, o.err); o.misread = Math.max(0.03, o.misread); o.react = Math.max(0.15, o.react); o.jitter = Math.max(0.2, o.jitter);
+  return o;
+}
+const LEVEL_F = { easy: 0, normal: 1, hard: 2 };
+const teamLevel = [LEVELS.normal, LEVELS.normal];
+const lvOf = (p) => teamLevel[p.team];
+function refreshLevels() {
+  const base = LEVEL_F[settings.level] ?? 1;
+  teamLevel[0] = LEVELS[settings.level] || LEVELS.normal;
+  teamLevel[1] = tour.active ? levelAt(clamp(base + tour.levelAdj, 0, 2.25)) : teamLevel[0];
+}
 
 class Player {
   constructor(team, slot, look) {
@@ -1471,7 +2062,30 @@ class Player {
 const teams = [[], []], players = [];
 const ball = { p: new THREE.Vector3(0, 1, 0), v: new THREE.Vector3(), out: false, rolled: false };
 const rally = { state: 'serve', server: null, hitterTeam: 0, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: 1, designated: [null, null], shotType: 'drive', hitZ: 0, lastHitTime: 0, lastErr: false, hits: 0, lastHitter: null };
-const score = { points: [0, 0], games: [0, 0], sets: [0, 0], serverIdx: 0 };
+/* Scoring by the FIP Rules of Padel: 6-game sets with a tie-break at 6-6, or 4-game mini sets with a tie-break at 4-4.
+   At 40-40: advantage, golden point (next point decides) or star point (two advantages, then a decisive point on the third deuce).
+   The deciding set can be replaced by a match tie-break to 7 or a super tie-break to 10. */
+const FMT = { bestOf: 1, games: 6, deuce: 'golden', decider: 'set' };
+function setFormat(f) { Object.assign(FMT, { bestOf: 3, games: 6, deuce: 'golden', decider: 'set' }, f); }
+const freshScore = () => ({ points: [0, 0], games: [0, 0], sets: [0, 0], serverIdx: 0, tb: false, mtb: false, tbTo: 7, tbStart: 0, deuces: 0, hist: [], over: false, winner: -1 });
+const score = freshScore();
+const setsToWin = () => Math.ceil(FMT.bestOf / 2);
+function decisiveNow() {
+  if (score.tb || score.points[0] !== 3 || score.points[1] !== 3) return false;
+  return FMT.deuce === 'golden' || (FMT.deuce === 'star' && score.deuces >= 3);
+}
+function gamePointFor(t) {
+  const a = score.points[t], b = score.points[1 - t];
+  if (score.tb) return a + 1 >= score.tbTo && a + 1 - b >= 2;
+  return (a === 3 && b < 3) || a === 4 || decisiveNow();
+}
+function setPointFor(t) {
+  if (!gamePointFor(t)) return false;
+  if (score.tb) return true;
+  const g = score.games[t] + 1, o = score.games[1 - t];
+  return g >= FMT.games && g - o >= 2;
+}
+const matchPointFor = (t) => setPointFor(t) && score.sets[t] + 1 >= setsToWin();
 let serverOrder = [];
 let simTime = 0, serveTimer = 0, deadTimer = 0, demo = true;
 
@@ -1638,7 +2252,8 @@ function award(team, reason) {
   rally.state = 'dead'; deadTimer = 2.4;
   const ev = addPoint(team);
   const tn = teamName(team), rs = tr('r')[reason] || '';
-  toast(_t(ev === 'set' ? 'setTo' : ev === 'game' ? 'gameTo' : 'pointTo', { t: tn }), rs);
+  toast(_t(ev === 'match' ? 'matchTo' : ev === 'set' ? 'setTo' : ev === 'game' ? 'gameTo' : 'pointTo', { t: tn }), rs);
+  if (ev !== 'point') saveLive();
   const who = rally.lastHitter ? rally.lastHitter.name : '', lines = tr('lines');
   say(fill(lines[reason] || lines.other, { p: who, t: tn, r: rs }), true);
   if (human.player && team === human.player.team) haptic([18, 40, 18]);
@@ -1648,14 +2263,55 @@ function award(team, reason) {
   updateScoreUI();
 }
 function addPoint(t) {
-  score.points[t]++;
-  if (score.points[t] >= 4) {
-    score.points = [0, 0]; score.games[t]++; score.serverIdx = (score.serverIdx + 1) % 4;
-    const g = score.games;
-    if ((g[t] >= 6 && g[t] - g[1 - t] >= 2) || g[t] === 7) { score.sets[t]++; score.games = [0, 0]; return 'set'; }
-    return 'game';
+  if (score.over) return 'point';
+  const o = 1 - t, p = score.points;
+  if (score.tb) {
+    p[t]++;
+    if (p[t] >= score.tbTo && p[t] - p[o] >= 2) {
+      const tbPts = [...p], wasMtb = score.mtb;
+      Object.assign(score, { tb: false, mtb: false, points: [0, 0], serverIdx: (score.tbStart + 1) % 4 });
+      if (!wasMtb) score.games[t]++;
+      return winSet(t, tbPts, wasMtb);
+    }
+    if ((p[0] + p[1]) % 2 === 1) score.serverIdx = (score.serverIdx + 1) % 4;
+    return 'point';
   }
+  const decisive = decisiveNow();
+  p[t]++;
+  if (decisive || (p[t] >= 4 && p[t] - p[o] >= 2)) return winGame(t);
+  if (p[0] === 4 && p[1] === 4) p[0] = p[1] = 3;
+  if (p[0] === 3 && p[1] === 3) score.deuces++;
   return 'point';
+}
+function winGame(t) {
+  score.games[t]++; score.points = [0, 0]; score.deuces = 0;
+  score.serverIdx = (score.serverIdx + 1) % 4;
+  const g = score.games, G = FMT.games;
+  if (g[t] >= G && g[t] - g[1 - t] >= 2) return winSet(t);
+  if (g[0] === G && g[1] === G) Object.assign(score, { tb: true, tbTo: 7, tbStart: score.serverIdx });
+  return 'game';
+}
+function winSet(t, tbPts = null, mtb = false) {
+  score.hist.push({ g: mtb ? null : [...score.games], tb: tbPts });
+  score.sets[t]++; score.games = [0, 0];
+  if (score.sets[t] >= setsToWin()) { score.over = true; score.winner = t; return 'match'; }
+  if (FMT.decider !== 'set' && score.sets[0] === score.sets[1] && score.sets[0] === setsToWin() - 1) {
+    Object.assign(score, { tb: true, mtb: true, tbTo: FMT.decider === 'stb10' ? 10 : 7, tbStart: score.serverIdx });
+  }
+  return 'set';
+}
+// Set scores as text, from the point of view of team t: "6-3 4-6 [10-7]", "7-6(5)".
+function scoreLine(t = 0) {
+  return score.hist.map((h) => {
+    if (!h.g) return `[${h.tb[t]}-${h.tb[1 - t]}]`;
+    return `${h.g[t]}-${h.g[1 - t]}` + (h.tb ? `(${Math.min(...h.tb)})` : '');
+  }).join(' ');
+}
+function ptLabel(t) {
+  const a = score.points[t], b = score.points[1 - t];
+  if (score.tb) return String(a);
+  if (a === 4) return 'AD';
+  return b === 4 ? '40' : PT[a];
 }
 function startPoint() {
   const srv = serverOrder[score.serverIdx];
@@ -1673,12 +2329,12 @@ function startPoint() {
   ball.out = false; ball.rolled = false; ball.v.set(0, 0, 0);
   serveTimer = srv.isHuman ? 0 : 1.2;
   human.pressAt = -10; trail.reset();
-  const bp = score.points[rt] === 3 && score.points[st] <= 3;
+  const bp = !score.tb && gamePointFor(rt);
   say(bp ? _t('breakFor', { t: teamName(rt), p: srv.name }) : _t('serves', { p: srv.name }), true);
   updateScoreUI();
 }
 function doServe() {
-  const srv = rally.server, sg = teamSign(srv.team), lv = LEVELS[settings.level];
+  const srv = rally.server, sg = teamSign(srv.team), lv = lvOf(srv);
   let base = 2.4;
   if (settings.mode === 'coach' && srv.team === 0) base = { t: 0.7, body: 2.4, wide: 4.1 }[coach.serve];
   else if (!srv.isHuman) base = pick([0.8, 2.4, 3.9], Math.random);
@@ -1697,13 +2353,13 @@ function legalFor(p) {
   return rally.state === 'play' && !ball.out && p.team !== rally.hitterTeam && rally.crossed && sideOf(ball.p.z) === p.team && rally.bounces <= 1 && !(rally.isServe && rally.bounces === 0);
 }
 function doHit(p, type, o) {
-  const lv = LEVELS[settings.level];
+  const lv = lvOf(p);
   if (!p.isHuman) o.speed = (o.speed ?? (type === 'smash' ? 29 : type === 'volley' ? 16.5 : 20)) * lv.power * (o.powerMul || 1);
   ball.v.copy(planShot(ball.p, type, p.team, o));
   Object.assign(rally, { hitterTeam: p.team, bounces: 0, crossed: false, isServe: false, netTouched: false, shotType: type, hitZ: p.pos.z, lastHitTime: simTime, lastErr: !!(o.wild || o.noClear), hits: rally.hits + 1, lastHitter: p });
   ball.rolled = false; p.swing = 0.3; p.swingKind = type;
   if (type === 'smash') { p.jump = 0.35; drawSpeed(ball.v.length() * 3.6); }
-  for (const q of teams[1 - p.team]) if (!q.isHuman) q.frozenUntil = simTime + lv.react * (0.8 + Math.random() * 0.7);
+  for (const q of teams[1 - p.team]) if (!q.isHuman) q.frozenUntil = simTime + lvOf(q).react * (0.8 + Math.random() * 0.7);
   const SL = tr('shots')[type]; if (SL) say(fill(pick(SL, Math.random), { p: p.name }) + (type === 'smash' ? ` ${Math.round(ball.v.length() * 3.6)} km/h.` : ''));
   if (p.isHuman) haptic(type === 'smash' ? 22 : 12);
   Sfx.hit(type === 'smash' ? 1.2 : type === 'lob' || type === 'drop' ? 0.6 : 0.9);
@@ -1720,12 +2376,12 @@ function replan() {
   const pr = predict();
   let best = null;
   for (const p of teams[rt]) {
-    const spd = p.isHuman ? HUMAN_SPEED : LEVELS[settings.level].speed;
+    const spd = p.isHuman ? HUMAN_SPEED : lvOf(p).speed;
     for (let i = 0; i < pr.samples.length; i += 2) {
       const s = pr.samples[i];
       if (!s.legal || s.y < 0.15 || s.y > 2.45) continue;
       const d = Math.max(0, Math.hypot(s.x - p.pos.x, s.z - p.pos.z) - REACH * 0.6);
-      if (d / spd + (p.isHuman ? 0 : LEVELS[settings.level].react) > s.t) continue;
+      if (d / spd + (p.isHuman ? 0 : lvOf(p).react) > s.t) continue;
       let cost = s.t;
       if (s.fb === 0 && Math.abs(p.pos.z) > 6 && s.y < 1.7) cost += 0.8;
       if (s.y < 0.35) cost += 0.5;
@@ -1746,7 +2402,7 @@ function replan() {
     rally.designated[rt] = d;
     d.plan = { x: best.s.x, z: best.s.z, fb: best.s.fb, t: simTime + best.s.t };
     if (!d.isHuman) {
-      const lv = LEVELS[settings.level];
+      const lv = lvOf(d);
       const hard = (ball.v.length() > 17 ? 1 : 0) + (rally.bounces > 0 ? 0.5 : 0);
       const off = Math.random() < lv.misread * (1 + hard) ? 1.1 + Math.random() * 0.9 : 0;
       const ang = Math.random() * Math.PI * 2;
@@ -1773,7 +2429,7 @@ function setFormation(p) {
   p.target.set(p.homeX * 2.4, 0, sg * z);
 }
 function aiTryHit(p) {
-  const lv = LEVELS[settings.level];
+  const lv = lvOf(p);
   if (p.plan && p.plan.fb >= 1 && rally.bounces === 0 && ball.p.y > 0.3) return;
   const y = ball.p.y, opps = teams[1 - p.team];
   const oppsAtNet = opps.every((q) => Math.abs(q.pos.z) < 5.5), oppsBack = opps.every((q) => Math.abs(q.pos.z) > 7);
@@ -1824,6 +2480,7 @@ const human = { input: new THREE.Vector2(), pressAt: -10, pressType: null, playe
 const keys = new Set();
 addEventListener('keydown', (e) => {
   if (e.target.closest && e.target.closest('input')) return;
+  if (!$('start').hidden) return;
   const k = e.key.toLowerCase();
   keys.add(k);
   if (k === 'j' || k === ' ') { press('drive'); e.preventDefault(); }
@@ -1898,8 +2555,8 @@ function humanTryHit(p) {
 const camRight = new THREE.Vector3(), camFwd = new THREE.Vector3();
 const _v = new THREE.Vector3(), _v2 = new THREE.Vector3();
 function updatePlayers(dt) {
-  const lv = LEVELS[settings.level];
   for (const p of players) {
+    const lv = lvOf(p);
     if (p.isHuman && rally.state !== 'dead') {
       _v2.set(0, 0, 0).addScaledVector(camRight, human.input.x).addScaledVector(camFwd, human.input.y).multiplyScalar(HUMAN_SPEED);
       p.vel.lerp(_v2, Math.min(1, dt * 14));
@@ -1944,7 +2601,8 @@ function simStep() {
     else if (serveTimer <= 0) doServe();
     return;
   }
-  if (rally.state === 'dead') { stepBall(ball, DT, null); deadTimer -= DT; if (deadTimer <= 0) startPoint(); return; }
+  if (rally.state === 'over') { stepBall(ball, DT, null); return; }
+  if (rally.state === 'dead') { stepBall(ball, DT, null); deadTimer -= DT; if (deadTimer <= 0) { if (score.over) endMatch(); else startPoint(); } return; }
   const ev = [];
   stepBall(ball, DT, ev);
   for (const e of ev) { handleEvent(e); if (rally.state !== 'play') return; }
@@ -2216,15 +2874,23 @@ const $ = (id) => document.getElementById(id);
 function updateScoreUI() {
   const srvTeam = serverOrder[score.serverIdx]?.team;
   for (const t of [0, 1]) {
-    $('p' + t).textContent = PT[score.points[t]] ?? '40';
+    $('p' + t).textContent = ptLabel(t);
     $('g' + t).textContent = score.games[t]; $('s' + t).textContent = score.sets[t];
     $('nm' + t).textContent = teamShort(t);
     $('dot' + t).classList.toggle('on', srvTeam === t);
   }
   $('vsLine').textContent = teams[0].map((p) => p.name).join(' / ') + ' v ' + teams[1].map((p) => p.name).join(' / ');
   const rt = srvTeam === undefined ? 1 : 1 - srvTeam;
-  const bp = score.points[rt] === 3 && score.points[1 - rt] <= 3;
-  $('statusLine').innerHTML = _t('status', { s: score.sets[0] + score.sets[1] + 1, g: `${score.games[0]}-${score.games[1]}`, p: `${PT[score.points[0]]}-${PT[score.points[1]]}` }) + (bp ? ` · <b>${tr('breakPt')}</b>` : '');
+  const flags = [];
+  if (score.tb) flags.push(tr(score.mtb ? (score.tbTo === 10 ? 'stbLbl' : 'mtbLbl') : 'tbLbl'));
+  if (!score.over) {
+    if (matchPointFor(0) || matchPointFor(1)) flags.push(`<b>${tr('matchPt')}</b>`);
+    else if (setPointFor(0) || setPointFor(1)) flags.push(`<b>${tr('setPt')}</b>`);
+    else if (!score.tb && gamePointFor(rt)) flags.push(`<b>${tr('breakPt')}</b>`);
+    if (decisiveNow()) flags.push(`<b>${tr(FMT.deuce === 'star' ? 'starLbl' : 'goldLbl')}</b>`);
+  }
+  const done = score.hist.length ? scoreLine(0) + ' · ' : '';
+  $('statusLine').innerHTML = done + _t('status', { s: Math.min(score.sets[0] + score.sets[1] + 1, FMT.bestOf), g: `${score.games[0]}-${score.games[1]}`, p: `${ptLabel(0)}-${ptLabel(1)}` }) + flags.map((f) => ' · ' + f).join('');
 }
 let toastTimer = 0;
 function toast(big, small) {
@@ -2248,6 +2914,11 @@ function syncAll() {
   for (let i = 0; i < 4; i++) { const el = $('nm_' + i); if (document.activeElement !== el) el.value = settings.names[i]; el.placeholder = DEFAULT_NAMES[i]; }
   if (document.activeElement !== $('nm_0b')) $('nm_0b').value = settings.names[0];
   $('nm_0b').placeholder = DEFAULT_NAMES[0];
+  for (const b of $('segMode').querySelectorAll('button')) b.disabled = tour.active;
+  for (const b of $('segSurface').querySelectorAll('button')) b.disabled = tour.active;
+  for (const b of $('segVenue').querySelectorAll('button')) { b.disabled = tour.active; b.setAttribute('aria-pressed', String(b.dataset.v === settings.venue)); }
+  $('btnNew').hidden = tour.active;
+  $('venueNote').textContent = tour.active ? tourName(tour.data.cur.id) : '';
   syncCoachUI();
   syncOverlays();
 }
@@ -2274,8 +2945,14 @@ function syncOverlays() {
 }
 narrowMQ.addEventListener('change', syncOverlays);
 bindSeg('segMode', () => settings.mode, (v) => { if (v !== settings.mode) { settings.mode = v; newMatch(false); } });
-bindSeg('segLevel', () => settings.level, (v) => { settings.level = v; });
-bindSeg('segLevel2', () => settings.level, (v) => { settings.level = v; });
+bindSeg('segLevel', () => settings.level, (v) => { settings.level = v; refreshLevels(); });
+bindSeg('segLen', () => settings.matchLen, (v) => { settings.matchLen = v; if (demo) setFormat(arcadeFmt()); renderArcade(); });
+bindSeg('segDeuce', () => settings.deuce, (v) => { settings.deuce = v; if (demo) setFormat(arcadeFmt()); renderArcade(); });
+function buildVenueButtons() {
+  $('segVenue').innerHTML = VENUE_IDS.map((id) => `<button class="vtile" data-v="${id}">${swatch(id)}<b>${esc(cityName(id))}</b></button>`).join('');
+}
+$('segVenue').addEventListener('click', (e) => { const b = e.target.closest('.vtile'); if (!b || b.disabled || tour.active || b.dataset.v === settings.venue) return; setVenue(b.dataset.v); say(tr('vd')[settings.venue], true); });
+bindSeg('segLevel2', () => settings.level, (v) => { settings.level = v; refreshLevels(); });
 bindSeg('segSpeed', () => settings.speed, (v) => { settings.speed = v; });
 bindSeg('segSurface', () => settings.surface, (v) => { settings.surface = v; applySurface(); say(tr('surfSay')[v], true); });
 bindSeg('segTime', () => settings.time, (v) => { settings.time = v; applyTime(); });
@@ -2308,7 +2985,7 @@ function togglePause() { paused = !paused; $('btnPause').textContent = tr(paused
 $('panelBtn').addEventListener('click', () => { const open = !$('panel').classList.contains('open'); $('panel').classList.toggle('open', open); $('panelBtn').setAttribute('aria-expanded', String(open)); });
 function closePanel() { $('panel').classList.remove('open'); $('panelBtn').setAttribute('aria-expanded', 'false'); }
 function applyNames() {
-  for (let tm = 0; tm < 2; tm++) teams[tm].forEach((p, i) => { p.name = nameFor(tm * 2 + i); });
+  for (let tm = 0; tm < 2; tm++) teams[tm].forEach((p, i) => { p.name = tm === 1 && tour.active && tour.opp ? tour.opp.n[i] : nameFor(tm * 2 + i); });
 }
 function onNameInput(i, el) {
   settings.names[i] = cleanName(el.value); saveSettings();
@@ -2327,7 +3004,9 @@ function applyLang() {
   if (window.__drawScreen) window.__drawScreen();
   $('installNote').hidden = !(isIOS && !isStandalone); $('installNote').textContent = tr('installIOS');
   for (const el of document.querySelectorAll('#start .hint')) el.hidden = !(isIOS && !isStandalone);
-  applyNames(); updateScoreUI(); syncAll();
+  applyNames(); updateScoreUI(); syncAll(); updateHeader(); buildVenueButtons();
+  const vis = CARDS.find((c) => !$(c).hidden);
+  if (vis && vis !== 'cardResult') showCard(vis);
 }
 bindSeg('segLang', () => settings.lang, (v) => { settings.lang = v; applyLang(); });
 bindSeg('segLang2', () => settings.lang, (v) => { settings.lang = v; applyLang(); });
@@ -2336,32 +3015,373 @@ $('hudPause').addEventListener('click', () => { haptic(10); togglePause(); });
 $('goPlay').addEventListener('click', () => { Sfx.unlock(); settings.mode = 'arcade'; newMatch(false); });
 $('goCoach').addEventListener('click', () => { Sfx.unlock(); settings.mode = 'coach'; newMatch(false); });
 
-function newMatch(asDemo) {
+/* ================================================================== */
+/* Tour: eight tournaments, categories and formats taken from the FIP  */
+/* rules (scoring options, mini sets, match tie-breaks, groups).       */
+/* ================================================================== */
+const TIERS = {
+  bronze: { pts: 150, adj: -0.45, col: '#b8743a' }, silver: { pts: 300, adj: -0.25, col: '#9aa6b2' },
+  gold: { pts: 600, adj: 0, col: '#d9a520' }, platinum: { pts: 1000, adj: 0.15, col: '#5fb8bd' },
+  major: { pts: 2000, adj: 0.3, col: '#c2412d' }, finals: { pts: 1500, adj: 0.35, col: '#7b4fa0' },
+};
+const TOURS = [
+  { id: 'napoli', tier: 'bronze', draw: 8, fmt: { games: 4, deuce: 'golden', decider: 'stb10' } },
+  { id: 'barcellona', tier: 'silver', draw: 8, fmt: { games: 6, deuce: 'golden', decider: 'stb10' } },
+  { id: 'cortina', tier: 'gold', draw: 8, fmt: { games: 6, deuce: 'adv', decider: 'tb7' } },
+  { id: 'buenosaires', tier: 'gold', draw: 16, fmt: { games: 6, deuce: 'golden', decider: 'set' } },
+  { id: 'dubai', tier: 'platinum', draw: 16, fmt: { games: 6, deuce: 'golden', decider: 'set' } },
+  { id: 'parigi', tier: 'major', draw: 16, fmt: { games: 6, deuce: 'star', decider: 'set' } },
+  { id: 'roma', tier: 'major', draw: 16, fmt: { games: 6, deuce: 'star', decider: 'set' } },
+  { id: 'milano', tier: 'finals', draw: 8, groups: true, unlock: 1500, fmt: { games: 6, deuce: 'star', decider: 'set' } },
+];
+const RES_ORDER = ['RR', 'R16', 'QF', 'SF', 'F', 'W'];
+const RES_SHARE = { RR: 0.12, R16: 0.09, QF: 0.18, SF: 0.36, F: 0.6, W: 1 };
+const ROUND_OF = { 8: 'R16', 4: 'QF', 2: 'SF', 1: 'F' };
+const AI_NAMES = ['Molina', 'Delgado', 'Castro', 'Romero', 'Vidal', 'Serrano', 'Iglesias', 'Herrera', 'Cabrera', 'Acosta', 'Benítez', 'Sosa',
+  'Quiroga', 'Funes', 'Medina', 'Paz', 'Laurent', 'Moreau', 'Dubois', 'Fournier', 'Silva', 'Costa', 'Lindqvist', 'Berg', 'Haddad', 'Novak',
+  'Kowalski', 'Bianchi', 'Conti', 'Marino', 'Greco', 'Bruno', 'Gallo', 'Moretti', 'Fontana', 'Rinaldi', 'Caruso', 'Ferri', 'Jansen', 'Tanaka', 'Okafor', 'Sartori'];
+const tour = { active: false, levelAdj: 0, opp: null, data: loadTour() };
+function loadTour() {
+  const empty = { best: {}, titles: {}, cur: null };
+  try { const d = JSON.parse(localStorage.getItem('terrazza-padel-tour-v1') || 'null'); if (d && typeof d === 'object') return Object.assign(empty, d); } catch (e) { /* storage unavailable */ }
+  return empty;
+}
+function saveTour() { try { localStorage.setItem('terrazza-padel-tour-v1', JSON.stringify(tour.data)); } catch (e) { /* ignore */ } }
+const tourDef = (id) => TOURS.find((t) => t.id === id);
+const rankPoints = () => Object.entries(tour.data.best).reduce((s, [id, r]) => s + (tourDef(id) ? Math.round(TIERS[tourDef(id).tier].pts * RES_SHARE[r]) : 0), 0);
+const titleCount = () => Object.values(tour.data.titles).reduce((a, b) => a + b, 0);
+const ptsFor = (id, r) => Math.round(TIERS[tourDef(id).tier].pts * RES_SHARE[r]);
+const tourName = (id) => VENUES[id].name;
+const cityName = (id) => VENUES[id].city[settings.lang] || VENUES[id].city.it;
+function tourFmt(cur) {
+  const f = Object.assign({ bestOf: 3 }, tourDef(cur.id).fmt);
+  if (cur.fast) Object.assign(f, { games: 4, decider: 'stb10' });
+  return f;
+}
+function arcadeFmt() {
+  const len = { mini: { bestOf: 1, games: 4 }, set1: { bestOf: 1, games: 6 }, set3: { bestOf: 3, games: 6, decider: 'set' } }[settings.matchLen] || { bestOf: 1, games: 6 };
+  return Object.assign({ deuce: settings.deuce || 'golden' }, len);
+}
+function fmtText(f) {
+  return [tr('fmtSets')[f.games], tr('fmtDecider')[f.bestOf === 1 ? 'one' : f.decider], tr('deuceNote')[f.deuce], tr('fmtTb')].join(' ');
+}
+function shortFmt(f) {
+  const sets = f.bestOf === 1 ? '1 set' : f.decider === 'set' ? tr('lenSet3') : f.decider === 'stb10' ? '2 set + super tie-break' : '2 set + tie-break 7';
+  return [f.games === 4 ? tr('lenMini') : null, sets, { adv: tr('dAdv'), golden: tr('dGolden'), star: tr('dStar') }[f.deuce]].filter(Boolean).join(' · ');
+}
+const pairName = (cur, i) => (i === 0 ? [nameFor(0), nameFor(1)] : cur.pairs[i].n).join('/');
+function strengthOf(cur, i) { return i === 0 ? 72 : cur.pairs[i].s; }
+function simScore(cur, w) {
+  const f = tourFmt(cur), r = Math.random, G = f.games, sets = [];
+  const one = (win) => { const k = r(); let a = G, b = Math.floor(r() * (G - 1)), tb = ''; if (k < 0.18) { a = G + 1; b = G - 1; } else if (k < 0.3) { a = G + 1; b = G; tb = `(${Math.floor(r() * 6)})`; } return win ? [a, b, tb] : [b, a, tb]; };
+  const lose1 = f.bestOf === 3 && r() < 0.38;
+  sets.push(one(true));
+  if (f.bestOf === 3) {
+    if (lose1) { sets.push(one(false)); if (f.decider === 'set') sets.push(one(true)); else { const to = f.decider === 'stb10' ? 10 : 7, b = Math.floor(r() * (to - 1)); sets.push(['mtb', to + (b > to - 2 ? 2 : 0), b]); } }
+    else sets.push(one(true));
+  }
+  return sets.map((st) => (st[0] === 'mtb' ? `[${st[1]}-${st[2]}]` : `${st[0]}-${st[1]}${st[2]}`)).join(' ');
+}
+function simMatch(cur, a, b) {
+  const pa = 1 / (1 + Math.pow(10, (strengthOf(cur, b) - strengthOf(cur, a)) / 30));
+  const w = Math.random() < pa ? a : b;
+  return [a, b, w, simScore(cur, w)];
+}
+function bracketOrder(n) { let a = [1, 2]; while (a.length < n) { const m = a.length * 2 + 1, b = []; for (const s of a) b.push(s, m - s); a = b; } return a; }
+function startTour(id, fast) {
+  const T = tourDef(id), seed = (Date.now() & 0xffffff) ^ (T.draw * 977);
+  const r = mulberry32(seed), pool = AI_NAMES.filter((n) => !DEFAULT_NAMES.includes(n) && ![nameFor(0), nameFor(1)].includes(n));
+  for (let i = pool.length - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [pool[i], pool[j]] = [pool[j], pool[i]]; }
+  const ai = [];
+  for (let i = 0; i < T.draw - 1; i++) ai.push({ n: [pool[i * 2], pool[i * 2 + 1]], s: Math.round(48 + r() * 46) });
+  ai.sort((a, b) => b.s - a.s);
+  const pairs = [{ n: null, s: 72, me: true }, ...ai];
+  const cur = { id, fast: !!fast, pairs, rounds: [], done: false, res: null, live: null, last: null };
+  if (T.groups) {
+    // Snake seeding into two groups of four; the user joins group A
+    cur.groups = [[0, 1, 4, 5], [2, 3, 6, 7]];
+    cur.gm = [[], [], []]; cur.gday = 0;
+  } else {
+    const order = bracketOrder(T.draw), userSeed = T.draw / 2 + 1;
+    const bySeed = []; let k = 1;
+    for (let sd = 1; sd <= T.draw; sd++) bySeed[sd] = sd === userSeed ? 0 : k++;
+    const slots = order.map((sd) => bySeed[sd]);
+    const r0 = []; for (let i = 0; i < slots.length; i += 2) r0.push([slots[i], slots[i + 1], -1, '']);
+    cur.rounds.push(r0);
+  }
+  tour.data.cur = cur; saveTour();
+  return cur;
+}
+const GROUP_DAYS = [[[0, 1], [2, 3]], [[0, 2], [1, 3]], [[0, 3], [1, 2]]];
+function nextUserMatch(cur) {
+  if (!cur || cur.done) return null;
+  if (cur.groups && cur.gday < 3) {
+    const [a, b] = GROUP_DAYS[cur.gday].find((m) => m.includes(0)).map((i) => cur.groups[0][i]);
+    return { opp: a === 0 ? b : a, label: _t('groupDay', { g: 'A', d: cur.gday + 1 }), code: 'RR' };
+  }
+  const rd = cur.rounds[cur.rounds.length - 1], m = rd.find((x) => x[0] === 0 || x[1] === 0);
+  if (!m) return null;
+  const code = ROUND_OF[rd.length];
+  return { opp: m[0] === 0 ? m[1] : m[0], label: tr('rounds')[code], code };
+}
+function standings(cur, g) {
+  const ids = cur.groups[g], st = ids.map((i) => ({ i, w: 0, sd: 0 }));
+  for (const day of cur.gm) for (const m of day) {
+    if (!ids.includes(m[0]) || m[2] < 0) continue;
+    const sw = (m[3].match(/\d+-\d+|\[\d+-\d+\]/g) || []).reduce((acc, x) => { const [p, q] = x.replace(/[[\]]/g, '').split('-').map(Number); return acc + (p > q ? 1 : -1); }, 0);
+    const W = st.find((x) => x.i === m[2]), L = st.find((x) => x.i === (m[2] === m[0] ? m[1] : m[0]));
+    W.w++; W.sd += sw; L.sd -= sw;
+  }
+  return st.sort((a, b) => b.w - a.w || b.sd - a.sd || strengthOf(cur, b.i) - strengthOf(cur, a.i));
+}
+// Records the user's result, simulates the rest of the round and moves the tournament on. Returns a short message.
+function recordResult(won, line) {
+  const cur = tour.data.cur, nx = nextUserMatch(cur);
+  if (!cur || !nx) return '';
+  cur.live = null;
+  const me = [0, nx.opp, won ? 0 : nx.opp, line];
+  let msg = '';
+  if (cur.groups && cur.gday < 3) {
+    const day = [me];
+    for (const g of [0, 1]) for (const [x, y] of GROUP_DAYS[cur.gday]) { const a = cur.groups[g][x], b = cur.groups[g][y]; if (a !== 0 && b !== 0) day.push(simMatch(cur, a, b)); }
+    cur.gm[cur.gday] = day; cur.gday++;
+    if (cur.gday < 3) msg = _t('groupNext', { d: cur.gday + 1 });
+    else {
+      const A = standings(cur, 0), B = standings(cur, 1);
+      if (A[0].i === 0 || A[1].i === 0) { cur.rounds.push([[A[0].i, B[1].i, -1, ''], [B[0].i, A[1].i, -1, '']]); msg = tr('groupThrough'); }
+      else { cur.rounds.push([[A[0].i, B[1].i, -1, ''], [B[0].i, A[1].i, -1, '']]); finishTour(cur, 'RR'); msg = _t('groupOut', { p: ptsFor(cur.id, 'RR') }); }
+    }
+    saveTour(); return msg;
+  }
+  const rd = cur.rounds[cur.rounds.length - 1], code = ROUND_OF[rd.length];
+  rd.forEach((m, i) => { if (m[0] === 0 || m[1] === 0) rd[i] = [m[0], m[1], won ? 0 : nx.opp, line]; else rd[i] = simMatch(cur, m[0], m[1]); });
+  if (!won) {
+    while (cur.rounds[cur.rounds.length - 1].length > 1) advance(cur);
+    finishTour(cur, code); msg = _t('outIn', { r: tr('roundsIn')[code], p: ptsFor(cur.id, code) });
+  } else if (rd.length === 1) { finishTour(cur, 'W'); msg = _t('wonTour', { p: ptsFor(cur.id, 'W') }); }
+  else { advance(cur); msg = _t('through', { r: tr('rounds')[ROUND_OF[rd.length / 2]] }); }
+  saveTour(); return msg;
+}
+function advance(cur) {
+  const rd = cur.rounds[cur.rounds.length - 1];
+  for (let i = 0; i < rd.length; i++) if (rd[i][2] < 0) rd[i] = simMatch(cur, rd[i][0], rd[i][1]);
+  if (rd.length === 1) return;
+  const nx = []; for (let i = 0; i < rd.length; i += 2) nx.push([rd[i][2], rd[i + 1][2], -1, '']);
+  cur.rounds.push(nx);
+  if (!nx.some((m) => m[0] === 0 || m[1] === 0)) { /* user is out: keep simulating */ }
+}
+function finishTour(cur, res) {
+  while (cur.rounds.length && cur.rounds[cur.rounds.length - 1].some((m) => m[2] < 0)) advance(cur);
+  cur.done = true; cur.res = res;
+  const prev = tour.data.best[cur.id];
+  if (!prev || RES_ORDER.indexOf(res) > RES_ORDER.indexOf(prev)) tour.data.best[cur.id] = res;
+  if (res === 'W') tour.data.titles[cur.id] = (tour.data.titles[cur.id] || 0) + 1;
+}
+function champion(cur) { const f = cur.rounds[cur.rounds.length - 1]; return f && f.length === 1 && f[0][2] >= 0 ? f[0][2] : -1; }
+function lookFor(name) {
+  let h = 7; for (const c of name) h = (h * 31 + c.charCodeAt(0)) | 0;
+  const r = mulberry32(h);
+  return { shirt: pick(SHIRTS, r), shorts: pick([0x23202e, 0xf3eadb, 0x1d2a44, 0x2a2233], r), hair: pick(HAIR, r), skin: pick(SKIN, r), racket: pick(SHIRTS, r), [r() < 0.5 ? 'cap' : 'band']: pick([0xf3eadb, 0x2a2233, 0xe98a2f, 0x1f7a6c], r) };
+}
+function restyle(p, look) {
+  scene.remove(p.mesh); p.mesh.traverse((o) => o.geometry && o.geometry.dispose());
+  p.mesh = makePerson(look); scene.add(p.mesh); p.lookKey = JSON.stringify(look);
+}
+function setTeamLooks(t, lk) { teams[t].forEach((p, i) => { if (p.lookKey !== JSON.stringify(lk[i])) restyle(p, lk[i]); }); }
+function saveLive() {
+  const cur = tour.data.cur;
+  if (!tour.active || demo || !cur || score.over) return;
+  cur.live = { score: JSON.parse(JSON.stringify(score)) }; saveTour();
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) saveLive(); });
+function playTourMatch(mode) {
+  const cur = tour.data.cur, nx = nextUserMatch(cur);
+  if (!nx) return;
+  tour.active = true; tour.opp = cur.pairs[nx.opp]; tour.round = nx;
+  tour.levelAdj = TIERS[tourDef(cur.id).tier].adj + (tour.opp.s - 70) / 60 + (nx.code === 'F' ? 0.1 : 0);
+  settings.mode = mode;
+  if (settings.venue !== cur.id) setVenue(cur.id, true);
+  settings.surface = VENUES[cur.id].surface;
+  settings.time = nx.code === 'F' ? 'night' : nx.code === 'SF' ? 'sunset' : VENUES[cur.id].time;
+  applySurface(); applyTime();
+  setFormat(tourFmt(cur));
+  newMatch(false, true);
+  if (cur.live && cur.live.score) { Object.assign(score, JSON.parse(JSON.stringify(cur.live.score)), { over: false }); startPoint(); }
+}
+function endMatch() {
+  rally.state = 'over';
+  if (demo) { newMatch(true); return; }
+  const won = score.winner === 0, opp = teamName(1), line = scoreLine(score.winner);
+  haptic(won ? [30, 60, 30, 60, 60] : 40);
+  let msg = '', inTour = tour.active;
+  if (inTour) msg = recordResult(won, line);
+  const card = $('cardResult');
+  card.querySelector('.res-big').textContent = tr(won ? 'resWin' : 'resLoss');
+  card.querySelector('.res-score').textContent = scoreLine(0);
+  card.querySelector('.res-vs').textContent = _t('resIn', { t: opp }) + (inTour ? ' · ' + tourName(tour.data.cur.id) : '');
+  card.querySelector('.res-msg').textContent = msg;
+  card.querySelector('.res-msg').hidden = !msg;
+  $('resRematch').hidden = inTour; $('resCont').hidden = !inTour;
+  resultFrom = inTour ? 'tour' : 'arcade';
+  tour.active = false;
+  newMatch(true);
+  showCard('cardResult');
+}
+let resultFrom = 'arcade';
+
+function setVenue(id, resetLook = true) {
+  if (!VENUES[id]) id = 'milano';
+  settings.venue = id;
+  if (resetLook) { settings.surface = VENUES[id].surface; settings.time = VENUES[id].time; }
+  buildWorld(id); saveSettings(); syncAll(); updateHeader();
+}
+function newMatch(asDemo, keepTour = false) {
   demo = asDemo;
+  if (!keepTour) { tour.active = false; tour.opp = null; tour.round = null; setFormat(arcadeFmt()); }
   for (const p of players) p.isHuman = false;
   human.player = null;
+  setTeamLooks(1, tour.active ? tour.opp.n.map(lookFor) : [looks[2], looks[3]]);
   applyNames();
   if (!demo && settings.mode === 'arcade') { human.player = teams[0][0]; human.player.isHuman = true; }
-  Object.assign(score, { points: [0, 0], games: [0, 0], sets: [0, 0], serverIdx: 0 });
+  Object.assign(score, freshScore());
   Object.assign(coach, { next: null, aim: null, aiming: false });
   aimMarker.visible = false;
+  refreshLevels();
   $('start').hidden = !demo;
   paused = false; $('btnPause').textContent = tr('pause'); $('hudPause').classList.remove('on');
   cam.intro = demo ? 0 : 2.2;
-  syncAll(); resize();
+  syncAll(); resize(); updateHeader();
   startPoint();
   if (!demo) {
     if (settings.mode === 'arcade') toast(tr('goPlay'), tr(isTouch ? 'goPlaySmallTouch' : 'goPlaySmall'));
     else toast(tr('goCoach'), tr(narrowMQ.matches ? 'goCoachBar' : 'goCoachPanel'));
-    say(_t('welcome', { a: teamName(0), b: teamName(1) }), true);
+    const n = VENUES[settings.venue].name;
+    say(tour.active ? _t('welcomeR', { r: tour.round.label, n, a: teamName(0), b: teamName(1) }) : _t('welcome', { n, a: teamName(0), b: teamName(1) }), true);
   }
 }
+
+/* ---- Start screens: home, arcade, tour list, tournament, result ---- */
+const CARDS = ['cardHome', 'cardArcade', 'cardTour', 'cardTourDet', 'cardResult'];
+const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+let detId = 'napoli', detFast = false, withdrawArm = 0;
+function showCard(id) {
+  closePanel();
+  for (const c of CARDS) $(c).hidden = c !== id;
+  $('start').hidden = false;
+  if (id === 'cardArcade') renderArcade();
+  if (id === 'cardTour') renderTour();
+  if (id === 'cardTourDet') renderDet();
+  $(id).scrollTop = 0;
+}
+function updateHeader() {
+  const id = settings.venue, city = cityName(id);
+  const lbl = tour.active && tour.round ? tour.round.label : tr('centreCourt');
+  $('topEyebrow').textContent = `${lbl} · ${city}`;
+  $('topTitle').textContent = VENUES[id].name;
+}
+const swatch = (id) => { const v = VENUES[id]; return `<i class="sw" style="--a:${v.pave[1]};--b:#${new THREE.Color(v.standWall).getHexString()};--c:${SURFACES[v.surface].base}"></i>`; };
+function renderArcade() {
+  const g = $('venueGrid');
+  if (!g.children.length) {
+    g.innerHTML = VENUE_IDS.map((id) => `<button class="vtile" data-v="${id}">${swatch(id)}<b></b><span></span></button>`).join('');
+    g.addEventListener('click', (e) => { const b = e.target.closest('.vtile'); if (!b || b.dataset.v === settings.venue) return; haptic(8); setVenue(b.dataset.v); renderArcade(); });
+  }
+  for (const b of g.children) { b.querySelector('b').textContent = cityName(b.dataset.v); b.querySelector('span').textContent = VENUES[b.dataset.v].name; b.setAttribute('aria-pressed', String(b.dataset.v === settings.venue)); }
+  $('venueDesc').textContent = tr('vd')[settings.venue];
+  $('arcadeFmt').textContent = fmtText(arcadeFmt());
+}
+function renderTour() {
+  const pts = rankPoints(), cur = tour.data.cur;
+  $('tourHead').textContent = _t('rankPts', { p: pts }) + ' · ' + _t('titlesN', { n: titleCount() });
+  $('tourList').innerHTML = TOURS.map((T) => {
+    const locked = T.unlock && pts < T.unlock, best = tour.data.best[T.id], live = cur && cur.id === T.id && !cur.done;
+    const f = Object.assign({ bestOf: 3 }, T.fmt);
+    return `<button class="trow" data-id="${T.id}"${locked ? ' disabled' : ''}>
+      <i class="tier" style="--c:${TIERS[T.tier].col}">${T.tier.toUpperCase()}</i>${swatch(T.id)}
+      <b>${esc(tourName(T.id))}</b><span class="city">${esc(cityName(T.id))} · ${_t('pairsN', { n: T.draw })}</span>
+      <span class="fmt">${locked ? esc(_t('locked', { p: T.unlock })) : esc(shortFmt(f))}</span>
+      ${live ? `<span class="live">${esc(nextUserMatch(cur)?.label || '')}</span>` : best ? `<span class="best">${esc(_t('best', { r: tr('res')[best] }))}${tour.data.titles[T.id] ? ' ★'.repeat(Math.min(3, tour.data.titles[T.id])) : ''}</span>` : ''}
+    </button>`;
+  }).join('');
+}
+function drawHTML(cur) {
+  const nm = (i) => `<span class="${i === 0 ? 'me' : ''}">${esc(pairName(cur, i))}</span>`;
+  const row = (m) => (m[2] < 0 ? `<li>${nm(m[0])} <i>–</i> ${nm(m[1])}</li>` : `<li><b>${nm(m[2])}</b> <i>${tr('beat')}</i> ${nm(m[2] === m[0] ? m[1] : m[0])} <em>${esc(m[3])}</em></li>`);
+  let h = '';
+  if (cur.groups) {
+    cur.groups.forEach((g, gi) => {
+      const st = standings(cur, gi);
+      h += `<h4>${esc(_t('groupLbl', { g: 'AB'[gi] }))}</h4><table class="stand"><tr><th></th><th>${tr('winsCol')}</th><th>±${tr('setsCol')}</th></tr>`
+        + st.map((x, k) => `<tr class="${k < 2 && cur.gday >= 3 ? 'q' : ''}"><td>${nm(x.i)}</td><td>${x.w}</td><td>${x.sd > 0 ? '+' : ''}${x.sd}</td></tr>`).join('') + '</table>';
+      const played = cur.gm.flat().filter((m) => g.includes(m[0]));
+      if (played.length) h += `<ul>${played.map(row).join('')}</ul>`;
+    });
+  }
+  for (const rd of cur.rounds) h += `<h4>${esc(tr('rounds')[ROUND_OF[rd.length]])}</h4><ul>${rd.map(row).join('')}</ul>`;
+  const T = tourDef(cur.id);
+  if (!cur.groups) for (let n = cur.rounds[cur.rounds.length - 1].length / 2; n >= 1 && cur.rounds.length < Math.log2(T.draw); n /= 2) h += `<h4>${esc(tr('rounds')[ROUND_OF[n]])}</h4><ul><li class="tbd">${tr('tbd')}</li></ul>`;
+  return h;
+}
+function renderDet() {
+  const T = tourDef(detId), cur = tour.data.cur, mine = cur && cur.id === detId, running = mine && !cur.done;
+  $('detTier').textContent = T.tier.toUpperCase(); $('detTier').style.setProperty('--c', TIERS[T.tier].col);
+  $('detName').textContent = tourName(T.id);
+  $('detCity').textContent = `${cityName(T.id)} · ${_t('pairsN', { n: T.draw })} · ${tr('vd')[T.id]}`;
+  $('detRules').textContent = (T.groups ? tr('groupsFmt') + ' ' : '') + fmtText(tourFmt(mine ? cur : { id: T.id, fast: detFast }));
+  $('detEnter').hidden = running;
+  $('detLenRow').hidden = running;
+  $('detFastNote').hidden = running;
+  $('detOther').hidden = !(cur && !cur.done && !mine);
+  if (cur && !cur.done && !mine) $('detOther').textContent = _t('otherRunning', { c: cityName(cur.id) });
+  $('detEnter').textContent = tr(mine && cur.done ? 'restart' : 'enter');
+  $('detNext').hidden = !running;
+  if (running) {
+    const nx = nextUserMatch(cur);
+    $('detNextLbl').textContent = _t('nextMatch', { r: nx.label });
+    $('detNextVs').textContent = _t('vsPair', { t: cur.pairs[nx.opp].n.join(tr('and')) });
+    $('detPlay').querySelector('b').textContent = tr(cur.live ? 'resumeMatch' : 'play');
+  }
+  $('detWithdraw').textContent = tr('withdraw'); withdrawArm = 0;
+  $('detResult').hidden = !(mine && cur.done);
+  if (mine && cur.done) {
+    const ch = champion(cur);
+    $('detResult').textContent = (cur.res === 'W' ? _t('wonTour', { p: ptsFor(cur.id, 'W') }) : cur.res === 'RR' ? _t('groupOut', { p: ptsFor(cur.id, 'RR') }) : _t('outIn', { r: tr('roundsIn')[cur.res], p: ptsFor(cur.id, cur.res) }))
+      + (ch > 0 ? ' ' + _t('champions', { t: cur.pairs[ch].n.join(tr('and')) }) : '');
+  }
+  $('detDrawWrap').hidden = !mine;
+  if (mine) $('detDraw').innerHTML = drawHTML(cur);
+  for (const b of $('segTourLen').querySelectorAll('button')) b.setAttribute('aria-pressed', String((b.dataset.v === 'fast') === detFast));
+}
+$('goArcade').addEventListener('click', () => { Sfx.unlock(); haptic(8); showCard('cardArcade'); });
+$('goTour').addEventListener('click', () => { Sfx.unlock(); haptic(8); showCard('cardTour'); });
+for (const b of document.querySelectorAll('[data-back]')) b.addEventListener('click', () => showCard(b.dataset.back));
+$('tourList').addEventListener('click', (e) => { const b = e.target.closest('.trow'); if (!b || b.disabled) return; haptic(8); detId = b.dataset.id; detFast = false; showCard('cardTourDet'); });
+$('segTourLen').addEventListener('click', (e) => { const b = e.target.closest('button'); if (!b) return; detFast = b.dataset.v === 'fast'; renderDet(); });
+$('detEnter').addEventListener('click', () => { haptic(12); startTour(detId, detFast); setVenue(detId); renderDet(); });
+$('detPlay').addEventListener('click', () => { Sfx.unlock(); playTourMatch('arcade'); });
+$('detCoach').addEventListener('click', () => { Sfx.unlock(); playTourMatch('coach'); });
+$('detWithdraw').addEventListener('click', () => {
+  const cur = tour.data.cur; if (!cur || cur.done) return;
+  if (!withdrawArm) { withdrawArm = 1; $('detWithdraw').textContent = tr('withdrawSure'); return; }
+  const nx = nextUserMatch(cur); cur.live = null;
+  if (cur.groups && cur.gday < 3) { while (cur.gday < 3) recordResult(false, ''); }
+  else recordResult(false, '');
+  void nx; renderDet();
+});
+$('resCont').addEventListener('click', () => { detId = tour.data.cur ? tour.data.cur.id : detId; showCard('cardTourDet'); });
+$('resRematch').addEventListener('click', () => { Sfx.unlock(); newMatch(false); });
+$('resMenu').addEventListener('click', () => showCard(resultFrom === 'tour' ? 'cardTour' : 'cardHome'));
+$('btnMenu').addEventListener('click', () => {
+  const wasTour = tour.active;
+  saveLive(); closePanel(); newMatch(true);
+  if (wasTour) { detId = tour.data.cur.id; showCard('cardTourDet'); } else showCard('cardHome');
+});
 
 /* ================================================================== */
 /* Boot                                                                */
 /* ================================================================== */
 try { await Promise.race([Promise.all([document.fonts.load('700 30px "Pixelify Sans"'), document.fonts.load('700 34px "Fraunces"')]), new Promise((r) => setTimeout(r, 1500))]); } catch (e) { /* fallback */ }
-buildRoof(); buildCourt(); buildStands(); buildProps(); buildClub(); buildCity();
+buildWorld(settings.venue);
 const looks = [
   { shirt: 0xe98a2f, shorts: 0x2a2233, hair: 0x3a2a1e, racket: 0xe98a2f, band: 0xf3eadb },
   { shirt: 0xf3eadb, shorts: 0xe98a2f, hair: 0x1a1a1a, racket: 0x2a2233, skin: 0xd9a273, cap: 0xe98a2f },
@@ -2370,9 +3390,12 @@ const looks = [
 ];
 for (let t = 0; t < 2; t++) for (let s = 0; s < 2; s++) { const p = new Player(t, s, looks[t * 2 + s]); teams[t].push(p); players.push(p); }
 serverOrder = [teams[0][0], teams[1][0], teams[0][1], teams[1][1]];
+players.forEach((p, i) => { p.lookKey = JSON.stringify(looks[i]); });
+buildVenueButtons();
 applyTime();
 newMatch(true);
 applyLang();
+showCard('cardHome');
 if (!commNow) $('commNow').textContent = tr('commHello');
 $('loading').remove();
 
@@ -2385,6 +3408,7 @@ function frame(now) {
     if (n >= 60) acc = 0;
   }
   updateFx(dt);
+  for (const t of waterTexs) t.offset.x = (now / 1000 * 0.006) % 1;
   syncMeshes(dt, now / 1000);
   updateCamera(dt);
   renderer.shadowMap.needsUpdate = true;
@@ -2398,7 +3422,7 @@ window.padel = {
   get state() { return { rally: { ...rally, server: rally.server?.team, lastHitter: rally.lastHitter?.name, designated: rally.designated.map((d) => d && d.team + ':' + d.slot) }, score: JSON.parse(JSON.stringify(score)), ball: ball.p.toArray().map((v) => +v.toFixed(2)), demo, mode: settings.mode }; },
   step(n = 120) { for (let i = 0; i < n; i++) simStep(); syncMeshes(n * DT, performance.now() / 1000); },
   frameCam(dt = 0.016, n = 1) { for (let i = 0; i < n; i++) updateCamera(dt); },
-  newMatch, settings, coach, players, ball, debugLog, cam,
+  newMatch, settings, coach, players, ball, debugLog, cam, setVenue, VENUES, tour, FMT, score, award: (t, r = 'double') => award(t, r),
 };
 </script>
 </body>
