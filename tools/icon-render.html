@@ -1,0 +1,7 @@
+<!doctype html>
+<meta charset="utf-8">
+<style>html,body{margin:0;background:#1c3d2c}img{display:block;image-rendering:pixelated}</style>
+<body><img id="i" src="../icons/icon.svg"><script>
+const q = new URLSearchParams(location.search), size = +q.get('s') || 512, pad = +q.get('pad') || 0;
+const im = document.getElementById('i'); im.style.width = im.style.height = (size - pad * 2) + 'px'; im.style.margin = pad + 'px';
+</script>
