@@ -775,6 +775,11 @@ const STR = {
       volley: ['Volée di {p}.', '{p} chiude a rete.'],
       bandeja: ['Bandeja di {p}.', '{p} gioca la bandeja.'],
       drop: ['Dejada di {p}!', '{p} accarezza una palla corta.'],
+      chiquita: ['Chiquita di {p} ai piedi di chi è a rete.', '{p} gioca la chiquita, bassa e lenta.'],
+      cuatro: ['Smash por cuatro di {p}!', '{p} schiaccia piatto per farla uscire dal fondo!'],
+      gancho: ['Gancho di {p} a rete!', '{p} chiude col gancho.'],
+      rulo: ['Rulo di {p}!', '{p} carica il rulo: la palla schizza alta.'],
+      contrapared: ['Contrapared di {p}!', '{p} la gioca contro il proprio vetro!', 'Che contrapared di {p}!'],
       vibora: ['Vibora di {p}!', '{p} taglia la vibora verso il vetro laterale.', 'Che vibora di {p}!'],
       bajada: ['Bajada di {p}!', '{p} aspetta la palla dal vetro e la tira giù forte.'],
       rescue: ['{p} la riprende da fuori campo!', 'Che recupero di {p} da fuori!'],
@@ -894,6 +899,11 @@ const STR = {
       volley: ['Volley by {p}.', '{p} finishes at the net.'],
       bandeja: ['Bandeja by {p}.', '{p} plays the bandeja.'],
       drop: ['Drop shot by {p}!', '{p} strokes a short ball.'],
+      chiquita: ['Chiquita by {p} at the net players\' feet.', '{p} plays the chiquita, low and slow.'],
+      cuatro: ['Por cuatro smash by {p}!', '{p} smashes flat to send it out over the back!'],
+      gancho: ['Gancho by {p} at the net!', '{p} finishes with the gancho.'],
+      rulo: ['Rulo by {p}!', '{p} loads the rulo: the ball kicks up high.'],
+      contrapared: ['Contrapared by {p}!', '{p} plays it into their own glass!', 'What a contrapared by {p}!'],
       vibora: ['Vibora by {p}!', '{p} slices a vibora into the side glass.', 'What a vibora by {p}!'],
       bajada: ['Bajada by {p}!', '{p} waits for it off the glass and drives it down.'],
       rescue: ['{p} plays it back from outside the court!', 'What a rescue by {p} from outside!'],
@@ -2303,6 +2313,9 @@ function stepBall(b, dt, ev, deterministic = false) {
       const vin = -b.v.y;
       b.v.y = vin * surf.e; b.v.x *= surf.f; b.v.z *= surf.f;
       // Kick smash (por tres): the ball jumps up and sideways towards the side wall
+      // Por cuatro: the flat smash bounces up and out over the back wall; rulo: topspin makes it jump high and deep
+      if (b.kick4) { b.kick4 = false; b.v.y = Math.max(b.v.y, 11); b.v.z = Math.sign(b.p.z || 1) * 6; b.v.x *= 0.5; }
+      if (b.topspin) { b.topspin = false; b.v.y = Math.max(b.v.y * 1.25, 7.5); b.v.z *= 1.1; }
       if (b.slice) { b.slice = false; b.v.y *= 0.6; b.v.x = Math.sign(b.p.x || 1) * Math.max(Math.abs(b.v.x), 5.5); b.v.z *= 0.8; }
       if (b.kick) { b.kick = false; b.v.y = Math.max(b.v.y, 9); b.v.x = Math.sign(b.p.x || 1) * 2.4; b.v.z *= 0.15; }
       if (b.v.y < 0.35) { b.v.y = 0; if (!b.rolled) { b.rolled = true; ev && ev.push({ type: 'roll', side: sideOf(b.p.z) }); } }
@@ -2329,7 +2342,7 @@ function stepBall(b, dt, ev, deterministic = false) {
   }
 }
 function predict(maxT = 3.4) {
-  const b = { p: ball.p.clone(), v: ball.v.clone(), out: ball.out, rolled: ball.rolled, inbound: ball.inbound, outBounced: ball.outBounced, outFar: ball.outFar, kick: ball.kick, slice: ball.slice };
+  const b = { p: ball.p.clone(), v: ball.v.clone(), out: ball.out, rolled: ball.rolled, inbound: ball.inbound, outBounced: ball.outBounced, outFar: ball.outFar, kick: ball.kick, slice: ball.slice, kick4: ball.kick4, topspin: ball.topspin };
   let outside = rally.outside;
   const rt = 1 - rally.hitterTeam;
   let bounces = rally.bounces, crossed = rally.crossed; const isServe = rally.isServe;
@@ -2377,6 +2390,10 @@ function planShot(from, type, team, o) {
     case 'drop': depth = o.depth ?? 2.6; speed = 8; clear = 0.2; break;
     case 'bajada': depth = o.depth ?? 7.4; speed = o.speed ?? 23; clear = 0.25; break;
     case 'vibora': depth = o.depth ?? 6.4; speed = o.speed ?? 24; clear = 0.3; break;
+    case 'chiquita': depth = o.depth ?? 4.2; speed = o.speed ?? 10.5; clear = 0.12; break;
+    case 'cuatro': depth = o.depth ?? 6.8; speed = o.speed ?? 32; break;
+    case 'gancho': depth = o.depth ?? 5.4; speed = o.speed ?? 25; break;
+    case 'rulo': depth = o.depth ?? 7.2; speed = o.speed ?? 24; clear = 0.3; break;
     default: depth = o.depth ?? 7.6; speed = o.speed ?? 18;
   }
   const target = o.wild ? new THREE.Vector3(o.x, BALL_R, s * depth) : new THREE.Vector3(clamp(o.x, -4.6, 4.6), BALL_R, s * depth);
@@ -2401,6 +2418,34 @@ function planOutShot(from, team, o) {
     if (ok && sol.netY >= NET_H + 0.3) return sol.v;
   }
   return solveVel(from, target, 2.8).v;
+}
+
+// Contrapared: hit the ball into your own back glass so that it rebounds over the net into the opponents' half.
+const _cb = { p: new THREE.Vector3(), v: new THREE.Vector3(), out: false, rolled: false };
+function planContra(from, team, o) {
+  const own = team, tx = clamp(o.x ?? 0, -4, 4), want = o.depth ?? 6.5, sz = teamSign(team);
+  let best = null, bestCost = Infinity;
+  const ev = [];
+  for (let vz = 5; vz <= 13; vz += 1) for (let vy = 3.5; vy <= 10; vy += 0.75) {
+    const tWall = (HL - Math.abs(from.z)) / vz, tTot = tWall + (HL + want) / (vz * 0.74);
+    _cb.p.copy(from); _cb.v.set((tx - from.x) / tTot, vy, sz * vz); _cb.out = false; _cb.rolled = false;
+    let glass = false, crossed = false, land = null;
+    for (let i = 0; i < 480 && !land; i++) {
+      ev.length = 0; stepBall(_cb, DT, ev, true);
+      let bad = false;
+      for (const e of ev) {
+        if (e.type === 'wall') { if (e.side === own && !crossed && e.mat === 'glass') glass = true; else bad = true; }
+        else if (e.type === 'cross') { if (glass && e.to !== own) crossed = true; else if (crossed) bad = true; }
+        else if (e.type === 'floor') { if (crossed && e.side !== own) land = { x: e.x, z: e.z }; else bad = true; }
+        else bad = true;
+      }
+      if (bad) break;
+    }
+    if (!land || Math.abs(land.z) > HL - 0.6) continue;
+    const cost = Math.abs(Math.abs(land.z) - want) + Math.abs(land.x - tx) * 0.4;
+    if (cost < bestCost) { bestCost = cost; best = _cb.v.clone().set((tx - from.x) / tTot, vy, sz * vz); }
+  }
+  return best;
 }
 
 /* ================================================================== */
@@ -2569,7 +2614,7 @@ function startPoint(serveNum = 1) {
   receiver.pos.set(-sxs * 2.6, 0, -sg * 9.2); rPartner.pos.set(sxs * 2.4, 0, -sg * 6.2);
   for (const p of players) { p.target.copy(p.pos); p.vel.set(0, 0, 0); p.plan = null; p.swing = 0; p.frozenUntil = 0; }
   Object.assign(rally, { state: choose ? 'choose' : 'serve', server: srv, serveNum, replay: 0, outside: false, offBack: false, pano: false, hitterTeam: st, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: -sxs, designated: [null, null], shotType: 'serve', lastErr: false, hits: 0, lastHitter: srv });
-  ball.out = false; ball.rolled = false; ball.inbound = false; ball.outBounced = false; ball.outFar = false; ball.kick = false; ball.slice = false; ball.v.set(0, 0, 0);
+  ball.out = false; ball.rolled = false; ball.inbound = false; ball.outBounced = false; ball.outFar = false; ball.kick = false; ball.slice = false; ball.kick4 = false; ball.topspin = false; ball.v.set(0, 0, 0);
   ball.p.set(srv.pos.x - 0.25 * sg, 0.85, srv.pos.z - 0.35 * sg);
   serveTimer = srv.isHuman ? 0 : 1.2;
   human.pressAt = -10; human.autoServe = false; trail.reset();
@@ -2635,23 +2680,28 @@ function legalFor(p) {
 }
 function doHit(p, type, o) {
   const lv = lvOf(p);
-  if (!p.isHuman) o.speed = (o.speed ?? (type === 'smash' ? 29 : type === 'volley' ? 16.5 : type === 'bajada' ? 23 : type === 'vibora' ? 24 : 20)) * lv.power * (o.powerMul || 1);
+  if (!p.isHuman) o.speed = (o.speed ?? (type === 'smash' ? 29 : type === 'volley' ? 16.5 : type === 'bajada' ? 23 : type === 'vibora' ? 24 : type === 'cuatro' ? 32 : type === 'gancho' ? 25 : type === 'rulo' ? 24 : type === 'chiquita' ? 10.5 : 20)) * lv.power * (o.powerMul || 1);
   const fromOut = Math.abs(ball.p.x) > HW + 0.05;
   if (fromOut) type = 'rescue';
+  let contra = null;
+  if (type === 'contrapared' && !fromOut) { contra = planContra(ball.p, p.team, o); if (!contra) type = 'lob'; }
   tally('shot:' + type);
-  ball.v.copy(fromOut ? planOutShot(ball.p, p.team, o) : planShot(ball.p, type, p.team, o));
+  ball.v.copy(fromOut ? planOutShot(ball.p, p.team, o) : contra || planShot(ball.p, type, p.team, o));
   ball.out = false; ball.outBounced = false; ball.outFar = false; ball.inbound = fromOut;
   ball.kick = type === 'smash' && o.depth < 4 && Math.abs(o.x ?? 0) > 2;
   ball.slice = type === 'vibora';
+  ball.kick4 = type === 'cuatro';
+  ball.topspin = type === 'rulo';
   p.swingSide = (ball.p.x - p.pos.x) * teamSign(p.team) >= 0 ? 1 : -1;
   for (const q of teams[1 - p.team]) q.hop = 0.22;
   Object.assign(rally, { outside: false, offBack: false, hitterTeam: p.team, bounces: 0, crossed: false, isServe: false, netTouched: false, shotType: type, hitZ: p.pos.z, lastHitTime: simTime, lastErr: !!(o.wild || o.noClear), hits: rally.hits + 1, lastHitter: p });
   ball.rolled = false; p.swing = 0.3; p.swingKind = type;
-  if (type === 'smash') { p.jump = 0.35; drawSpeed(ball.v.length() * 3.6); }
+  if (type === 'smash' || type === 'cuatro' || type === 'gancho' || type === 'rulo') { p.jump = 0.35; drawSpeed(ball.v.length() * 3.6); }
   for (const q of teams[1 - p.team]) if (!q.isHuman) q.frozenUntil = simTime + lvOf(q).react * (0.8 + Math.random() * 0.7);
-  const SL = tr('shots')[type]; if (SL) say(fill(pick(SL, Math.random), { p: p.name }) + (type === 'smash' ? ` ${Math.round(ball.v.length() * 3.6)} km/h.` : ''));
-  if (p.isHuman) haptic(type === 'smash' ? 22 : 12);
-  Sfx.hit(type === 'smash' ? 1.2 : type === 'lob' || type === 'drop' ? 0.6 : 0.9);
+  const SL = tr('shots')[type]; if (SL) say(fill(pick(SL, Math.random), { p: p.name }) + (type === 'smash' || type === 'cuatro' ? ` ${Math.round(ball.v.length() * 3.6)} km/h.` : ''));
+  const hard = type === 'smash' || type === 'cuatro' || type === 'gancho' || type === 'rulo';
+  if (p.isHuman) haptic(hard ? 22 : 12);
+  Sfx.hit(hard ? 1.2 : type === 'lob' || type === 'drop' || type === 'chiquita' ? 0.6 : 0.9);
   replan();
 }
 
@@ -2737,12 +2787,15 @@ function aiTryHit(p) {
   let type = 'drive';
   const smashP = tac === 'attack' ? 0.92 : tac === 'safe' ? 0.45 : 0.75;
   if (y > 1.75 && nearNet && Math.random() < smashP) type = 'smash';
-  else if (y > 1.75) { const k = Math.random(), vib = tac === 'attack' ? 0.5 : tac === 'safe' ? 0.12 : 0.3; type = k < vib ? 'vibora' : k < vib + 0.4 ? 'bandeja' : 'drive'; }
+  else if (y > 1.75) { const k = Math.random(), vib = tac === 'attack' ? 0.45 : tac === 'safe' ? 0.1 : 0.27, rul = tac === 'safe' ? 0.04 : 0.13; type = k < vib ? 'vibora' : k < vib + rul ? 'rulo' : k < vib + rul + 0.35 ? 'bandeja' : 'drive'; }
   else if (rally.bounces === 0 && Math.abs(ball.p.z) < 5) type = 'volley';
   else if (oppsAtNet && Math.random() < (tac === 'safe' ? 0.6 : 0.4)) type = 'lob';
+  else if (oppsAtNet && y < 1.3 && Math.abs(p.pos.z) > 6 && Math.random() < (tac === 'attack' ? 0.2 : 0.35)) type = 'chiquita';
   else if (Math.abs(p.pos.z) > 8 && y < 0.6 && Math.random() < 0.3) type = 'lob';
   else if (oppsBack && Math.random() < 0.06) type = 'drop';
   if (rally.offBack && y > 1.25 && Math.abs(p.pos.z) > 6.2 && type !== 'smash' && Math.random() < 0.7) type = 'bajada';
+  // The ball has got past and is dying into the corner: play it into your own back glass
+  if (rally.bounces >= 1 && Math.sign(ball.v.z) === teamSign(p.team) && Math.abs(ball.p.z) > 7.6 && y < 1.1 && Math.abs(ball.p.z) > Math.abs(p.pos.z) && Math.random() < 0.45) type = 'contrapared';
   if (isC && coach.next) {
     type = coach.next === 'smash' ? (y > 1.4 ? 'smash' : 'drive') : coach.next;
     say(_t('order', { p: p.name, o: tr('orderNames')[coach.next] }), true);
@@ -2752,7 +2805,16 @@ function aiTryHit(p) {
   let x = 0, bestGap = -1;
   for (const c of cands) { const gap = Math.min(...opps.map((q) => Math.abs(q.pos.x - c))) + Math.random() * 0.8; if (gap > bestGap) { bestGap = gap; x = c; } }
   const o = { x: x + gauss() * lv.jitter };
-  if (type === 'smash') { o.depth = y > 2.1 && Math.abs(ball.p.z) < 4 && Math.random() < 0.35 ? 3.2 : 5 + Math.random() * 2; if (o.depth < 4) { o.x = Math.sign(x || 1) * 3.1; o.speed = 31; } }
+  if (type === 'smash') {
+    const close = Math.abs(ball.p.z) < 4.2, k = Math.random();
+    if (close && y > 2.1 && k < 0.3) { o.depth = 3.2; o.x = Math.sign(x || 1) * 3.1; o.speed = 31; }
+    else if (close && y > 2.2 && k < 0.5) { type = 'cuatro'; o.x = gauss() * 1.2; o.depth = 6.8; }
+    else if (close && k < 0.68) { type = 'gancho'; o.x = -Math.sign(ball.p.x || 1) * 3.6; o.depth = 5.4; }
+    else o.depth = 5 + Math.random() * 2;
+  }
+  if (type === 'rulo') o.depth = 7 + Math.random() * 1.2;
+  if (type === 'chiquita') { o.depth = 3.6 + Math.random() * 1.2; o.x = opps[Math.floor(Math.random() * 2)].pos.x + gauss() * 0.8; }
+  if (type === 'contrapared') { o.depth = 6 + Math.random() * 2; }
   if (type === 'drive') o.depth = 6.6 + Math.random() * 2.2 + gauss() * lv.jitter * 0.5;
   if (type === 'lob') o.depth = 8.8 + Math.random() * 0.6;
   if (type === 'drop') o.depth = 2.2 + Math.random() * 1.2;
@@ -2766,7 +2828,7 @@ function aiTryHit(p) {
     if (coach.aim) { o.x = coach.aim.x; o.depth = Math.abs(coach.aim.z); coach.aim = null; aimMarker.visible = false; syncCoachUI(); say(_t('aimDone', { p: p.name })); }
   }
   const stretch = Math.hypot(ball.p.x - p.pos.x, ball.p.z - p.pos.z) > REACH * 0.75 ? 1 : 0;
-  const tough = (1 + (y < 0.35 ? 1.5 : 0) + (ball.v.length() > 17 ? 1 : 0) + stretch + (type === 'drop' ? 1 : 0)) * errMul;
+  const tough = (1 + (y < 0.35 ? 1.5 : 0) + (ball.v.length() > 17 ? 1 : 0) + stretch + (type === 'drop' ? 1 : 0) + (type === 'contrapared' ? 1 : 0) + (rally.shotType === 'chiquita' && y < 0.9 ? 1.2 : 0)) * errMul;
   if (Math.random() < lv.err * tough) {
     const k = Math.random();
     if (k < 0.45) { o.depth = 10.8; o.wild = true; }
@@ -2847,13 +2909,27 @@ function humanTryHit(p) {
   if (type === 'drive' && atNet) type = 'volley';
   if (rally.offBack && y > 1.2 && (type === 'smash' || type === 'bandeja' || type === 'drive')) type = 'bajada';
   const ix = human.input.x, iy = human.input.y;
-  if (pressed === 'smash' && type === 'smash' && Math.abs(ix) > 0.5 && iy <= 0.5 && Math.abs(ball.p.z) > 4.5) type = 'vibora';
+  // Smash + stick: at the net forward-and-side = por tres, forward = por cuatro, side = gancho; from mid court side = vibora, back = rulo
+  if (pressed === 'smash' && type === 'smash') {
+    const close = Math.abs(ball.p.z) < 4.5, side = Math.abs(ix) > 0.5;
+    if (close && iy > 0.5 && !side) type = 'cuatro';
+    else if (close && side && iy <= 0.5) type = 'gancho';
+    else if (!close && side && iy <= 0.5) type = 'vibora';
+    else if (!close && iy < -0.5) type = 'rulo';
+  }
+  if (pressed === 'drive' && type === 'drive' && iy < -0.5) type = 'chiquita';
+  if (rally.bounces >= 1 && Math.sign(ball.v.z) === teamSign(p.team) && Math.abs(ball.p.z) > 7.6 && y < 1.1 && Math.abs(ball.p.z) > Math.abs(p.pos.z) + 0.2) type = 'contrapared';
   const o = { x: Math.abs(ix) > 0.2 ? ix * 4 : -Math.sign(ball.p.x || 1) * 2.2 + gauss() * 0.4 };
   if (type === 'drive' || type === 'volley') o.depth = clamp(7.2 + iy * 1.6, 5, 9);
   if (type === 'smash') o.depth = iy > 0.5 ? 3.2 : 5.6;
   if (type === 'smash' && o.depth < 4) { o.speed = 31; if (Math.abs(o.x) > 2) o.x = Math.sign(o.x) * 3.1; }
   if (type === 'bajada') o.depth = clamp(7.4 + iy * 1.2, 5.5, 9);
   if (type === 'vibora') { o.x = Math.sign(ix) * 3.8; o.depth = clamp(6.4 + iy, 5.2, 7.6); }
+  if (type === 'cuatro') { o.x = ix * 2; o.depth = 6.8; }
+  if (type === 'gancho') { o.x = Math.sign(ix) * 3.6; o.depth = 5.4; }
+  if (type === 'rulo') o.depth = 7.4;
+  if (type === 'chiquita') o.depth = 4.2;
+  if (type === 'contrapared') o.depth = 6.5;
   if (Math.abs(ball.p.x) > HW + 0.05) o.depth = clamp(6.8 + iy * 1.4, 5, 8.8);
   human.pressAt = -10;
   doHit(p, type, o);
@@ -3238,6 +3314,8 @@ function syncMeshes(dt, t) {
     let diff = toBall - base; diff = Math.atan2(Math.sin(diff), Math.cos(diff));
     let twist = 0;
     if (p.swing > 0 && p.swingKind === 'vibora') twist = -Math.sin((1 - p.swing / 0.3) * Math.PI) * 0.7;
+    else if (p.swing > 0 && p.swingKind === 'gancho') twist = Math.sin((1 - p.swing / 0.3) * Math.PI) * 0.9;
+    else if (p.swing > 0 && p.swingKind === 'contrapared') twist = Math.PI * 0.85 * Math.sin((1 - p.swing / 0.3) * Math.PI * 0.5 + Math.PI * 0.5);
     else if (p.swing > 0 && (p.swingKind === 'drive' || p.swingKind === 'volley' || p.swingKind === 'lob' || p.swingKind === 'drop' || p.swingKind === 'rescue')) twist = (p.swingSide || 1) * Math.sin((1 - p.swing / 0.3) * Math.PI) * 0.6;
     m.rotation.y = base + clamp(diff, -1.1, 1.1) + twist;
     // Lean into the run, slump after losing a point
@@ -3248,7 +3326,9 @@ function syncMeshes(dt, t) {
     if (rally.server === p && toss > 0) u.armL.rotation.set(-1.2 - toss * 1.7, 0, 0);
     if (p.swing > 0) {
       const k = 1 - p.swing / 0.3;
-      if (p.swingKind === 'smash' || p.swingKind === 'bandeja') u.armR.rotation.set(-3.0 + k * 2.4, 0, 0);
+      if (p.swingKind === 'smash' || p.swingKind === 'bandeja' || p.swingKind === 'cuatro' || p.swingKind === 'rulo') u.armR.rotation.set(-3.0 + k * 2.4, 0, 0);
+      else if (p.swingKind === 'gancho') u.armR.rotation.set(-2.5 + k * 1.2, 0, -1.3 + k * 2.4);
+      else if (p.swingKind === 'contrapared') u.armR.rotation.set(-0.6 + k * 1.6, 0, 1.0 - k * 1.4);
       else if (p.swingKind === 'bajada') u.armR.rotation.set(-2.2 + k * 2.2, 0, 0.6 - k * 0.6);
       else if (p.swingKind === 'vibora') u.armR.rotation.set(-2.7 + k * 2.3, 0, -0.7 + k * 1.6);
       else if (p.swingKind === 'serve') u.armR.rotation.set(0.6 - k * 1.8, 0, 0);
@@ -3871,7 +3951,7 @@ window.padel = {
   get state() { return { rally: { ...rally, server: rally.server?.team, lastHitter: rally.lastHitter?.name, designated: rally.designated.map((d) => d && d.team + ':' + d.slot) }, score: JSON.parse(JSON.stringify(score)), ball: ball.p.toArray().map((v) => +v.toFixed(2)), demo, mode: settings.mode }; },
   step(n = 120) { for (let i = 0; i < n; i++) simStep(); syncMeshes(n * DT, performance.now() / 1000); },
   frameCam(dt = 0.016, n = 1) { for (let i = 0; i < n; i++) updateCamera(dt); },
-  newMatch, settings, coach, players, ball, debugLog, cam, setVenue, VENUES, tour, FMT, score, award: (t, r = 'double') => award(t, r), chooseSide, serveFault, rally, evCount, _dbg: { startPoint, replan, planShot, stepBall, planOutShot, rankingList, myRank, startTour, recordResult, seasonData },
+  newMatch, settings, coach, players, ball, debugLog, cam, setVenue, VENUES, tour, FMT, score, award: (t, r = 'double') => award(t, r), chooseSide, serveFault, rally, evCount, _dbg: { startPoint, replan, planShot, planContra, stepBall, planOutShot, rankingList, myRank, startTour, recordResult, seasonData },
 };
 </script>
 </body>
