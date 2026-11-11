@@ -53,7 +53,7 @@ No build step: GitHub Pages serves the folder as it is.
 ## Release
 
 1. Change the code.
-2. Bump `CACHE` in `sw.js` (`terrazza-padel-r5` → `r6` …), otherwise installed copies keep the old files.
+2. Bump `CACHE` in `sw.js` (`terrazza-padel-r6` → `r7` …), otherwise installed copies keep the old files.
 3. Test, commit, push to `main`.
 
 ## Test
