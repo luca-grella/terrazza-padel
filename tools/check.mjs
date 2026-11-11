@@ -86,7 +86,10 @@ try {
   // serve with the Hit button, then drag the stick while the point is live
   for (let i = 0; i < 40 && (await ev('window.padel.state.rally.state')) !== 'serve'; i++) await sleep(200);
   const before = await ev('window.padel.state.rally.state');
-  await tap('#shots .main'); await sleep(150);
+  // On a phone serve with the Hit button; on a desktop the touch buttons are hidden, so press J like a player would
+  if (mobile) await tap('#shots .main');
+  else for (const type of ['keyDown', 'keyUp']) await send('Input.dispatchKeyEvent', { type, key: 'j', code: 'KeyJ', text: type === 'keyDown' ? 'j' : undefined, windowsVirtualKeyCode: 74 });
+  await sleep(150);
   result.serve = { before, after: await ev('window.padel.state.rally.state') };
   if (result.touchVisible) {
     const s = await rect('#stick');
