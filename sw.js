@@ -1,6 +1,6 @@
 // Terrazza Padel service worker: precache the game for offline play, cache Google Fonts at runtime.
 // Bump CACHE on every release so phones pick up the new files.
-const CACHE = 'terrazza-padel-r6';
+const CACHE = 'terrazza-padel-r7';
 const ASSETS = [
   './', './index.html', './manifest.webmanifest', './vendor/three.module.min.js',
   './icons/icon.svg', './icons/icon-180.png', './icons/icon-192.png', './icons/icon-512.png', './icons/icon-maskable-512.png',

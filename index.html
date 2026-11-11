@@ -2213,7 +2213,7 @@ const LEVELS = {
   normal: { speed: 4.5, err: 0.065, jitter: 0.5, power: 1.0, react: 0.25, misread: 0.11 },
   hard: { speed: 5.1, err: 0.04, jitter: 0.3, power: 1.08, react: 0.18, misread: 0.05 },
 };
-const REACH = 1.05, HUMAN_SPEED = 5.6;
+const REACH = 1.05, HUMAN_SPEED = 5.6, SERVE_Y = 0.75; // serve contact height: waist level
 // Difficulty as a continuous value: 0 easy, 1 normal, 2 strong (a little beyond in late tournament rounds).
 function levelAt(f) {
   const ks = ['easy', 'normal', 'hard'], i = clamp(Math.floor(f), 0, 1), k = f - i, a = LEVELS[ks[i]], b = LEVELS[ks[i + 1]], o = {};
@@ -2615,7 +2615,7 @@ function startPoint(serveNum = 1) {
   for (const p of players) { p.target.copy(p.pos); p.vel.set(0, 0, 0); p.plan = null; p.swing = 0; p.frozenUntil = 0; }
   Object.assign(rally, { state: choose ? 'choose' : 'serve', server: srv, serveNum, replay: 0, outside: false, offBack: false, pano: false, hitterTeam: st, bounces: 0, crossed: false, isServe: true, netTouched: false, serveBoxSign: -sxs, designated: [null, null], shotType: 'serve', lastErr: false, hits: 0, lastHitter: srv });
   ball.out = false; ball.rolled = false; ball.inbound = false; ball.outBounced = false; ball.outFar = false; ball.kick = false; ball.slice = false; ball.kick4 = false; ball.topspin = false; ball.v.set(0, 0, 0);
-  ball.p.set(srv.pos.x - 0.25 * sg, 0.85, srv.pos.z - 0.35 * sg);
+  ball.p.set(srv.pos.x - 0.25 * sg, SERVE_Y, srv.pos.z - 0.35 * sg);
   serveTimer = srv.isHuman ? 0 : 1.2;
   human.pressAt = -10; human.autoServe = false; trail.reset();
   $('sideChoice').hidden = !choose;
@@ -2652,7 +2652,7 @@ function doServe() {
   else if (!srv.isHuman) base = pick([0.8, 2.4, 3.9], Math.random);
   let lat, depth, T;
   if (srv.isHuman) {
-    // Timing: the best moment is at the top of the toss; pushing the stick forward serves deeper and faster, with more risk.
+    // Timing: the best moment is at the top of the bounce (waist height); pushing the stick forward serves deeper and faster, with more risk.
     const timing = Math.abs(Math.sin(simTime * 4)), iy = human.input.y;
     const miss = human.autoServe ? 0 : Math.max(0, 0.62 - timing) * (second ? 2.4 : 4.4);
     lat = base + gauss() * 0.45 + human.input.x * rally.serveBoxSign * -0.9 + miss * (Math.random() < 0.5 ? 0.7 : -0.5);
@@ -2666,7 +2666,7 @@ function doServe() {
   }
   const tx = rally.serveBoxSign * clamp(lat, 0.2, 5.8);
   depth = clamp(depth, 2.4, 8.4);
-  ball.p.set(srv.pos.x - 0.25 * sg, 0.85, srv.pos.z - 0.35 * sg);
+  ball.p.set(srv.pos.x - 0.25 * sg, SERVE_Y, srv.pos.z - 0.35 * sg);
   ball.v.copy(planShot(ball.p, 'serve', srv.team, { x: tx, depth, T, wild: true }));
   Object.assign(rally, { state: 'play', isServe: true, hitterTeam: srv.team, bounces: 0, crossed: false, netTouched: false, hitZ: srv.pos.z, shotType: 'serve', lastHitTime: simTime, lastHitter: srv, outside: false, offBack: false });
   ball.rolled = false; ball.inbound = false; srv.swing = 0.3; srv.swingKind = 'serve'; srv.swingSide = 1;
@@ -3292,13 +3292,14 @@ function syncMeshes(dt, t) {
   trail.update();
   marker.material.opacity = 0.55 + Math.sin(t * 10) * 0.3;
   aimMarker.rotation.z = t * 2;
-  // Serve toss: the ball goes up and down above the server; for the human the top of the toss is the best moment to serve
+  // Serve: the ball bounces between the floor and the server's waist
   let toss = 0;
   if ((rally.state === 'serve' || rally.state === 'choose') && rally.server) {
     const srv = rally.server;
-    toss = srv.isHuman ? Math.abs(Math.sin(simTime * 4)) : clamp(1 - Math.abs(serveTimer - 0.35) / 0.35, 0, 1);
-    if (rally.state === 'choose') toss = 0;
-    ballMesh.position.y = 0.85 + toss * 1.3;
+    // FIP rule 6: the server bounces the ball on the floor and hits it at or below the waist; the top of the bounce is the moment to serve
+    toss = srv.isHuman ? Math.abs(Math.sin(simTime * 4)) : Math.abs(Math.cos(clamp((0.7 - serveTimer) / 0.7, 0, 1) * Math.PI));
+    if (rally.state === 'choose') toss = 1;
+    ballMesh.position.y = BALL_R + (SERVE_Y - BALL_R) * toss;
   }
   for (const p of players) {
     const m = p.mesh, u = m.userData;
@@ -3323,7 +3324,7 @@ function syncMeshes(dt, t) {
     const stride = moving > 0.05 ? Math.sin(p.walk * 3) * 0.7 * moving : 0;
     u.legL.rotation.x = stride + crouch * 4; u.legR.rotation.x = -stride + crouch * 4;
     u.armL.rotation.set(-stride * 0.7, 0, 0);
-    if (rally.server === p && toss > 0) u.armL.rotation.set(-1.2 - toss * 1.7, 0, 0);
+    if (rally.server === p && rally.state === 'serve') u.armL.rotation.set(-0.5 - toss * 0.5, 0, 0);
     if (p.swing > 0) {
       const k = 1 - p.swing / 0.3;
       if (p.swingKind === 'smash' || p.swingKind === 'bandeja' || p.swingKind === 'cuatro' || p.swingKind === 'rulo') u.armR.rotation.set(-3.0 + k * 2.4, 0, 0);
@@ -3336,7 +3337,7 @@ function syncMeshes(dt, t) {
       else u.armR.rotation.set(0.2, 0, 1.3 - k * 2.4);
     } else if (happy) { const w = Math.sin(t * 12 + p.slot) * 0.25; u.armR.rotation.set(-2.9 + w, 0, 0.2); u.armL.rotation.set(-2.9 - w, 0, -0.2); }
     else if (sad) { u.armR.rotation.set(0.15, 0, 0.1); u.armL.rotation.set(0.15, 0, -0.1); }
-    else if (rally.server === p && toss > 0) u.armR.rotation.set(-1.4 * toss, 0, 0.5);
+    else if (rally.server === p && rally.state === 'serve') u.armR.rotation.set(0.5, 0, 0.5);
     else u.armR.rotation.set(-0.5 + stride * 0.4 - crouch * 4, 0, 0.35);
   }
   const hp = human.player;

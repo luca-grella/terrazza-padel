@@ -33,13 +33,13 @@ The game opens full screen and works offline after the first visit.
 
 ## The rules it follows
 
-Padel rules on a 10 x 20 m court with two side doors per half, checked against the FIP Rules of Padel (2023 edition):
+Padel rules on a 10 x 20 m court with two side doors per half, checked against the FIP Rules of Padel (2023 edition, and the 2026 edition for the serve and the star point):
 
-- Serve underhand into the diagonal box. A serve that lands outside the box, hits the fence after the bounce, or hits a wall before reaching the box is a fault; two faults lose the point. A serve that clips the net and lands in the box is a let and is replayed (on the second serve, only that serve).
+- Serve underhand into the diagonal box: the server bounces the ball on the floor and hits it at waist height, best at the top of the bounce. A serve that lands outside the box, hits the fence after the bounce, or hits a wall before reaching the box is a fault; two faults lose the point. A serve that clips the net and lands in the box is a let and is replayed (on the second serve, only that serve).
 - One bounce on the floor, then the ball may hit the glass and stay in play. Hitting the opponents' glass or fence before the bounce loses the point. Waiting for the ball off the back glass and driving it down is the bajada. Overheads: bandeja; vibora (sliced, from mid court, bounces low and skids into the side glass); rulo (topspin, kicks up high into the back glass); gancho (hook at the net, angled to the side); smash, the kick smash that tries the por tres and the flat smash that tries the por cuatro. Low game: the chiquita, a slow low ball at the feet of a pair at the net. When the ball has got past you into the corner you can play a contrapared: hit it into your own back glass so it rebounds over the net.
 - A ball that goes over the back wall after a legal bounce wins the point at once (por cuatro). Over the side wall or through a door it can still be chased: the player runs out through the door and plays it back before it bounces outside (por tres if they don't make it). The kick smash near the net tries exactly that.
 - Change of ends after the first game and then every two games, and every six points in a tie-break; the camera shows the whole venue during the changeover.
-- On the golden point and on the decisive star point the receiving pair chooses whether to receive on the right or on the left. Scoring: 6-game sets won by two with a tie-break to 7 at 6-6 (or 4-game mini sets with a tie-break at 4-4); at 40-40 advantage, golden point or star point (two advantages, then a decisive point on the third deuce; the star point is not in the 2023 FIP text this check used, so it follows the description published by the FIP for the 2026 season); the deciding set can be replaced by a match tie-break to 7 or a super tie-break to 10. In a tie-break the first server serves one point, then two each, and the pair that did not serve first starts the next set.
+- On the golden point and on the decisive star point the receiving pair chooses whether to receive on the right or on the left. Scoring: 6-game sets won by two with a tie-break to 7 at 6-6 (or 4-game mini sets with a tie-break at 4-4); at 40-40 advantage, golden point or star point (two advantages, then a decisive point on the third deuce; FIP Rules of Padel 2026, rule 1 option 2); the deciding set can be replaced by a match tie-break to 7 or a super tie-break to 10. In a tie-break the first server serves one point, then two each, and the pair that did not serve first starts the next set.
 
 ## Files
 
@@ -53,7 +53,7 @@ No build step: GitHub Pages serves the folder as it is.
 ## Release
 
 1. Change the code.
-2. Bump `CACHE` in `sw.js` (`terrazza-padel-r6` → `r7` …), otherwise installed copies keep the old files.
+2. Bump `CACHE` in `sw.js` (`terrazza-padel-r7` → `r8` …), otherwise installed copies keep the old files.
 3. Test, commit, push to `main`.
 
 ## Test
