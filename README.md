@@ -68,3 +68,10 @@ node --experimental-websocket tools/check.mjs http://127.0.0.1:8777/ /tmp/tp --m
 ## Credits
 
 Code by Claude for Luca. Fonts from Google Fonts (Jersey 10, Pixelify Sans, Fraunces, Inter; SIL Open Font License). three.js by its authors (MIT).
+
+## Publishing (password)
+
+Since 11 Nov 2026 the game is private while in development: GitHub Pages is published by `.github/workflows/pages.yml`,
+which copies the repo and encrypts `index.html` with StatiCrypt (`tools/encrypt_for_pages.py`), using the shared password
+of the private pages of luca-grella.github.io (repo secret `STATICRYPT_PASSWORD`). The repo keeps the plain `index.html`,
+so local testing does not change.
